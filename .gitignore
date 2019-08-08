@@ -5,7 +5,7 @@
 *.slo
 *.lo
 *.o
-*.obj
+#*.obj
 
 # Precompiled Headers
 *.gch
@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Visual Studio
+.vs
+
+# Build Directory
+build
