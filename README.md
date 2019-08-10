@@ -10,13 +10,6 @@ These instructions will get you a copy of the project up and running on your loc
 
 * CMake
 
-### Checkout
-
-```sh
-git clone https://github.com/MissingBitStudios/kyte.git
-cd kyte
-```
-
 ### Build
 
 ```sh
@@ -26,16 +19,10 @@ cmake ..
 cmake --build .
 ```
 
-### Update
-
-```sh
-git pull
-```
-
 ## Built With
 
 * [Bison](https://www.gnu.org/software/bison/)
-* [flex](https://www.gnu.org/software/flex/)
+* [re2c](http://re2c.org/)
 
 ## Contributing
 
@@ -54,3 +41,8 @@ See also the list of [contributors](https://github.com/MissingBitStudios/kyte/gr
 ## License
 
 This project is licensed under the Creative Commons Attribution 4.0 International Public License (CC-BY-4.0) - see the [LICENSE.md](LICENSE.md) file for details.
+
+## Acknowledgements
+
+* Thank you to the authors of Bison and re2c.
+* Thank you to [Bisqwit](https://www.youtube.com/user/Bisqwit) for his informative [compiler series](https://github.com/bisqwit/compiler_series).

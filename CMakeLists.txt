@@ -21,3 +21,5 @@ add_subdirectory(libkyte)
 if(KYTE_CLI)
   add_subdirectory(kyte)
 endif()
+
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
