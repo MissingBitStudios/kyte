@@ -1,7 +1,7 @@
 add_library(libkyte STATIC
 	src/kyte.cpp
 	src/parser.cpp
-	src/textbox.hpp
+	src/parser.yy
 
 	include/kyte/kyte.hpp
 )

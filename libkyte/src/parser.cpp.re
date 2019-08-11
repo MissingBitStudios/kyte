@@ -3441,82 +3441,23 @@ static void FindPureFunctions()
             std::cerr << "Could not figure out whether " << f.name << " is a pure function\n";
 }
 
-std::string stringify(const expression& e, bool stmt);
-std::string stringify_op(const expression& e, const char* sep, const char* delim, bool stmt = false, unsigned first=0, unsigned limit=~0u)
+bool expression_equal(const expression& a, const expression& b)
 {
-    std::string result(1, delim[0]);
-    const char* fsep = "";
-    for(const auto& p: e.params) { if(first) { --first; continue; }
-                                   if(!limit--) break;
-                                   result += fsep; fsep = sep; result += stringify(p, stmt); }
-    if(stmt) result += sep;
-    result += delim[1];
-    return result;
-}
-std::string stringify(const expression& e, bool stmt = false)
-{
-    auto expect1 = [&]{ return e.params.empty() ? "?" : e.params.size()==1 ? stringify(e.params.front()) : stringify_op(e, "??", "()"); };
-    switch(e.type)
-    {
-        // atoms
-        case ex_type::nop    : return "";
-        case ex_type::string : return "\"" + e.strvalue + "\"";
-        case ex_type::number : return std::to_string(e.numvalue);
-        case ex_type::ident  : return "?FPVS"[(int)e.ident.type] + std::to_string(e.ident.index) + "\"" + e.ident.name + "\"";
-        // binary & misc
-        case ex_type::add    : return stringify_op(e, " + ",  "()");
-        case ex_type::eq     : return stringify_op(e, " == ", "()");
-        case ex_type::cand   : return stringify_op(e, " && ", "()");
-        case ex_type::cor    : return stringify_op(e, " || ", "()");
-        case ex_type::comma  : return stmt ? stringify_op(e, "; ", "{}", true) : stringify_op(e, ", ",  "()");
-        // unary
-        case ex_type::neg    : return "-(" + expect1() + ")";
-        case ex_type::deref  : return "*(" + expect1() + ")";
-        case ex_type::addrof : return "&(" + expect1() + ")";
-        // special
-        case ex_type::copy   : return "(" + stringify(e.params.back()) + " = " + stringify(e.params.front()) + ")";
-        case ex_type::fcall  : return "(" + (e.params.empty() ? "?" : stringify(e.params.front()))+")"+stringify_op(e,", ","()",false,1);
-        case ex_type::loop   : return "while " + stringify(e.params.front()) + " " + stringify_op(e, "; ", "{}", true, 1);
-        case ex_type::ret    : return "return " + expect1();
-    }
-    return "?";
-}
-static std::string stringify(const function& f)
-{
-    return stringify(f.code, true);
+	return (a.type == b.type)
+		&& (!is_ident(a) || (a.ident.type == b.ident.type && a.ident.index == b.ident.index))
+		&& (!is_string(a) || a.strvalue == b.strvalue)
+		&& (!is_number(a) || a.numvalue == b.numvalue)
+		&& std::equal(a.params.begin(), a.params.end(), b.params.begin(), b.params.end(), expression_equal);
 }
 
-#include "textbox.hpp"
-
-static std::string stringify_tree(const function& f)
+bool function_equal(const function& a, const function& b)
 {
-    textbox result;
-    result.putbox(2,0, create_tree_graph(f.code, 132-2,
-        [](const expression& e)
-        {
-            std::string p = stringify(e), k = p;
-            switch(e.type)
-            {
-                #define o(n) case ex_type::n: k.assign(#n,sizeof(#n)-1); break;
-                ENUM_EXPRESSIONS(o)
-                #undef o
-            }
-            return e.params.empty() ? (k + ' ' + p) : std::move(k);
-        },
-        [](const expression& e) { return std::make_pair(e.params.cbegin(), e.params.cend()); },
-        [](const expression& e) { return e.params.size() >= 1; }, // whether simplified horizontal layout can be used
-        [](const expression&  ) { return true; },                 // whether extremely simplified horiz layout can be used
-        [](const expression& e) { return is_loop(e); }));
-    return "function " + f.name + ":\n" + stringify(f) + '\n' + result.to_string();
-}
-
-static bool equal(const expression& a, const expression& b)
-{
-    return (a.type == b.type)
-        && (!is_ident(a) || (a.ident.type == b.ident.type && a.ident.index == b.ident.index))
-        && (!is_string(a) || a.strvalue == b.strvalue)
-        && (!is_number(a) || a.numvalue == b.numvalue)
-        && std::equal(a.params.begin(), a.params.end(), b.params.begin(), b.params.end(), equal);
+	return (a.name == b.name)
+		&& (expression_equal(a.code, b.code))
+		&& (a.num_vars == b.num_vars)
+		&& (a.num_params == b.num_params)
+		&& (a.pure == b.pure)
+		&& (a.pure_known == b.pure_known);
 }
 
 static void ConstantFolding(expression& e, function& f)
@@ -3650,7 +3591,7 @@ static void ConstantFolding(expression& e, function& f)
         case ex_type::eq:
             if(is_number(e.params.front()) && is_number(e.params.back()))
                 e = long(e.params.front().numvalue == e.params.back().numvalue);
-            else if(equal(e.params.front(), e.params.back()) && e.params.front().is_pure())
+            else if(expression_equal(e.params.front(), e.params.back()) && e.params.front().is_pure())
                 e = 1l;
             break;
         case ex_type::deref:
@@ -3696,7 +3637,7 @@ static void ConstantFolding(expression& e, function& f)
             auto& tgt = e.params.back(), &src = e.params.front();
             // If an assign-statement assigns into itself, and the expression has no side effects,
             // replace with the lhs.
-            if(equal(tgt, src) && tgt.is_pure())
+            if(expression_equal(tgt, src) && tgt.is_pure())
                 e = C(M(tgt));
             // If the target expression of the assign-statement is also used in the source expression,
             // replace the target-param reference with a temporary variable. A new temporary is created
@@ -3705,7 +3646,7 @@ static void ConstantFolding(expression& e, function& f)
             {
                 expr_vec comma_params;
                 for_all_expr(src, true, [&](auto& e)
-                                        { if(equal(e, tgt)) comma_params.push_back(C(e = f.maketemp()) %= C(tgt)); });
+                                        { if(expression_equal(e, tgt)) comma_params.push_back(C(e = f.maketemp()) %= C(tgt)); });
                 if(!comma_params.empty())
                 {
                     comma_params.push_back(M(e));
@@ -3773,7 +3714,7 @@ static void ConstantFolding(expression& e, function& f)
             if(e.params.size() >= 2)
             {
                 auto& last = e.params.back(), &prev = *std::next(e.params.rbegin());
-                if(is_copy(prev) && equal(prev.params.back(), last))
+                if(is_copy(prev) && expression_equal(prev.params.back(), last))
                     e.params.pop_back();
             }
             if(e.params.size() == 1 && !is_loop(e))
@@ -3806,39 +3747,30 @@ static void DoConstantFolding()
         // as unreachable statements have been deleted etc.
         FindPureFunctions();
 
-        std::string text_before = stringify(f);
-        std::cerr << "Before: " << text_before << '\n';
-        std::cerr << stringify_tree(f);
+        function function_before = f;
 
         for_all_expr(f.code, true, [&](expression& e){ ConstantFolding(e,f); });
-        return stringify(f) != text_before;
+
+        return !function_equal(f, function_before);
     }));
 }
 
-int main(int argc, char** argv)
+namespace kyte
 {
-    std::string filename = argv[1];
-    std::ifstream f(filename);
-    std::string buffer(std::istreambuf_iterator<char>(f), {});
+	void parse(std::string filename)
+	{
+		std::ifstream f(filename);
+		std::string buffer(std::istreambuf_iterator<char>(f), {});
 
-    lexcontext ctx;
-    ctx.cursor = buffer.c_str();
-    ctx.loc.begin.filename = &filename;
-    ctx.loc.end.filename   = &filename;
+		lexcontext ctx;
+		ctx.cursor = buffer.c_str();
+		ctx.loc.begin.filename = &filename;
+		ctx.loc.end.filename   = &filename;
 
-    yy::conj_parser parser(ctx);
-    parser.parse();
-    func_list = std::move(ctx.func_list);
+		yy::conj_parser parser(ctx);
+		parser.parse();
+		func_list = std::move(ctx.func_list);
 
-    std::cerr << "Initial\n";
-    for(const auto& f: func_list) std::cerr << stringify_tree(f);
-
-    DoConstantFolding();
-
-    std::cerr << "Final\n";
-    for(const auto& f: func_list) std::cerr << stringify_tree(f);
+		DoConstantFolding();
+	}
 }
-
-
-
-
