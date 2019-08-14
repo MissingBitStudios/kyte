@@ -54,6 +54,8 @@
 #include <algorithm>
 #include <functional>
 
+#include "kyte_p.hpp"
+
 #define ENUM_IDENTIFIERS(o) \
         o(undefined)                              /* undefined */ \
         o(function)                               /* a pointer to given function */ \
@@ -135,7 +137,7 @@ struct function
 struct lexcontext;
 
 
-#line 139 "parser.cpp.re" // lalr1.cc:408
+#line 141 "parser.cpp.re" // lalr1.cc:408
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -210,7 +212,7 @@ struct lexcontext;
 
 
 namespace yy {
-#line 214 "parser.cpp.re" // lalr1.cc:408
+#line 216 "parser.cpp.re" // lalr1.cc:408
 
   template <class T, class S = std::vector<T> >
   class stack
@@ -1628,7 +1630,7 @@ namespace yy {
 
 
 } // yy
-#line 1632 "parser.cpp.re" // lalr1.cc:408
+#line 1634 "parser.cpp.re" // lalr1.cc:408
 
 
 
@@ -1636,9 +1638,9 @@ namespace yy {
 
 // User implementation prologue.
 
-#line 1640 "parser.cpp.re" // lalr1.cc:412
+#line 1642 "parser.cpp.re" // lalr1.cc:412
 // Unqualified %code blocks.
-#line 104 "parser.yy" // lalr1.cc:413
+#line 106 "parser.yy" // lalr1.cc:413
 
 
 struct lexcontext
@@ -1684,7 +1686,7 @@ namespace yy { conj_parser::symbol_type yylex(lexcontext& ctx); }
 #define C(x) expression(x)
 
 
-#line 1688 "parser.cpp.re" // lalr1.cc:413
+#line 1690 "parser.cpp.re" // lalr1.cc:413
 
 
 #ifndef YY_
@@ -1770,7 +1772,7 @@ namespace yy { conj_parser::symbol_type yylex(lexcontext& ctx); }
 
 
 namespace yy {
-#line 1774 "parser.cpp.re" // lalr1.cc:479
+#line 1776 "parser.cpp.re" // lalr1.cc:479
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -2215,488 +2217,488 @@ namespace yy {
           switch (yyn)
             {
   case 2:
-#line 167 "parser.yy" // lalr1.cc:859
+#line 169 "parser.yy" // lalr1.cc:859
     { ++ctx; }
-#line 2221 "parser.cpp.re" // lalr1.cc:859
+#line 2223 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 3:
-#line 167 "parser.yy" // lalr1.cc:859
+#line 169 "parser.yy" // lalr1.cc:859
     { --ctx; }
-#line 2227 "parser.cpp.re" // lalr1.cc:859
+#line 2229 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 4:
-#line 168 "parser.yy" // lalr1.cc:859
+#line 170 "parser.yy" // lalr1.cc:859
     { ctx.defun(yystack_[0].value.as< std::string > ()); ++ctx; }
-#line 2233 "parser.cpp.re" // lalr1.cc:859
+#line 2235 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 5:
-#line 168 "parser.yy" // lalr1.cc:859
+#line 170 "parser.yy" // lalr1.cc:859
     { ctx.add_function(M(yystack_[4].value.as< std::string > ()), M(yystack_[0].value.as< expression > ())); --ctx; }
-#line 2239 "parser.cpp.re" // lalr1.cc:859
+#line 2241 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 9:
-#line 171 "parser.yy" // lalr1.cc:859
+#line 173 "parser.yy" // lalr1.cc:859
     { ctx.defparm(yystack_[0].value.as< std::string > ()); }
-#line 2245 "parser.cpp.re" // lalr1.cc:859
+#line 2247 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 10:
-#line 172 "parser.yy" // lalr1.cc:859
+#line 174 "parser.yy" // lalr1.cc:859
     { ctx.defparm(yystack_[0].value.as< std::string > ()); }
-#line 2251 "parser.cpp.re" // lalr1.cc:859
+#line 2253 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 11:
-#line 173 "parser.yy" // lalr1.cc:859
+#line 175 "parser.yy" // lalr1.cc:859
     {}
-#line 2257 "parser.cpp.re" // lalr1.cc:859
+#line 2259 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 12:
-#line 173 "parser.yy" // lalr1.cc:859
+#line 175 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< std::string > () = M(yystack_[0].value.as< std::string > ()); }
-#line 2263 "parser.cpp.re" // lalr1.cc:859
+#line 2265 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 13:
-#line 174 "parser.yy" // lalr1.cc:859
+#line 176 "parser.yy" // lalr1.cc:859
     {}
-#line 2269 "parser.cpp.re" // lalr1.cc:859
+#line 2271 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 15:
-#line 175 "parser.yy" // lalr1.cc:859
+#line 177 "parser.yy" // lalr1.cc:859
     {}
-#line 2275 "parser.cpp.re" // lalr1.cc:859
+#line 2277 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 17:
-#line 176 "parser.yy" // lalr1.cc:859
+#line 178 "parser.yy" // lalr1.cc:859
     {}
-#line 2281 "parser.cpp.re" // lalr1.cc:859
+#line 2283 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 19:
-#line 177 "parser.yy" // lalr1.cc:859
+#line 179 "parser.yy" // lalr1.cc:859
     {}
-#line 2287 "parser.cpp.re" // lalr1.cc:859
+#line 2289 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 21:
-#line 178 "parser.yy" // lalr1.cc:859
+#line 180 "parser.yy" // lalr1.cc:859
     {}
-#line 2293 "parser.cpp.re" // lalr1.cc:859
+#line 2295 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 23:
-#line 179 "parser.yy" // lalr1.cc:859
+#line 181 "parser.yy" // lalr1.cc:859
     {}
-#line 2299 "parser.cpp.re" // lalr1.cc:859
+#line 2301 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 24:
-#line 179 "parser.yy" // lalr1.cc:859
+#line 181 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = M(yystack_[0].value.as< expression > ()); }
-#line 2305 "parser.cpp.re" // lalr1.cc:859
+#line 2307 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 25:
-#line 180 "parser.yy" // lalr1.cc:859
+#line 182 "parser.yy" // lalr1.cc:859
     {}
-#line 2311 "parser.cpp.re" // lalr1.cc:859
+#line 2313 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 26:
-#line 180 "parser.yy" // lalr1.cc:859
+#line 182 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = M(yystack_[0].value.as< expression > ()); }
-#line 2317 "parser.cpp.re" // lalr1.cc:859
+#line 2319 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 27:
-#line 181 "parser.yy" // lalr1.cc:859
+#line 183 "parser.yy" // lalr1.cc:859
     {}
-#line 2323 "parser.cpp.re" // lalr1.cc:859
+#line 2325 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 28:
-#line 181 "parser.yy" // lalr1.cc:859
+#line 183 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = M(yystack_[0].value.as< expression > ()); }
-#line 2329 "parser.cpp.re" // lalr1.cc:859
+#line 2331 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 29:
-#line 182 "parser.yy" // lalr1.cc:859
+#line 184 "parser.yy" // lalr1.cc:859
     {}
-#line 2335 "parser.cpp.re" // lalr1.cc:859
+#line 2337 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 30:
-#line 182 "parser.yy" // lalr1.cc:859
+#line 184 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = M(yystack_[1].value.as< expression > ()); }
-#line 2341 "parser.cpp.re" // lalr1.cc:859
+#line 2343 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 31:
-#line 183 "parser.yy" // lalr1.cc:859
+#line 185 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = M(yystack_[1].value.as< expression > ()); --ctx; }
-#line 2347 "parser.cpp.re" // lalr1.cc:859
+#line 2349 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 32:
-#line 184 "parser.yy" // lalr1.cc:859
+#line 186 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_cand(M(yystack_[1].value.as< expression > ()), M(yystack_[0].value.as< expression > ())); }
-#line 2353 "parser.cpp.re" // lalr1.cc:859
+#line 2355 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 33:
-#line 185 "parser.yy" // lalr1.cc:859
+#line 187 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_loop(M(yystack_[1].value.as< expression > ()), M(yystack_[0].value.as< expression > ())); }
-#line 2359 "parser.cpp.re" // lalr1.cc:859
+#line 2361 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 34:
-#line 186 "parser.yy" // lalr1.cc:859
+#line 188 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_ret(M(yystack_[1].value.as< expression > ()));         }
-#line 2365 "parser.cpp.re" // lalr1.cc:859
+#line 2367 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 35:
-#line 187 "parser.yy" // lalr1.cc:859
+#line 189 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = M(yystack_[1].value.as< expression > ());        }
-#line 2371 "parser.cpp.re" // lalr1.cc:859
+#line 2373 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 36:
-#line 188 "parser.yy" // lalr1.cc:859
+#line 190 "parser.yy" // lalr1.cc:859
     { }
-#line 2377 "parser.cpp.re" // lalr1.cc:859
+#line 2379 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 37:
-#line 189 "parser.yy" // lalr1.cc:859
+#line 191 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_comma(); ++ctx; }
-#line 2383 "parser.cpp.re" // lalr1.cc:859
+#line 2385 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 38:
-#line 190 "parser.yy" // lalr1.cc:859
+#line 192 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = M(yystack_[1].value.as< expression > ()); yylhs.value.as< expression > ().params.push_back(M(yystack_[0].value.as< expression > ())); }
-#line 2389 "parser.cpp.re" // lalr1.cc:859
+#line 2391 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 39:
-#line 191 "parser.yy" // lalr1.cc:859
+#line 193 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_comma(M(yystack_[0].value.as< expression > ())); }
-#line 2395 "parser.cpp.re" // lalr1.cc:859
+#line 2397 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 40:
-#line 192 "parser.yy" // lalr1.cc:859
+#line 194 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = M(yystack_[2].value.as< expression > ()); yylhs.value.as< expression > ().params.push_back(M(yystack_[0].value.as< expression > ())); }
-#line 2401 "parser.cpp.re" // lalr1.cc:859
+#line 2403 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 41:
-#line 193 "parser.yy" // lalr1.cc:859
+#line 195 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = ctx.def(yystack_[2].value.as< std::string > ()) %= M(yystack_[0].value.as< expression > ()); }
-#line 2407 "parser.cpp.re" // lalr1.cc:859
+#line 2409 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 42:
-#line 194 "parser.yy" // lalr1.cc:859
+#line 196 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = ctx.def(yystack_[0].value.as< std::string > ()) %= 0l; }
-#line 2413 "parser.cpp.re" // lalr1.cc:859
+#line 2415 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 43:
-#line 195 "parser.yy" // lalr1.cc:859
+#line 197 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = M(yystack_[0].value.as< expression > ()); }
-#line 2419 "parser.cpp.re" // lalr1.cc:859
+#line 2421 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 44:
-#line 196 "parser.yy" // lalr1.cc:859
+#line 198 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = M(yystack_[0].value.as< expression > ()); }
-#line 2425 "parser.cpp.re" // lalr1.cc:859
+#line 2427 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 45:
-#line 197 "parser.yy" // lalr1.cc:859
+#line 199 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_comma(M(yystack_[2].value.as< expression > ())); yylhs.value.as< expression > ().params.splice(yylhs.value.as< expression > ().params.end(), M(yystack_[0].value.as< expression > ().params)); }
-#line 2431 "parser.cpp.re" // lalr1.cc:859
+#line 2433 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 46:
-#line 198 "parser.yy" // lalr1.cc:859
+#line 200 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_comma(M(yystack_[0].value.as< expression > ())); }
-#line 2437 "parser.cpp.re" // lalr1.cc:859
+#line 2439 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 47:
-#line 199 "parser.yy" // lalr1.cc:859
+#line 201 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = M(yystack_[2].value.as< expression > ()); yylhs.value.as< expression > ().params.push_back(M(yystack_[0].value.as< expression > ())); }
-#line 2443 "parser.cpp.re" // lalr1.cc:859
+#line 2445 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 48:
-#line 200 "parser.yy" // lalr1.cc:859
+#line 202 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = yystack_[0].value.as< long > ();    }
-#line 2449 "parser.cpp.re" // lalr1.cc:859
+#line 2451 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 49:
-#line 201 "parser.yy" // lalr1.cc:859
+#line 203 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = M(yystack_[0].value.as< std::string > ()); }
-#line 2455 "parser.cpp.re" // lalr1.cc:859
+#line 2457 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 50:
-#line 202 "parser.yy" // lalr1.cc:859
+#line 204 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = ctx.use(yystack_[0].value.as< std::string > ());   }
-#line 2461 "parser.cpp.re" // lalr1.cc:859
+#line 2463 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 51:
-#line 203 "parser.yy" // lalr1.cc:859
+#line 205 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = M(yystack_[1].value.as< expression > ()); }
-#line 2467 "parser.cpp.re" // lalr1.cc:859
+#line 2469 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 52:
-#line 204 "parser.yy" // lalr1.cc:859
+#line 206 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_deref(e_add(M(yystack_[3].value.as< expression > ()), M(yystack_[1].value.as< expression > ()))); }
-#line 2473 "parser.cpp.re" // lalr1.cc:859
+#line 2475 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 53:
-#line 205 "parser.yy" // lalr1.cc:859
+#line 207 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_fcall(M(yystack_[2].value.as< expression > ())); }
-#line 2479 "parser.cpp.re" // lalr1.cc:859
+#line 2481 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 54:
-#line 206 "parser.yy" // lalr1.cc:859
+#line 208 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_fcall(M(yystack_[3].value.as< expression > ())); yylhs.value.as< expression > ().params.splice(yylhs.value.as< expression > ().params.end(), M(yystack_[1].value.as< expression > ().params)); }
-#line 2485 "parser.cpp.re" // lalr1.cc:859
+#line 2487 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 55:
-#line 207 "parser.yy" // lalr1.cc:859
+#line 209 "parser.yy" // lalr1.cc:859
     {yylhs.value.as< expression > ()=M(yystack_[2].value.as< expression > ());}
-#line 2491 "parser.cpp.re" // lalr1.cc:859
+#line 2493 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 56:
-#line 207 "parser.yy" // lalr1.cc:859
+#line 209 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = M(yystack_[2].value.as< expression > ()) %= M(yystack_[0].value.as< expression > ()); }
-#line 2497 "parser.cpp.re" // lalr1.cc:859
+#line 2499 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 57:
-#line 208 "parser.yy" // lalr1.cc:859
+#line 210 "parser.yy" // lalr1.cc:859
     {yylhs.value.as< expression > ()=M(yystack_[2].value.as< expression > ());}
-#line 2503 "parser.cpp.re" // lalr1.cc:859
+#line 2505 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 58:
-#line 208 "parser.yy" // lalr1.cc:859
+#line 210 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_add( M(yystack_[2].value.as< expression > ()), M(yystack_[0].value.as< expression > ())); }
-#line 2509 "parser.cpp.re" // lalr1.cc:859
+#line 2511 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 59:
-#line 209 "parser.yy" // lalr1.cc:859
+#line 211 "parser.yy" // lalr1.cc:859
     {yylhs.value.as< expression > ()=M(yystack_[2].value.as< expression > ());}
-#line 2515 "parser.cpp.re" // lalr1.cc:859
+#line 2517 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 60:
-#line 209 "parser.yy" // lalr1.cc:859
+#line 211 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_add( M(yystack_[2].value.as< expression > ()), e_neg(M(yystack_[0].value.as< expression > ()))); }
-#line 2521 "parser.cpp.re" // lalr1.cc:859
+#line 2523 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 61:
-#line 210 "parser.yy" // lalr1.cc:859
+#line 212 "parser.yy" // lalr1.cc:859
     {yylhs.value.as< expression > ()=M(yystack_[2].value.as< expression > ());}
-#line 2527 "parser.cpp.re" // lalr1.cc:859
+#line 2529 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 62:
-#line 210 "parser.yy" // lalr1.cc:859
+#line 212 "parser.yy" // lalr1.cc:859
     { if(!yystack_[0].value.as< expression > ().is_pure()) { yylhs.value.as< expression > () = ctx.temp() %= e_addrof(M(yystack_[2].value.as< expression > ())); yystack_[2].value.as< expression > () = e_deref(yylhs.value.as< expression > ().params.back()); }
                                                               yylhs.value.as< expression > () = e_comma(M(yylhs.value.as< expression > ()), M(yystack_[2].value.as< expression > ()) %= e_add(C(yystack_[2].value.as< expression > ()), M(yystack_[0].value.as< expression > ()))); }
-#line 2534 "parser.cpp.re" // lalr1.cc:859
+#line 2536 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 63:
-#line 213 "parser.yy" // lalr1.cc:859
+#line 215 "parser.yy" // lalr1.cc:859
     {yylhs.value.as< expression > ()=M(yystack_[2].value.as< expression > ());}
-#line 2540 "parser.cpp.re" // lalr1.cc:859
+#line 2542 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 64:
-#line 213 "parser.yy" // lalr1.cc:859
+#line 215 "parser.yy" // lalr1.cc:859
     { if(!yystack_[0].value.as< expression > ().is_pure()) { yylhs.value.as< expression > () = ctx.temp() %= e_addrof(M(yystack_[2].value.as< expression > ())); yystack_[2].value.as< expression > () = e_deref(yylhs.value.as< expression > ().params.back()); }
                                                               yylhs.value.as< expression > () = e_comma(M(yylhs.value.as< expression > ()), M(yystack_[2].value.as< expression > ()) %= e_add(C(yystack_[2].value.as< expression > ()), e_neg(M(yystack_[0].value.as< expression > ())))); }
-#line 2547 "parser.cpp.re" // lalr1.cc:859
+#line 2549 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 65:
-#line 216 "parser.yy" // lalr1.cc:859
+#line 218 "parser.yy" // lalr1.cc:859
     {}
-#line 2553 "parser.cpp.re" // lalr1.cc:859
+#line 2555 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 66:
-#line 216 "parser.yy" // lalr1.cc:859
+#line 218 "parser.yy" // lalr1.cc:859
     { if(!yystack_[0].value.as< expression > ().is_pure()) { yylhs.value.as< expression > () = ctx.temp() %= e_addrof(M(yystack_[0].value.as< expression > ())); yystack_[0].value.as< expression > () = e_deref(yylhs.value.as< expression > ().params.back()); }
                                                               yylhs.value.as< expression > () = e_comma(M(yylhs.value.as< expression > ()), M(yystack_[0].value.as< expression > ()) %= e_add(C(yystack_[0].value.as< expression > ()),  1l)); }
-#line 2560 "parser.cpp.re" // lalr1.cc:859
+#line 2562 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 67:
-#line 219 "parser.yy" // lalr1.cc:859
+#line 221 "parser.yy" // lalr1.cc:859
     {}
-#line 2566 "parser.cpp.re" // lalr1.cc:859
+#line 2568 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 68:
-#line 219 "parser.yy" // lalr1.cc:859
+#line 221 "parser.yy" // lalr1.cc:859
     { if(!yystack_[0].value.as< expression > ().is_pure()) { yylhs.value.as< expression > () = ctx.temp() %= e_addrof(M(yystack_[0].value.as< expression > ())); yystack_[0].value.as< expression > () = e_deref(yylhs.value.as< expression > ().params.back()); }
                                                               yylhs.value.as< expression > () = e_comma(M(yylhs.value.as< expression > ()), M(yystack_[0].value.as< expression > ()) %= e_add(C(yystack_[0].value.as< expression > ()), -1l)); }
-#line 2573 "parser.cpp.re" // lalr1.cc:859
+#line 2575 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 69:
-#line 222 "parser.yy" // lalr1.cc:859
+#line 224 "parser.yy" // lalr1.cc:859
     { if(!yystack_[1].value.as< expression > ().is_pure()) { yylhs.value.as< expression > () = ctx.temp() %= e_addrof(M(yystack_[1].value.as< expression > ())); yystack_[1].value.as< expression > () = e_deref(yylhs.value.as< expression > ().params.back()); }
                                                               auto i = ctx.temp(); yylhs.value.as< expression > () = e_comma(M(yylhs.value.as< expression > ()), C(i) %= C(yystack_[1].value.as< expression > ()), C(yystack_[1].value.as< expression > ()) %= e_add(C(yystack_[1].value.as< expression > ()),  1l), C(i)); }
-#line 2580 "parser.cpp.re" // lalr1.cc:859
+#line 2582 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 70:
-#line 225 "parser.yy" // lalr1.cc:859
+#line 227 "parser.yy" // lalr1.cc:859
     { if(!yystack_[1].value.as< expression > ().is_pure()) { yylhs.value.as< expression > () = ctx.temp() %= e_addrof(M(yystack_[1].value.as< expression > ())); yystack_[1].value.as< expression > () = e_deref(yylhs.value.as< expression > ().params.back()); }
                                                               auto i = ctx.temp(); yylhs.value.as< expression > () = e_comma(M(yylhs.value.as< expression > ()), C(i) %= C(yystack_[1].value.as< expression > ()), C(yystack_[1].value.as< expression > ()) %= e_add(C(yystack_[1].value.as< expression > ()), -1l), C(i)); }
-#line 2587 "parser.cpp.re" // lalr1.cc:859
+#line 2589 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 71:
-#line 228 "parser.yy" // lalr1.cc:859
+#line 230 "parser.yy" // lalr1.cc:859
     {yylhs.value.as< expression > ()=M(yystack_[2].value.as< expression > ());}
-#line 2593 "parser.cpp.re" // lalr1.cc:859
+#line 2595 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 72:
-#line 228 "parser.yy" // lalr1.cc:859
+#line 230 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_cor( M(yystack_[2].value.as< expression > ()), M(yystack_[0].value.as< expression > ())); }
-#line 2599 "parser.cpp.re" // lalr1.cc:859
+#line 2601 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 73:
-#line 229 "parser.yy" // lalr1.cc:859
+#line 231 "parser.yy" // lalr1.cc:859
     {yylhs.value.as< expression > ()=M(yystack_[2].value.as< expression > ());}
-#line 2605 "parser.cpp.re" // lalr1.cc:859
+#line 2607 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 74:
-#line 229 "parser.yy" // lalr1.cc:859
+#line 231 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_cand(M(yystack_[2].value.as< expression > ()), M(yystack_[0].value.as< expression > ())); }
-#line 2611 "parser.cpp.re" // lalr1.cc:859
+#line 2613 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 75:
-#line 230 "parser.yy" // lalr1.cc:859
+#line 232 "parser.yy" // lalr1.cc:859
     {yylhs.value.as< expression > ()=M(yystack_[2].value.as< expression > ());}
-#line 2617 "parser.cpp.re" // lalr1.cc:859
+#line 2619 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 76:
-#line 230 "parser.yy" // lalr1.cc:859
+#line 232 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_eq(  M(yystack_[2].value.as< expression > ()), M(yystack_[0].value.as< expression > ())); }
-#line 2623 "parser.cpp.re" // lalr1.cc:859
+#line 2625 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 77:
-#line 231 "parser.yy" // lalr1.cc:859
+#line 233 "parser.yy" // lalr1.cc:859
     {yylhs.value.as< expression > ()=M(yystack_[2].value.as< expression > ());}
-#line 2629 "parser.cpp.re" // lalr1.cc:859
+#line 2631 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 78:
-#line 231 "parser.yy" // lalr1.cc:859
+#line 233 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_eq(e_eq(M(yystack_[2].value.as< expression > ()), M(yystack_[0].value.as< expression > ())), 0l); }
-#line 2635 "parser.cpp.re" // lalr1.cc:859
+#line 2637 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 79:
-#line 232 "parser.yy" // lalr1.cc:859
+#line 234 "parser.yy" // lalr1.cc:859
     {}
-#line 2641 "parser.cpp.re" // lalr1.cc:859
+#line 2643 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 80:
-#line 232 "parser.yy" // lalr1.cc:859
+#line 234 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_addrof(M(yystack_[0].value.as< expression > ())); }
-#line 2647 "parser.cpp.re" // lalr1.cc:859
+#line 2649 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 81:
-#line 233 "parser.yy" // lalr1.cc:859
+#line 235 "parser.yy" // lalr1.cc:859
     {}
-#line 2653 "parser.cpp.re" // lalr1.cc:859
+#line 2655 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 82:
-#line 233 "parser.yy" // lalr1.cc:859
+#line 235 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_deref(M(yystack_[0].value.as< expression > ()));  }
-#line 2659 "parser.cpp.re" // lalr1.cc:859
+#line 2661 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 83:
-#line 234 "parser.yy" // lalr1.cc:859
+#line 236 "parser.yy" // lalr1.cc:859
     {}
-#line 2665 "parser.cpp.re" // lalr1.cc:859
+#line 2667 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 84:
-#line 234 "parser.yy" // lalr1.cc:859
+#line 236 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_neg(M(yystack_[0].value.as< expression > ()));    }
-#line 2671 "parser.cpp.re" // lalr1.cc:859
+#line 2673 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 85:
-#line 235 "parser.yy" // lalr1.cc:859
+#line 237 "parser.yy" // lalr1.cc:859
     {}
-#line 2677 "parser.cpp.re" // lalr1.cc:859
+#line 2679 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 86:
-#line 235 "parser.yy" // lalr1.cc:859
+#line 237 "parser.yy" // lalr1.cc:859
     { yylhs.value.as< expression > () = e_eq(M(yystack_[0].value.as< expression > ()), 0l); }
-#line 2683 "parser.cpp.re" // lalr1.cc:859
+#line 2685 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 87:
-#line 236 "parser.yy" // lalr1.cc:859
+#line 238 "parser.yy" // lalr1.cc:859
     {yylhs.value.as< expression > ()=M(yystack_[2].value.as< expression > ());}
-#line 2689 "parser.cpp.re" // lalr1.cc:859
+#line 2691 "parser.cpp.re" // lalr1.cc:859
     break;
 
   case 88:
-#line 236 "parser.yy" // lalr1.cc:859
+#line 238 "parser.yy" // lalr1.cc:859
     { auto i = ctx.temp();
                                                               yylhs.value.as< expression > () = e_comma(e_cor(e_cand(M(yystack_[4].value.as< expression > ()), e_comma(C(i) %= M(yystack_[2].value.as< expression > ()), 1l)), C(i) %= M(yystack_[0].value.as< expression > ())), C(i)); }
-#line 2696 "parser.cpp.re" // lalr1.cc:859
+#line 2698 "parser.cpp.re" // lalr1.cc:859
     break;
 
 
-#line 2700 "parser.cpp.re" // lalr1.cc:859
+#line 2702 "parser.cpp.re" // lalr1.cc:859
             default:
               break;
             }
@@ -3210,15 +3212,15 @@ namespace yy {
   const unsigned char
   conj_parser::yyrline_[] =
   {
-       0,   167,   167,   167,   168,   168,   169,   170,   170,   171,
-     172,   173,   173,   174,   174,   175,   175,   176,   176,   177,
-     177,   178,   178,   179,   179,   180,   180,   181,   181,   182,
-     182,   183,   184,   185,   186,   187,   188,   189,   190,   191,
-     192,   193,   194,   195,   196,   197,   198,   199,   200,   201,
-     202,   203,   204,   205,   206,   207,   207,   208,   208,   209,
-     209,   210,   210,   213,   213,   216,   216,   219,   219,   222,
-     225,   228,   228,   229,   229,   230,   230,   231,   231,   232,
-     232,   233,   233,   234,   234,   235,   235,   236,   236
+       0,   169,   169,   169,   170,   170,   171,   172,   172,   173,
+     174,   175,   175,   176,   176,   177,   177,   178,   178,   179,
+     179,   180,   180,   181,   181,   182,   182,   183,   183,   184,
+     184,   185,   186,   187,   188,   189,   190,   191,   192,   193,
+     194,   195,   196,   197,   198,   199,   200,   201,   202,   203,
+     204,   205,   206,   207,   208,   209,   209,   210,   210,   211,
+     211,   212,   212,   215,   215,   218,   218,   221,   221,   224,
+     227,   230,   230,   231,   231,   232,   232,   233,   233,   234,
+     234,   235,   235,   236,   236,   237,   237,   238,   238
   };
 
   // Print the state stack on the debug stream.
@@ -3253,8 +3255,8 @@ namespace yy {
 
 
 } // yy
-#line 3257 "parser.cpp.re" // lalr1.cc:1167
-#line 239 "parser.yy" // lalr1.cc:1168
+#line 3259 "parser.cpp.re" // lalr1.cc:1167
+#line 241 "parser.yy" // lalr1.cc:1168
 
 
 yy::conj_parser::symbol_type yy::yylex(lexcontext& ctx)
@@ -3757,20 +3759,21 @@ static void DoConstantFolding()
 
 namespace kyte
 {
-	void parse(std::string filename)
+	AST parse(const std::string& sourceCode, std::string debugName)
 	{
-		std::ifstream f(filename);
-		std::string buffer(std::istreambuf_iterator<char>(f), {});
-
 		lexcontext ctx;
-		ctx.cursor = buffer.c_str();
-		ctx.loc.begin.filename = &filename;
-		ctx.loc.end.filename   = &filename;
+		ctx.cursor = sourceCode.c_str();
+		ctx.loc.begin.filename = &debugName;
+		ctx.loc.end.filename   = &debugName;
 
 		yy::conj_parser parser(ctx);
 		parser.parse();
 		func_list = std::move(ctx.func_list);
 
 		DoConstantFolding();
+
+		AST ast;
+
+		return ast;
 	}
 }

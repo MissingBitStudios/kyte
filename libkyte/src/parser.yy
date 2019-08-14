@@ -16,6 +16,8 @@
 #include <algorithm>
 #include <functional>
 
+#include "kyte_p.hpp"
+
 #define ENUM_IDENTIFIERS(o) \
         o(undefined)                              /* undefined */ \
         o(function)                               /* a pointer to given function */ \
@@ -738,20 +740,21 @@ static void DoConstantFolding()
 
 namespace kyte
 {
-	void parse(std::string filename)
+	AST parse(const std::string& sourceCode, std::string debugName)
 	{
-		std::ifstream f(filename);
-		std::string buffer(std::istreambuf_iterator<char>(f), {});
-
 		lexcontext ctx;
-		ctx.cursor = buffer.c_str();
-		ctx.loc.begin.filename = &filename;
-		ctx.loc.end.filename   = &filename;
+		ctx.cursor = sourceCode.c_str();
+		ctx.loc.begin.filename = &debugName;
+		ctx.loc.end.filename   = &debugName;
 
 		yy::conj_parser parser(ctx);
 		parser.parse();
 		func_list = std::move(ctx.func_list);
 
 		DoConstantFolding();
+
+		AST ast;
+
+		return ast;
 	}
 }

@@ -2,6 +2,13 @@ add_library(libkyte STATIC
 	src/kyte.cpp
 	src/parser.cpp
 	src/parser.yy
+	src/kyte_p.hpp
+
+	src/backend.cpp
+	src/glsl.cpp
+	src/hlsl.cpp
+	src/metal.cpp
+	src/spirv.cpp
 
 	include/kyte/kyte.hpp
 )

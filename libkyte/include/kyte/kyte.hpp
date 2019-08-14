@@ -5,8 +5,6 @@
 
 namespace kyte
 {
-	void parse(std::string filename);
-
 	enum Type
 	{
 		VOID,
@@ -37,6 +35,16 @@ namespace kyte
 		SHADER_TYPE_COUNT
 	};
 
+	enum ExpressionType
+	{
+
+	};
+
+	struct AST
+	{
+
+	};
+
 	struct Variable
 	{
 		Type type;
@@ -45,52 +53,43 @@ namespace kyte
 
 	struct Expression
 	{
-
+		ExpressionType type;
 	};
 
 	struct Function
 	{
 		Type returnType;
 		std::string name;
-		std::vector<Variable> arguments;
+		Expression arguments;
 		Expression code;
 	};
 
-	class Shader
-	{
-	public:
-		Shader(ShaderType shaderType);
-		~Shader();
-
-		void addAttribute(Type type, std::string name);
-		void addUniform(Type type, std::string name);
-		void addIn(Type type, std::string name);
-		void addOut(Type type, std::string name);
-		void addFunction(Function function);
-		void setMain(Function mainFunction);
-		void passThrough(Type type, std::string name);
-
-		const ShaderType& getType() const;
-		const std::vector<Variable>& getAttributes() const;
-		const std::vector<Variable>& getIns() const;
-		const std::vector<Variable>& getOuts() const;
-		const std::vector<Variable>& getUniforms() const;
-		const std::vector<Function>& getFunctions() const;
-		const Function& getMain() const;
-	private:
-		ShaderType type;
-		std::vector<Variable> ins;
-		std::vector<Variable> outs;
-		std::vector<Variable> uniforms;
-		std::vector<Function> functions;
-		Function main;
-	};
-
-	enum Backend
+	enum BackendType
 	{
 		GLSL,
-		BACKEND_COUNT
+		HLSL,
+		METAL,
+		SPIRV,
+		BACKEND_TYPE_COUNT
 	};
 
-	void compile(const Shader& shader, std::string outputFileName, Backend backend);
+	class CompilerCallback
+	{
+	public:
+		CompilerCallback(BackendType backendType, unsigned int languageVersion = 0);
+		~CompilerCallback();
+
+		std::string BeforePreprocess(const std::string& sourceCode);
+		std::string AfterPreprocess(const std::string& sourceCode);
+		AST AfterParse(const AST& ast);
+		std::string AfterCompile(const std::string& sourceCode);
+	protected:
+		BackendType backend;
+		unsigned int version;
+	};
+
+	AST parse(const std::string& sourceCode, std::string debugName = "");
+	std::string preprocess(const std::string& sourceCode, BackendType backendType, unsigned int languageVersion = 0);
+
+	std::string compileSource(std::string sourceCode, BackendType backendType, unsigned int languageVersion = 0, CompilerCallback* compilerCallback = nullptr);
 }

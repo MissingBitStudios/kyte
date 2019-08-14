@@ -1,0 +1,6 @@
+typedef vec3 ray;
+
+test_function :: (x : float, y : float, z : float) -> ray : vec3, five : int
+{
+	return vec3(x, y, z), 5;
+}

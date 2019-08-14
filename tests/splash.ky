@@ -1,0 +1,16 @@
+#pragma program("splash", vertex, fragment)
+
+attribute position : vec2 $ POSITION;
+attribute texcoord : vec2 $ TEXCOORD0;
+
+sampler texture : sampler2D $ 0;
+
+vertex() -> vec3
+{
+    return vec4(a_position.xy, 0f, 1f);
+}
+
+fragment() -> vec4
+{
+    return texture2D(texture, texcoord);
+}
