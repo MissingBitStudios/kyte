@@ -7,7 +7,7 @@ sampler texture : sampler2D $ 0;
 
 vertex() -> vec3
 {
-    return vec4(a_position.xy, 0f, 1f);
+    return vec4(position, 0f, 1f);
 }
 
 fragment() -> vec4

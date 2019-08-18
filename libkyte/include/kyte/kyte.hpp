@@ -40,11 +40,6 @@ namespace kyte
 
 	};
 
-	struct AST
-	{
-
-	};
-
 	struct Variable
 	{
 		Type type;
@@ -58,10 +53,17 @@ namespace kyte
 
 	struct Function
 	{
+		Function(float f);
+		Function();
 		Type returnType;
 		std::string name;
 		Expression arguments;
 		Expression code;
+	};
+
+	struct AST
+	{
+		std::vector<Function> functions;
 	};
 
 	enum BackendType
@@ -71,6 +73,16 @@ namespace kyte
 		METAL,
 		SPIRV,
 		BACKEND_TYPE_COUNT
+	};
+
+	struct ShaderData
+	{
+		ShaderType type;
+		BackendType backend;
+		std::string sourceCode;
+		std::string programName;
+		unsigned int binarySize;
+		const unsigned char* binary;
 	};
 
 	class CompilerCallback
