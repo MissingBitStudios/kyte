@@ -91,8 +91,7 @@ namespace kyte
 		CompilerCallback(BackendType backendType, unsigned int languageVersion = 0);
 		~CompilerCallback();
 
-		std::string BeforePreprocess(const std::string& sourceCode);
-		std::string AfterPreprocess(const std::string& sourceCode);
+		std::string BeforeParse(const std::string& sourceCode);
 		AST AfterParse(const AST& ast);
 		std::string AfterCompile(const std::string& sourceCode);
 	protected:

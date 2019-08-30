@@ -27,12 +27,7 @@ namespace kyte
 
 	}
 
-	std::string CompilerCallback::BeforePreprocess(const std::string& sourceCode)
-	{
-		return sourceCode;
-	}
-
-	std::string CompilerCallback::AfterPreprocess(const std::string& sourceCode)
+	std::string CompilerCallback::BeforeParse(const std::string& sourceCode)
 	{
 		return sourceCode;
 	}
@@ -75,11 +70,9 @@ namespace kyte
 			// error
 		}
 
-		callback(BeforePreprocess, sourceCode);
+		callback(BeforeParse, sourceCode);
 
 		sourceCode = preprocess(sourceCode, backendType, languageVersion);
-
-		callback(AfterPreprocess, sourceCode);
 
 		AST ast = parse(sourceCode);
 

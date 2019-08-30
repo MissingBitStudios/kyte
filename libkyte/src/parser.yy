@@ -12,6 +12,13 @@
 
 using namespace kyte;
 
+struct identifier
+{
+    Type type  = VOID;
+    std::size_t     index = 0; // function#, parameter# within surrounding function, variable#
+    std::string     name;
+};
+
 struct lexcontext;
 }//%code requires
 
@@ -24,8 +31,27 @@ struct lexcontext
 {
     const char* cursor;
     yy::location loc;
+	std::vector<std::map<std::string, identifier>> scopes;
 
 	std::vector<Function> functions;
+
+	expression use(const std::string& name)
+    {
+        for(auto j = scopes.crbegin(); j != scopes.crend(); ++j)
+            if(auto i = j->find(name); i != j->end())
+                return i->second;
+        throw yy::parser::syntax_error(loc, "Undefined identifier <" + name + ">");
+    }
+
+	void operator ++()
+	{
+		scopes.emplace_back();
+	}
+
+	void operator --()
+	{
+		scopes.pop_back();
+	}
 };
 
 namespace yy { parser::symbol_type yylex(lexcontext& ctx); }
@@ -33,8 +59,12 @@ namespace yy { parser::symbol_type yylex(lexcontext& ctx); }
 
 %token             END 0
 %token             ATTRIBUTE "attribute" UNIFORM "uniform" SAMPLER "sampler"
+%token             IMPORT "import"
+%token             RETURN "return" DISCARD "discard"
+%token             IF "if" ELSE "else"  SWITCH "switch" CASE "case"
+%token             FOR "for" DO "do" WHILE "while" BREAK "break" CONTINUE "continue"
 %token             IDENTIFIER
-%token             FLOAT INT
+%token             FLOAT INT STRUCT "struct"
 %token             TYPE
 %token             ARROW "->" OR "||" AND "&&" EQ "==" NE "!=" PP "++" MM "--" PL_EQ "+=" MI_EQ "-=" MU_EQ "*=" DI_EQ "/=" MO_EQ "%="
 
@@ -179,6 +209,19 @@ re2c:define:YYCURSOR = "ctx.cursor";
 "attribute" { return s(parser::make_ATTRIBUTE); }
 "uniform" { return s(parser::make_UNIFORM); }
 "sampler" { return s(parser::make_SAMPLER); }
+"import" { return s(parser::make_IMPORT); }
+"return" { return s(parser::make_RETURN); }
+"discard" { return s(parser::make_DISCARD); }
+"if" { return s(parser::make_IF); }
+"else" { return s(parser::make_ELSE); }
+"switch" { return s(parser::make_SWITCH); }
+"case" { return s(parser::make_CASE); }
+"for" { return s(parser::make_FOR); }
+"do" { return s(parser::make_DO); }
+"while" { return s(parser::make_WHILE); }
+"break" { return s(parser::make_BREAK); }
+"continue" { return s(parser::make_CONTINUE); }
+"struct" { return s(parser::make_STRUCT); }
 
 // Types:
 "float" | "int" { return s(parser::make_TYPE, stot(std::string(anchor,ctx.cursor))); }
