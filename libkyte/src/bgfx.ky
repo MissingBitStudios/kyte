@@ -1,0 +1,14 @@
+const BGFX_CONFIG_MAX_BONES := 32;
+
+uniform viewRect : vec4f;
+uniform viewTexel : vec4f;
+uniform view : mat4f;
+uniform invView : mat4f;
+uniform proj : mat4f;
+uniform invProj : mat4f;
+uniform viewProj : mat4f;
+uniform invViewProj : mat4f;
+uniform model : mat4f[BGFX_CONFIG_MAX_BONES];
+uniform modelView : mat4f;
+uniform modelViewProj : mat4f;
+uniform alphaRef4 : vec4f;

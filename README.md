@@ -36,7 +36,7 @@ We use [SemVer](http://semver.org/spec/v2.0.0.html) for versioning. For the vers
 
 ## Authors
 
-* [ProWolf](https://github.com/prowolf)
+* [widberg](https://github.com/widberg)
 
 See also the list of [contributors](https://github.com/MissingBitStudios/kyte/graphs/contributors) who participated in this project.
 

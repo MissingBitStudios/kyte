@@ -113,6 +113,8 @@ namespace kyte
 		replace(format, "%t", t[shaderData.type]);
 		replace(format, "%b", b[shaderData.backend]);
 		replace(format, "%n", shaderData.programName);
+
+		return format;
 	}
 
 	std::string header(std::string outputFormat, std::vector<ShaderData> shaderDatas)

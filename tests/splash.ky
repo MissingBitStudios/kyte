@@ -1,16 +1,19 @@
-#pragma program("splash", vertex, fragment)
+import kyte.stl;
 
 attribute position : vec2 $ POSITION;
 attribute texcoord : vec2 $ TEXCOORD0;
 
 sampler texture : sampler2D $ 0;
 
-vertex() -> vec3
+program splash
 {
-    return vec4(position, 0f, 1f);
-}
+    vertex() -> vec3
+    {
+        return vec4(position, 0f, 1f);
+    }
 
-fragment() -> vec4
-{
-    return texture2D(texture, texcoord);
+    fragment() -> vec4
+    {
+        return sample(texture, texcoord);
+    }
 }

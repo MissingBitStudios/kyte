@@ -1,6 +1,141 @@
-typedef vec3 ray;
+// Kyte Standard Library
+// Types
+// Mat
+typedef mat2b bool[2][2];
+typedef mat3b bool[3][3];
+typedef mat4b bool[4][4];
+typedef mat2i int[2][2];
+typedef mat3i int[3][3];
+typedef mat4i int[4][4];
+typedef mat2u uint[2][2];
+typedef mat3u uint[3][3];
+typedef mat4u uint[4][4];
+typedef mat2f float[2][2];
+typedef mat3f float[3][3];
+typedef mat4f float[4][4];
+typedef mat2d double[2][2];
+typedef mat3d double[3][3];
+typedef mat4d double[4][4];
 
-test_function :: (x : float, y : float, z : float) -> ray : vec3, five : int
+typedef mat2 <mat2b, mat2i, mat2u, mat2f, mat2d>;
+typedef mat3 <mat3b, mat3i, mat3u, mat3f, mat3d>;
+typedef mat4 <mat4b, mat4i, mat4u, mat4f, mat4d>;
+
+typedef matb <mat2b, mat3b, mat4b>;
+typedef mati <mat2i, mat3i, mat4i>;
+typedef matu <mat2u, mat3u, mat4u>;
+typedef matf <mat2f, mat3f, mat4f>;
+typedef matd <mat2d, mat3d, mat4d>;
+
+typedef matn <mati, matu, matf, matd>;
+
+// Vec
+typedef vec2b bool[2];
+typedef vec3b bool[3];
+typedef vec4b bool[4];
+typedef vec2i int[2];
+typedef vec3i int[3];
+typedef vec4i int[4];
+typedef vec2u uint[2];
+typedef vec3u uint[3];
+typedef vec4u uint[4];
+typedef vec2f float[2];
+typedef vec3f float[3];
+typedef vec4f float[4];
+typedef vec2d double[2];
+typedef vec3d double[3];
+typedef vec4d double[4];
+
+typedef vec2 <vec2b, vec2i, vec2u, vec2f, vec2d>;
+typedef vec3 <vec3b, vec3i, vec3u, vec3f, vec3d>;
+typedef vec4 <vec4b, vec4i, vec4u, vec4f, vec4d>;
+
+typedef vecb <vec2b, vec3b, vec4b>;
+typedef veci <vec2i, vec3i, vec4i>;
+typedef vecu <vec2u, vec3u, vec4u>;
+typedef vecf <vec2f, vec3f, vec4f>;
+typedef vecd <vec2d, vec3d, vec4d>;
+
+typedef vecn <veci, vecu, vecf, vecd>;
+
+// Scalar
+typedef whole <int, uint>;
+typedef fractional <float, double>
+typedef numeric <whole, fractional>;
+typedef scalar <bool, numeric>;
+
+// Operators
+extern operator+(a : T<vecn>, b : T) -> T;
+extern operator-(a : T<vecn>, b : T) -> T;
+extern operator*(a : T<vecn>, b : T) -> T;
+extern operator/(a : T<vecn>, b : T) -> T;
+
+extern operator+(a : T<matn>, b : T) -> T;
+extern operator-(a : T<matn>, b : T) -> T;
+extern operator*(a : T<matn>, b : T) -> T;
+extern operator/(a : T<matn>, b : T) -> T;
+
+// Functions
+// Angle
+extern radians(degrees : T<numeric, vecn>) -> T;
+extern degrees(radians : T<numeric, vecn>) -> T;
+
+// Trigonometry
+extern sin(angle : T<numeric, vecn>) -> T;
+extern cos(angle : T<numeric, vecn>) -> T;
+extern tan(angle : T<numeric, vecn>) -> T;
+extern asin(x : T<numeric, vecn>) -> T;
+extern acos(x : T<numeric, vecn>) -> T;
+extern atan(y : T<numeric, vecn>, x : T) -> T;
+extern atan(y_over_x : T<numeric, vecn>) -> T;
+extern sinh(x : T<numeric, vecn>) -> T;
+extern cosh(x : T<numeric, vecn>) -> T;
+extern tanh(x : T<numeric, vecn>) -> T;
+extern asinh(x : T<numeric, vecn>) -> T;
+extern acosh(x : T<numeric, vecn>) -> T;
+extern atanh(x : T<numeric, vecn>) -> T;
+
+// Exponential
+extern pow(base : T<numeric, vecn>, exponent : T) -> T;
+extern exp(exponent : T<numeric, vecn>) -> T;
+extern log(float) -> float;
+extern ln(float) -> float;
+extern exp2(float) -> float;
+extern log2(float) -> float;
+extern sqrt(float) -> float;
+
+// Arithmetic
+extern abs(x : T<numeric>) -> T;
+extern floor(float) -> int;
+extern ceil(float) -> int;
+extern fract(float) -> float;
+extern mod(float, float) -> float;
+extern min(float, float) -> float;
+extern max(float, float) -> float;
+extern clamp(low : T<numeric>, high : T, x : T) -> float;
+extern mix(float, float, float) -> float;
+extern step(float, float) -> float;
+extern smoothstep(float, float, float) -> float;
+
+// Geometric
+extern length(vector : vec) -> float;
+extern distance(float, float) -> float;
+extern dot(float, float) -> float;
+extern cross(float, float) -> vec3;
+extern normalize(vector : T<vec>) -> T;
+extern faceforward(vec, vec, vec) -> vec;
+extern reflect(vec, vec) -> vec;
+extern refract(vec, vec, float) -> vec;
+
+// Vector
+
+
+// Texture
+extern sample(sampler2D, vec2f) -> vec4f;
+extern sample(sampler3D, vec3f) -> vec4f;
+
+// Misc
+cast(value : any, T : type) -> T
 {
-	return vec3(x, y, z), 5;
+	return (T)value;
 }
