@@ -14,12 +14,14 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(KYTE_CLI  "Build CLI."       ON)
-option(KYTE_UTIL "Build Utilities." OFF)
+option(KYTE_GRAMMAR "Build Grammar with Bison and re2c." OFF)
 
-add_subdirectory(libkyte)
+add_subdirectory(dependencies)
+
+add_subdirectory(kyte)
 
 if(KYTE_CLI)
-  add_subdirectory(kyte)
+  add_subdirectory(kytecli)
 endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)

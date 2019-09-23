@@ -1,76 +1,150 @@
-#include <kyte/kyte.hpp>
+#include "kyte_p.hpp"
 
-#include <fstream>
-#include <string>
-#include <vector>
+#include <sstream>
 
-#include <iostream>
+#define callback(method, param) if (compilerCallback) { param = compilerCallback->method(param); }
 
-using namespace kyte;
-
-int main(int argc, char** argv)
+namespace kyte
 {
-	std::vector<std::string> sources;
-	std::string output;
-	std::string header;
-
-	int i = 1;
-	while (i < argc)
+	Function::Function(float f)
 	{
-		std::string arg = argv[i];
-		if (arg == "-o")
+
+	}
+
+	Function::Function()
+	{
+
+	}
+
+	CompilerCallback::CompilerCallback(BackendType backendType, unsigned int languageVersion)
+		: backend(backendType), version(languageVersion)
+	{
+
+	}
+
+	CompilerCallback::~CompilerCallback()
+	{
+
+	}
+
+	std::string CompilerCallback::BeforeParse(const std::string& sourceCode)
+	{
+		return sourceCode;
+	}
+
+	AST CompilerCallback::AfterParse(const AST& ast)
+	{
+		return ast;
+	}
+
+	std::string CompilerCallback::AfterCompile(const std::string& sourceCode)
+	{
+		return sourceCode;
+	}
+
+	std::string preprocess(const std::string& sourceCode, BackendType backendType, unsigned int languageVersion)
+	{
+		return sourceCode;
+	}
+
+	std::string compileSource(std::string sourceCode, BackendType backendType, unsigned int languageVersion, CompilerCallback* compilerCallback)
+	{
+		Backend* backend = nullptr;
+		switch (backendType)
 		{
-			if (output.empty())
-			{
-				if (i + 1 < argc)
-				{
-					output = argv[i + 1];
-					i += 2;
-				}
-				else
-				{
-					std::cerr << "-o: output rule must follow -o option" << std::endl;
-					return 1;
-				}
-			}
-			else
-			{
-				std::cerr << "-o: only one output string allowed" << std::endl;
-				return 1;
-			}
+		case GLSL:
+			backend = new GLSLBackend(languageVersion);
+			break;
+		case HLSL:
+			break;
+		case METAL:
+			break;
+		case SPIRV:
+			break;
+		default:
+			break;
 		}
-		else if (arg == "-h")
+
+		if (!backend)
 		{
-			if (header.empty())
-			{
-				if (i + 1 < argc)
-				{
-					header = argv[i + 1];
-					i += 2;
-				}
-				else
-				{
-					std::cerr << "-h: header path must follow -h option" << std::endl;
-					return 1;
-				}
-			}
-			else
-			{
-				std::cerr << "-h: header flag may only be used once" << std::endl;
-				return 1;
-			}
+			// error
 		}
-		else
+
+		callback(BeforeParse, sourceCode);
+
+		sourceCode = preprocess(sourceCode, backendType, languageVersion);
+
+		AST ast = parse(sourceCode);
+
+		callback(AfterParse, ast);
+
+		std::string output = backend->compile(ast);
+
+		callback(AfterCompile, output);
+
+		return output;
+	}
+
+
+	std::string toHex(unsigned char c)
+	{
+		const char* keys = "0123456789ABCDEF";
+		std::string result = "0x";
+		result += keys[c / 16];
+		result += keys[c % 16];
+		return result;
+	}
+
+	void replace(std::string& str, const std::string& oldStr, const std::string& newStr)
+	{
+		size_t pos = 0;
+		while ((pos = str.find(oldStr, pos)) != std::string::npos)
 		{
-			sources.push_back(arg);
-			i++;
+			str.replace(pos, oldStr.length(), newStr);
+			pos += newStr.length();
 		}
 	}
 
-	for (std::string source : sources)
+	std::string formatString(std::string format, ShaderData shaderData)
 	{
-		std::cout << "source: " << source << "\n";
+		const char* t[SHADER_TYPE_COUNT] = { "fs", "vs" };
+		const char* b[BACKEND_TYPE_COUNT] = { "glsl", "hlsl", "metal", "spirv" };
+		
+		replace(format, "%t", t[shaderData.type]);
+		replace(format, "%b", b[shaderData.backend]);
+		replace(format, "%n", shaderData.programName);
+
+		return format;
 	}
-	std::cout << "output: " << output << "\n"
-	          << "header: " << header << "\n";
+
+	std::string header(std::string outputFormat, std::vector<ShaderData> shaderDatas)
+	{
+		std::ostringstream out;
+
+		for (ShaderData data : shaderDatas)
+		{
+			std::string name = formatString(outputFormat, data);
+			out << "static const int " + name + "_len = " << data.binarySize << ";\n";
+			out << "static const unsigned char " + name + "[] = {\n\t";
+			for (size_t j = 0; j < data.binarySize; ++j)
+			{
+				out << toHex((unsigned char)data.binary[j]);
+				if (j == data.binarySize - 1)
+				{
+					out << "\n";
+				}
+				else
+				{
+					out << ",";
+					if ((j + 1) % 25 == 0)
+					{
+						out << "\n\t";
+					}
+				}
+			}
+			out << "};\n\n";
+		}
+
+		return out.str();
+	}
 }
