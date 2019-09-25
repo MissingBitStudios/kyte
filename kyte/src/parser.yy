@@ -22,13 +22,13 @@ struct lexcontext
 {
 	const char* cursor;
 	yy::location loc;
-	int condition;
-	unsigned int comment_scope = 0;
 };
 
 namespace yy { parser::symbol_type yylex(lexcontext& ctx); }
 }//%code
 
+%token             END 0
+%token             BLOCK_COMMENT_ERROR
 %token             ATTRIBUTE "attribute" UNIFORM "uniform" SAMPLER "sampler"
 %token             IMPORT "import"
 %token             CONST "const" EXTERN "extern" TYPEDEF "typedef" OPERATOR "operator"
@@ -37,7 +37,10 @@ namespace yy { parser::symbol_type yylex(lexcontext& ctx); }
 %token             IF "if" ELSE "else"  SWITCH "switch" CASE "case"
 %token             FOR "for" DO "do" WHILE "while" BREAK "break" CONTINUE "continue"
 %token             FLOAT_LITERAL INTEGER_LITERAL IDENTIFIER
-%token             ARROW "->" OR "||" AND "&&" EQ "==" NE "!=" PP "++" MM "--" PL_EQ "+=" MI_EQ "-=" MU_EQ "*=" DI_EQ "/=" MO_EQ "%=" BOR_EQ "|=" BAND_EQ "&=" BXOR_EQ "^=" BLS_EQ "<<=" BRS_EQ ">>=" BLS "<<" BRS ">>" LT_EQ "<=" GT_EQ ">="
+%token             ARROW "->"
+%token             PL_EQ "+=" MI_EQ "-=" MU_EQ "*=" DI_EQ "/=" MO_EQ "%=" PP "++" MM "--"
+%token             OR "||" AND "&&" EQ "==" NE "!=" LT_EQ "<=" GT_EQ ">="
+%token             BOR_EQ "|=" BAND_EQ "&=" BXOR_EQ "^=" BLS_EQ "<<=" BRS_EQ ">>=" BLS "<<" BRS ">>"
 
 %left  ','
 %right '?' ':' '=' "+=" "-=" "*=" "/=" "%="
@@ -82,86 +85,92 @@ yy::parser::symbol_type yy::yylex(lexcontext& ctx)
 {
     const char* anchor = ctx.cursor;
     ctx.loc.step();
-	auto ws = [&]() { ctx.loc.columns(ctx.cursor - anchor); };
-    auto s  = [&](auto func, auto&&... params) { ctx.loc.columns(ctx.cursor - anchor); return func(params..., ctx.loc); };
-#define r(label) { anchor = ctx.cursor; goto label; }
-start:
+	unsigned int comment_scope = 0;
+	int condition = yycinit;
+#define walk() { ctx.loc.columns(ctx.cursor - anchor); }
+#define advance(label) { anchor = ctx.cursor; ctx.loc.step(); goto label; }
+#define token(name) { walk(); return parser::make_##name(ctx.loc); }
+#define tokenv(name, ...) { walk(); return parser::make_##name(__VA_ARGS__, ctx.loc); }
 	%{ /* Begin re2c lexer */
 	re2c:yyfill:enable = 0;
 	re2c:define:YYCTYPE  = "char";
 	re2c:define:YYCURSOR = "ctx.cursor";
-	re2c:define:YYGETCONDITION = "ctx.condition";
+	re2c:define:YYGETCONDITION = "condition";
 	re2c:define:YYGETCONDITION:naked = 1;
-	re2c:define:YYSETCONDITION = "ctx.condition = @@;";
+	re2c:define:YYSETCONDITION = "condition = @@;";
 	re2c:define:YYSETCONDITION:naked = 1;
 
 	// Keywords
-	<init> "typedef"               { return s(parser::make_TYPEDEF); }
-	<init> "if"                    { return s(parser::make_IF); }
-	<init> "else"                  { return s(parser::make_ELSE); }
-	<init> "switch"                { return s(parser::make_SWITCH); }
-	<init> "case"                  { return s(parser::make_CASE); }
-	<init> "for"                   { return s(parser::make_FOR); }
-	<init> "do"                    { return s(parser::make_DO); }
-	<init> "while"                 { return s(parser::make_WHILE); }
-	<init> "break"                 { return s(parser::make_BREAK); }
-	<init> "continue"              { return s(parser::make_CONTINUE); }
-	<init> "struct"                { return s(parser::make_STRUCT); }
-	<init> "import"                { return s(parser::make_IMPORT); }
-	<init> "extern"                { return s(parser::make_EXTERN); }
-	<init> "const"                 { return s(parser::make_CONST); }
-	<init> "return"                { return s(parser::make_RETURN); }
-	<init> "enum"                  { return s(parser::make_ENUM); }
-	<init> "discard"               { return s(parser::make_DISCARD); }
-	<init> "attribute"             { return s(parser::make_ATTRIBUTE); }
-	<init> "uniform"               { return s(parser::make_UNIFORM); }
-	<init> "sampler"               { return s(parser::make_SAMPLER); }
-	<init> "operator"              { return s(parser::make_OPERATOR); }
-	<init> "float"                 { return s(parser::make_FLOAT); }
-	<init> "double"                { return s(parser::make_DOUBLE); }
-	<init> "int"                   { return s(parser::make_INT); }
-	<init> "uint"                  { return s(parser::make_UINT); }
+	<init> "typedef"               { token(TYPEDEF); }
+	<init> "if"                    { token(IF); }
+	<init> "else"                  { token(ELSE); }
+	<init> "switch"                { token(SWITCH); }
+	<init> "case"                  { token(CASE); }
+	<init> "for"                   { token(FOR); }
+	<init> "do"                    { token(DO); }
+	<init> "while"                 { token(WHILE); }
+	<init> "break"                 { token(BREAK); }
+	<init> "continue"              { token(CONTINUE); }
+	<init> "struct"                { token(STRUCT); }
+	<init> "import"                { token(IMPORT); }
+	<init> "extern"                { token(EXTERN); }
+	<init> "const"                 { token(CONST); }
+	<init> "return"                { token(RETURN); }
+	<init> "enum"                  { token(ENUM); }
+	<init> "discard"               { token(DISCARD); }
+	<init> "attribute"             { token(ATTRIBUTE); }
+	<init> "uniform"               { token(UNIFORM); }
+	<init> "sampler"               { token(SAMPLER); }
+	<init> "operator"              { token(OPERATOR); }
+	<init> "float"                 { token(FLOAT); }
+	<init> "double"                { token(DOUBLE); }
+	<init> "int"                   { token(INT); }
+	<init> "uint"                  { token(UINT); }
 
 	// Whitespace
-	<*> "\r\n" | [\r\n]            { ctx.loc.lines();   r(start); }
-	<*> [\t\v\b\f ]                { ctx.loc.columns(); r(start); }
+	<init> "\r\n" | [\r\n]         { ctx.loc.lines();   advance(yyc_init); }
+	<init> [\t\v\b\f ]             { ctx.loc.columns(); advance(yyc_init); }
+	<init> [\x00]                  { token(END); }
 
 	// Identifiers
-	<init> [a-zA-Z_] [a-zA-Z_0-9]* { return s(parser::make_IDENTIFIER, std::string(anchor, ctx.cursor)); }
+	<init> [a-zA-Z_] [a-zA-Z_0-9]* { tokenv(IDENTIFIER, std::string(anchor, ctx.cursor)); }
 
 	// Literals
-	<init> [0-9]+ [f]              { return s(parser::make_FLOAT_LITERAL, std::stof(std::string(anchor, ctx.cursor))); }
-	<init> [0-9]+                  { return s(parser::make_INTEGER_LITERAL, std::stoi(std::string(anchor, ctx.cursor))); }
+	<init> [0-9]+ [f]              { tokenv(FLOAT_LITERAL, std::stof(std::string(anchor, ctx.cursor))); }
+	<init> [0-9]+                  { tokenv(INTEGER_LITERAL, std::stoi(std::string(anchor, ctx.cursor))); }
 
 	// Comments
-	<init> "//" [^\r\n]*           { ws(); r(yyc_init); }
-	<*> "/*"                       { ws(); ctx.comment_scope++; r(yyc_block_comment); }
-	<block_comment> "*/"           { ws(); ctx.comment_scope--; if(!ctx.comment_scope) r(yyc_init); }
-	<block_comment> *              { ctx.loc.columns(); r(yyc_block_comment); }
+	<init> "//" [^\r\n]*           { walk(); advance(yyc_init); }
+	<*> "/*"                       { comment_scope++; goto yyc_block_comment; }
+	<block_comment> "*/"           { walk(); comment_scope--; if(!comment_scope) advance(yyc_init); goto yyc_block_comment; }
+	<block_comment> "\r\n" | [\r\n]{ ctx.loc.lines();   advance(yyc_block_comment); }
+	<block_comment> [\t\v\b\f ]    { ctx.loc.columns(); advance(yyc_block_comment); }
+	<block_comment> [\x00]         { token(BLOCK_COMMENT_ERROR); }
+	<block_comment> *              { goto yyc_block_comment; }
 
 	// Multi-char operators and any other character (either an operator or an invalid symbol)
-	<init> "->"                    { return s(parser::make_ARROW); }
-	<init> "&&"                    { return s(parser::make_AND); }
-	<init> "||"                    { return s(parser::make_OR); }
-	<init> "++"                    { return s(parser::make_PP); }
-	<init> "--"                    { return s(parser::make_MM); }
-	<init> "!="                    { return s(parser::make_NE); }
-	<init> "=="                    { return s(parser::make_EQ); }
-	<init> "+="                    { return s(parser::make_PL_EQ); }
-	<init> "-="                    { return s(parser::make_MI_EQ); }
-	<init> "*="                    { return s(parser::make_MU_EQ); }
-	<init> "/="                    { return s(parser::make_DI_EQ); }
-	<init> "%="                    { return s(parser::make_MO_EQ); }
-	<init> "|="                    { return s(parser::make_BOR_EQ); }
-	<init> "&="                    { return s(parser::make_BAND_EQ); }
-	<init> "^="                    { return s(parser::make_BXOR_EQ); }
-	<init> "<<="                   { return s(parser::make_BLS_EQ); }
-	<init> ">>="                   { return s(parser::make_BRS_EQ); }
-	<init> "<<"                    { return s(parser::make_BLS); }
-	<init> ">>"                    { return s(parser::make_BRS); }
-	<init> "<="                    { return s(parser::make_LT_EQ); }
-	<init> ">="                    { return s(parser::make_GT_EQ); }
-	<init> *                       { return s([](auto...s){return parser::symbol_type(s...);}, parser::token_type(ctx.cursor[-1]&0xFF)); }
+	<init> "->"                    { token(ARROW); }
+	<init> "&&"                    { token(AND); }
+	<init> "||"                    { token(OR); }
+	<init> "++"                    { token(PP); }
+	<init> "--"                    { token(MM); }
+	<init> "!="                    { token(NE); }
+	<init> "=="                    { token(EQ); }
+	<init> "+="                    { token(PL_EQ); }
+	<init> "-="                    { token(MI_EQ); }
+	<init> "*="                    { token(MU_EQ); }
+	<init> "/="                    { token(DI_EQ); }
+	<init> "%="                    { token(MO_EQ); }
+	<init> "|="                    { token(BOR_EQ); }
+	<init> "&="                    { token(BAND_EQ); }
+	<init> "^="                    { token(BXOR_EQ); }
+	<init> "<<="                   { token(BLS_EQ); }
+	<init> ">>="                   { token(BRS_EQ); }
+	<init> "<<"                    { token(BLS); }
+	<init> ">>"                    { token(BRS); }
+	<init> "<="                    { token(LT_EQ); }
+	<init> ">="                    { token(GT_EQ); }
+	<init> *                       { walk(); return parser::symbol_type(parser::token_type(ctx.cursor[-1]&0xFF), ctx.loc); }
 	%} /* End lexer */
 }
 
