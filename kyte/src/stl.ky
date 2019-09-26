@@ -60,7 +60,7 @@ typedef vecn <veci, vecu, vecf, vecd>;
 
 // Scalar
 typedef whole <int, uint>;
-typedef fractional <float, double>
+typedef fractional <float, double>;
 typedef numeric <whole, fractional>;
 typedef scalar <bool, numeric>;
 

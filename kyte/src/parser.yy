@@ -32,7 +32,7 @@ namespace yy { parser::symbol_type yylex(lexcontext& ctx); }
 %token             ATTRIBUTE "attribute" UNIFORM "uniform" SAMPLER "sampler"
 %token             IMPORT "import"
 %token             CONST "const" EXTERN "extern" TYPEDEF "typedef" OPERATOR "operator"
-%token             STRUCT "struct" ENUM "enum" FLOAT "float" INT "int" DOUBLE "double" UINT "uint"
+%token             STRUCT "struct" ENUM "enum"
 %token             RETURN "return" DISCARD "discard"
 %token             IF "if" ELSE "else"  SWITCH "switch" CASE "case"
 %token             FOR "for" DO "do" WHILE "while" BREAK "break" CONTINUE "continue"
@@ -58,23 +58,132 @@ namespace yy { parser::symbol_type yylex(lexcontext& ctx); }
 
 %%
 
-identifier_list
-	: identifier_list1
-	{
-
-	}
+program
+	: program1
 	| %empty
 	;
 
-identifier_list1
-	: identifier_list1 ',' IDENTIFIER
-	{
+program1
+	: program1 function
+	| function
+	| program1 statement
+	| statement
+	| program1 type_definition
+	| type_definition
+	;
 
-	}
+op
+	: "+="
+	| "-="
+	| "*="
+	| "/="
+	| "%="
+	| "++"
+	| "--"
+	| "||"
+	| "&&"
+	| "=="
+	| "!="
+	| "<="
+	| ">="
+	| "|="
+	| "&="
+	| "^="
+	| "<<="
+	| ">>="
+	| "<<"
+	| ">>"
+	| '+'
+	| '-'
+	| '*'
+	| '/'
+	| '%'
+	;
+
+expression
+	: FLOAT_LITERAL
+	| INTEGER_LITERAL
 	| IDENTIFIER
-	{
+	| '(' expression ')'
+	| '(' expression ')' expression
+	;
 
-	}
+statement
+	: expression ';'
+	| "return" expression ';'
+	| ';'
+	;
+
+statements
+	: statements1
+	| %empty
+	;
+
+statements1
+	: statements1 statement
+	| statement
+	;
+
+subscript
+	: '[' IDENTIFIER ']'
+	| '[' INTEGER_LITERAL ']'
+	;
+
+subscripts
+	: subscripts1
+	| %empty
+	;
+
+subscripts1
+	: subscripts1 subscript
+	| subscript
+	;
+
+type
+	: IDENTIFIER subscripts
+	;
+
+compound_type
+	: '<' compound_type1 '>'
+	;
+
+compound_type1
+	: compound_type1 ',' type
+	| type
+	;
+
+formal_paramater
+	: type
+	| compound_type
+	| IDENTIFIER ':' type
+	| IDENTIFIER ':' IDENTIFIER compound_type
+	;
+
+formal_paramaters
+	: formal_paramaters1
+	| %empty
+	;
+
+formal_paramaters1
+	: formal_paramaters1 ',' formal_paramater
+	| formal_paramater
+	;
+
+formal_returns
+	: formal_returns ',' type
+	| type
+	;
+
+function
+	: IDENTIFIER '(' formal_paramaters ')' "->" formal_returns '{' statements '}'
+	| "extern" IDENTIFIER '(' formal_paramaters ')' "->" formal_returns ';'
+	| "operator" op '(' formal_paramaters ')' "->" formal_returns ';'
+	| "extern" "operator" op '(' formal_paramaters ')' "->" formal_returns ';'
+	;
+
+type_definition
+	: "typedef" IDENTIFIER type ';'
+	| "typedef" IDENTIFIER compound_type ';'
 	;
 
 %%
@@ -122,10 +231,6 @@ yy::parser::symbol_type yy::yylex(lexcontext& ctx)
 	<init> "uniform"               { token(UNIFORM); }
 	<init> "sampler"               { token(SAMPLER); }
 	<init> "operator"              { token(OPERATOR); }
-	<init> "float"                 { token(FLOAT); }
-	<init> "double"                { token(DOUBLE); }
-	<init> "int"                   { token(INT); }
-	<init> "uint"                  { token(UINT); }
 
 	// Whitespace
 	<init> "\r\n" | [\r\n]         { ctx.loc.lines();   advance(yyc_init); }
@@ -174,10 +279,23 @@ yy::parser::symbol_type yy::yylex(lexcontext& ctx)
 	%} /* End lexer */
 }
 
-void yy::parser::error(const location_type& l, const std::string& m)
+void yy::parser::error(const location_type& l, const std::string& message)
 {
-    std::cerr << (l.begin.filename ? l.begin.filename->c_str() : "(undefined)");
-    std::cerr << ':' << l.begin.line << ':' << l.begin.column << '-' << l.end.column << ": " << m << '\n';
+    std::cerr << l.begin.filename->c_str() << ':' << l.begin.line << ':' << l.begin.column << '-' << l.end.column << ": " << message << '\n';
+
+	// find a better way. dont open and skip for every single error
+	std::ifstream f(l.begin.filename->c_str());
+	std::string s;
+	
+	for (int i = 0; i < l.begin.line; i++)
+	{
+		std::getline(f, s);
+	}
+	
+	std::cout << s << std::endl;
+	f.close();
+
+	std::cerr << std::string(l.begin.column - 1, ' ') << '^' << std::string(l.end.column - l.begin.column - 1, '~') << std::endl;
 }
 
 namespace kyte
