@@ -74,7 +74,8 @@ namespace kyte
 
 		sourceCode = preprocess(sourceCode, backendType, languageVersion);
 
-		AST ast = parse(sourceCode);
+		AST ast;
+		parse(sourceCode);
 
 		callback(AfterParse, ast);
 

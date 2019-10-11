@@ -99,7 +99,7 @@ namespace kyte
 		unsigned int version;
 	};
 
-	AST parse(const std::string& sourceCode, std::string debugName = "");
+	void parse(const std::string& sourceCode, std::string debugName = "");
 	std::string preprocess(const std::string& sourceCode, BackendType backendType, unsigned int languageVersion = 0);
 
 	std::string compileSource(std::string sourceCode, BackendType backendType, unsigned int languageVersion = 0, CompilerCallback* compilerCallback = nullptr);

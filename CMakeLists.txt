@@ -13,7 +13,7 @@ project(kyte VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-option(KYTE_CLI  "Build CLI."       ON)
+option(KYTE_CLI     "Build CLI."                         ON)
 option(KYTE_GRAMMAR "Build Grammar with Bison and re2c." OFF)
 
 add_subdirectory(dependencies)

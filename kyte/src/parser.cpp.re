@@ -1,8 +1,8 @@
-// A Bison parser, made by GNU Bison 3.0.4.
+// A Bison parser, made by GNU Bison 3.4.1.
 
 // Skeleton implementation for Bison LALR(1) parsers in C++
 
-// Copyright (C) 2002-2015 Free Software Foundation, Inc.
+// Copyright (C) 2002-2015, 2018-2019 Free Software Foundation, Inc.
 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,29 +30,23 @@
 // This special exception was added by the Free Software Foundation in
 // version 2.2 of Bison.
 
+// Undocumented macros, especially those whose name start with YY_,
+// are private implementation details.  Do not rely on them.
 
-// First part of user declarations.
 
-#line 37 "parser.cpp.re" // lalr1.cc:404
 
-# ifndef YY_NULLPTR
-#  if defined __cplusplus && 201103L <= __cplusplus
-#   define YY_NULLPTR nullptr
-#  else
-#   define YY_NULLPTR 0
-#  endif
-# endif
+
 
 // //                    "%code requires" blocks.
-#line 10 "parser.yy" // lalr1.cc:408
+#line 16 "parser.yy"
 
-#include "kyte_p.hpp"
-
-using namespace kyte;
+#include <iostream>
+#include <fstream>
+#include <algorithm>
 
 struct lexcontext;
 
-#line 56 "parser.cpp.re" // lalr1.cc:408
+#line 50 "parser.cpp.re"
 
 # include <cassert>
 # include <cstdlib> // std::abort
@@ -60,6 +54,44 @@ struct lexcontext;
 # include <stdexcept>
 # include <string>
 # include <vector>
+
+#if defined __cplusplus
+# define YY_CPLUSPLUS __cplusplus
+#else
+# define YY_CPLUSPLUS 199711L
+#endif
+
+// Support move semantics when possible.
+#if 201103L <= YY_CPLUSPLUS
+# define YY_MOVE           std::move
+# define YY_MOVE_OR_COPY   move
+# define YY_MOVE_REF(Type) Type&&
+# define YY_RVREF(Type)    Type&&
+# define YY_COPY(Type)     Type
+#else
+# define YY_MOVE
+# define YY_MOVE_OR_COPY   copy
+# define YY_MOVE_REF(Type) Type&
+# define YY_RVREF(Type)    const Type&
+# define YY_COPY(Type)     const Type&
+#endif
+
+// Support noexcept when possible.
+#if 201103L <= YY_CPLUSPLUS
+# define YY_NOEXCEPT noexcept
+# define YY_NOTHROW
+#else
+# define YY_NOEXCEPT
+# define YY_NOTHROW throw ()
+#endif
+
+// Support constexpr when possible.
+#if 201703 <= YY_CPLUSPLUS
+# define YY_CONSTEXPR constexpr
+#else
+# define YY_CONSTEXPR
+#endif
+
 #include <typeinfo>
 #ifndef YYASSERT
 # include <cassert>
@@ -85,15 +117,6 @@ struct lexcontext;
 # define YY_ATTRIBUTE_UNUSED YY_ATTRIBUTE ((__unused__))
 #endif
 
-#if !defined _Noreturn \
-     && (!defined __STDC_VERSION__ || __STDC_VERSION__ < 201112)
-# if defined _MSC_VER && 1200 <= _MSC_VER
-#  define _Noreturn __declspec (noreturn)
-# else
-#  define _Noreturn YY_ATTRIBUTE ((__noreturn__))
-# endif
-#endif
-
 /* Suppress unused-variable warnings by "using" E.  */
 #if ! defined lint || defined __GNUC__
 # define YYUSE(E) ((void) (E))
@@ -101,7 +124,7 @@ struct lexcontext;
 # define YYUSE(E) /* empty */
 #endif
 
-#if defined __GNUC__ && 407 <= __GNUC__ * 100 + __GNUC_MINOR__
+#if defined __GNUC__ && ! defined __ICC && 407 <= __GNUC__ * 100 + __GNUC_MINOR__
 /* Suppress an incorrect diagnostic about yylval being uninitialized.  */
 # define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN \
     _Pragma ("GCC diagnostic push") \
@@ -120,141 +143,45 @@ struct lexcontext;
 # define YY_INITIAL_VALUE(Value) /* Nothing. */
 #endif
 
+# ifndef YY_NULLPTR
+#  if defined __cplusplus
+#   if 201103L <= __cplusplus
+#    define YY_NULLPTR nullptr
+#   else
+#    define YY_NULLPTR 0
+#   endif
+#  else
+#   define YY_NULLPTR ((void*)0)
+#  endif
+# endif
+
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
 #endif
 
-
 namespace yy {
-#line 131 "parser.cpp.re" // lalr1.cc:408
+#line 165 "parser.cpp.re"
 
-  template <class T, class S = std::vector<T> >
-  class stack
-  {
-  public:
-    // Hide our reversed order.
-    typedef typename S::reverse_iterator iterator;
-    typedef typename S::const_reverse_iterator const_iterator;
 
-    stack ()
-      : seq_ ()
-    {
-      seq_.reserve (200);
-    }
-
-    stack (unsigned int n)
-      : seq_ (n)
-    {}
-
-    inline
-    T&
-    operator[] (unsigned int i)
-    {
-      return seq_[seq_.size () - 1 - i];
-    }
-
-    inline
-    const T&
-    operator[] (unsigned int i) const
-    {
-      return seq_[seq_.size () - 1 - i];
-    }
-
-    /// Steal the contents of \a t.
-    ///
-    /// Close to move-semantics.
-    inline
-    void
-    push (T& t)
-    {
-      seq_.push_back (T());
-      operator[](0).move (t);
-    }
-
-    inline
-    void
-    pop (unsigned int n = 1)
-    {
-      for (; n; --n)
-        seq_.pop_back ();
-    }
-
-    void
-    clear ()
-    {
-      seq_.clear ();
-    }
-
-    inline
-    typename S::size_type
-    size () const
-    {
-      return seq_.size ();
-    }
-
-    inline
-    const_iterator
-    begin () const
-    {
-      return seq_.rbegin ();
-    }
-
-    inline
-    const_iterator
-    end () const
-    {
-      return seq_.rend ();
-    }
-
-  private:
-    stack (const stack&);
-    stack& operator= (const stack&);
-    /// The wrapped container.
-    S seq_;
-  };
-
-  /// Present a slice of the top of a stack.
-  template <class T, class S = stack<T> >
-  class slice
-  {
-  public:
-    slice (const S& stack, unsigned int range)
-      : stack_ (stack)
-      , range_ (range)
-    {}
-
-    inline
-    const T&
-    operator [] (unsigned int i) const
-    {
-      return stack_[range_ - i];
-    }
-
-  private:
-    const S& stack_;
-    unsigned int range_;
-  };
-
-  /// Abstract a position.
+  /// A point in a source file.
   class position
   {
   public:
     /// Construct a position.
     explicit position (std::string* f = YY_NULLPTR,
-                       unsigned int l = 1u,
-                       unsigned int c = 1u)
+                       unsigned l = 1u,
+                       unsigned c = 1u)
       : filename (f)
       , line (l)
       , column (c)
-    {
-    }
+    {}
 
 
     /// Initialization.
     void initialize (std::string* fn = YY_NULLPTR,
-                     unsigned int l = 1u,
-                     unsigned int c = 1u)
+                     unsigned l = 1u,
+                     unsigned c = 1u)
     {
       filename = fn;
       line = l;
@@ -283,17 +210,16 @@ namespace yy {
     /// File name to which this position refers.
     std::string* filename;
     /// Current line number.
-    unsigned int line;
+    unsigned line;
     /// Current column number.
-    unsigned int column;
+    unsigned column;
 
   private:
-    /// Compute max(min, lhs+rhs) (provided min <= lhs).
-    static unsigned int add_ (unsigned int lhs, int rhs, unsigned int min)
+    /// Compute max (min, lhs+rhs).
+    static unsigned add_ (unsigned lhs, int rhs, int min)
     {
-      return (0 < rhs || -static_cast<unsigned int>(rhs) < lhs
-              ? rhs + lhs
-              : min);
+      return static_cast<unsigned> (std::max (min,
+                                              static_cast<int> (lhs) + rhs));
     }
   };
 
@@ -349,7 +275,7 @@ namespace yy {
    ** \param pos a reference to the position to redirect
    */
   template <typename YYChar>
-  inline std::basic_ostream<YYChar>&
+  std::basic_ostream<YYChar>&
   operator<< (std::basic_ostream<YYChar>& ostr, const position& pos)
   {
     if (pos.filename)
@@ -357,7 +283,7 @@ namespace yy {
     return ostr << pos.line << '.' << pos.column;
   }
 
-  /// Abstract a location.
+  /// Two points in a source file.
   class location
   {
   public:
@@ -366,30 +292,27 @@ namespace yy {
     location (const position& b, const position& e)
       : begin (b)
       , end (e)
-    {
-    }
+    {}
 
     /// Construct a 0-width location in \a p.
     explicit location (const position& p = position ())
       : begin (p)
       , end (p)
-    {
-    }
+    {}
 
     /// Construct a 0-width location in \a f, \a l, \a c.
     explicit location (std::string* f,
-                       unsigned int l = 1u,
-                       unsigned int c = 1u)
+                       unsigned l = 1u,
+                       unsigned c = 1u)
       : begin (f, l, c)
       , end (f, l, c)
-    {
-    }
+    {}
 
 
     /// Initialization.
     void initialize (std::string* f = YY_NULLPTR,
-                     unsigned int l = 1u,
-                     unsigned int c = 1u)
+                     unsigned l = 1u,
+                     unsigned c = 1u)
     {
       begin.initialize (f, l, c);
       end = begin;
@@ -484,10 +407,10 @@ namespace yy {
    ** Avoid duplicate information.
    */
   template <typename YYChar>
-  inline std::basic_ostream<YYChar>&
+  std::basic_ostream<YYChar>&
   operator<< (std::basic_ostream<YYChar>& ostr, const location& loc)
   {
-    unsigned int end_col = 0 < loc.end.column ? loc.end.column - 1 : 0;
+    unsigned end_col = 0 < loc.end.column ? loc.end.column - 1 : 0;
     ostr << loc.begin;
     if (loc.end.filename
         && (!loc.begin.filename
@@ -501,114 +424,168 @@ namespace yy {
   }
 
 
-  /// A char[S] buffer to store and retrieve objects.
+  /// A Bison parser.
+  class  parser 
+  {
+  public:
+#ifndef YYSTYPE
+  /// A buffer to store and retrieve objects.
   ///
   /// Sort of a variant, but does not keep track of the nature
   /// of the stored data, since that knowledge is available
-  /// via the current state.
-  template <size_t S>
-  struct variant
+  /// via the current parser state.
+  class semantic_type
   {
+  public:
     /// Type of *this.
-    typedef variant<S> self_type;
+    typedef semantic_type self_type;
 
     /// Empty construction.
-    variant ()
-      : yytypeid_ (YY_NULLPTR)
+    semantic_type () YY_NOEXCEPT
+      : yybuffer_ ()
+      , yytypeid_ (YY_NULLPTR)
     {}
 
     /// Construct and fill.
     template <typename T>
-    variant (const T& t)
+    semantic_type (YY_RVREF (T) t)
       : yytypeid_ (&typeid (T))
     {
-      YYASSERT (sizeof (T) <= S);
-      new (yyas_<T> ()) T (t);
+      YYASSERT (sizeof (T) <= size);
+      new (yyas_<T> ()) T (YY_MOVE (t));
     }
 
     /// Destruction, allowed only if empty.
-    ~variant ()
+    ~semantic_type () YY_NOEXCEPT
     {
       YYASSERT (!yytypeid_);
     }
 
+# if 201103L <= YY_CPLUSPLUS
+    /// Instantiate a \a T in here from \a t.
+    template <typename T, typename... U>
+    T&
+    emplace (U&&... u)
+    {
+      YYASSERT (!yytypeid_);
+      YYASSERT (sizeof (T) <= size);
+      yytypeid_ = & typeid (T);
+      return *new (yyas_<T> ()) T (std::forward <U>(u)...);
+    }
+# else
     /// Instantiate an empty \a T in here.
     template <typename T>
     T&
-    build ()
+    emplace ()
     {
       YYASSERT (!yytypeid_);
-      YYASSERT (sizeof (T) <= S);
+      YYASSERT (sizeof (T) <= size);
       yytypeid_ = & typeid (T);
-      return *new (yyas_<T> ()) T;
+      return *new (yyas_<T> ()) T ();
     }
 
     /// Instantiate a \a T in here from \a t.
     template <typename T>
     T&
-    build (const T& t)
+    emplace (const T& t)
     {
       YYASSERT (!yytypeid_);
-      YYASSERT (sizeof (T) <= S);
+      YYASSERT (sizeof (T) <= size);
       yytypeid_ = & typeid (T);
       return *new (yyas_<T> ()) T (t);
+    }
+# endif
+
+    /// Instantiate an empty \a T in here.
+    /// Obsolete, use emplace.
+    template <typename T>
+    T&
+    build ()
+    {
+      return emplace<T> ();
+    }
+
+    /// Instantiate a \a T in here from \a t.
+    /// Obsolete, use emplace.
+    template <typename T>
+    T&
+    build (const T& t)
+    {
+      return emplace<T> (t);
     }
 
     /// Accessor to a built \a T.
     template <typename T>
     T&
-    as ()
+    as () YY_NOEXCEPT
     {
+      YYASSERT (yytypeid_);
       YYASSERT (*yytypeid_ == typeid (T));
-      YYASSERT (sizeof (T) <= S);
+      YYASSERT (sizeof (T) <= size);
       return *yyas_<T> ();
     }
 
     /// Const accessor to a built \a T (for %printer).
     template <typename T>
     const T&
-    as () const
+    as () const YY_NOEXCEPT
     {
+      YYASSERT (yytypeid_);
       YYASSERT (*yytypeid_ == typeid (T));
-      YYASSERT (sizeof (T) <= S);
+      YYASSERT (sizeof (T) <= size);
       return *yyas_<T> ();
     }
 
-    /// Swap the content with \a other, of same type.
+    /// Swap the content with \a that, of same type.
     ///
     /// Both variants must be built beforehand, because swapping the actual
     /// data requires reading it (with as()), and this is not possible on
     /// unconstructed variants: it would require some dynamic testing, which
-    /// should not be the variant's responsability.
+    /// should not be the variant's responsibility.
     /// Swapping between built and (possibly) non-built is done with
-    /// variant::move ().
+    /// self_type::move ().
     template <typename T>
     void
-    swap (self_type& other)
+    swap (self_type& that) YY_NOEXCEPT
     {
       YYASSERT (yytypeid_);
-      YYASSERT (*yytypeid_ == *other.yytypeid_);
-      std::swap (as<T> (), other.as<T> ());
+      YYASSERT (*yytypeid_ == *that.yytypeid_);
+      std::swap (as<T> (), that.as<T> ());
     }
 
-    /// Move the content of \a other to this.
+    /// Move the content of \a that to this.
     ///
-    /// Destroys \a other.
+    /// Destroys \a that.
     template <typename T>
     void
-    move (self_type& other)
+    move (self_type& that)
     {
-      build<T> ();
-      swap<T> (other);
-      other.destroy<T> ();
+# if 201103L <= YY_CPLUSPLUS
+      emplace<T> (std::move (that.as<T> ()));
+# else
+      emplace<T> ();
+      swap<T> (that);
+# endif
+      that.destroy<T> ();
     }
 
-    /// Copy the content of \a other to this.
+# if 201103L <= YY_CPLUSPLUS
+    /// Move the content of \a that to this.
     template <typename T>
     void
-    copy (const self_type& other)
+    move (self_type&& that)
     {
-      build<T> (other.as<T> ());
+      emplace<T> (std::move (that.as<T> ()));
+      that.destroy<T> ();
+    }
+#endif
+
+    /// Copy the content of \a that to this.
+    template <typename T>
+    void
+    copy (const self_type& that)
+    {
+      emplace<T> (that.as<T> ());
     }
 
     /// Destroy the stored \a T.
@@ -622,13 +599,13 @@ namespace yy {
 
   private:
     /// Prohibit blind copies.
-    self_type& operator=(const self_type&);
-    variant (const self_type&);
+    self_type& operator= (const self_type&);
+    semantic_type (const self_type&);
 
     /// Accessor to raw memory as \a T.
     template <typename T>
     T*
-    yyas_ ()
+    yyas_ () YY_NOEXCEPT
     {
       void *yyp = yybuffer_.yyraw;
       return static_cast<T*> (yyp);
@@ -637,54 +614,35 @@ namespace yy {
     /// Const accessor to raw memory as \a T.
     template <typename T>
     const T*
-    yyas_ () const
+    yyas_ () const YY_NOEXCEPT
     {
       const void *yyp = yybuffer_.yyraw;
       return static_cast<const T*> (yyp);
      }
 
+    /// An auxiliary type to compute the largest semantic type.
+    union union_type
+    {
+      // IDENTIFIER
+      char dummy1[sizeof (std::string)];
+    };
+
+    /// The size of the largest semantic type.
+    enum { size = sizeof (union_type) };
+
+    /// A buffer to store semantic values.
     union
     {
       /// Strongest alignment constraints.
       long double yyalign_me;
       /// A buffer large enough to store any of the semantic values.
-      char yyraw[S];
+      char yyraw[size];
     } yybuffer_;
 
     /// Whether the content is built: if defined, the name of the stored type.
     const std::type_info *yytypeid_;
   };
 
-
-  /// A Bison parser.
-  class conj_parser
-  {
-  public:
-#ifndef YYSTYPE
-    /// An auxiliary type to compute the largest semantic type.
-    union union_type
-    {
-      // function
-      char dummy1[sizeof(Function)];
-
-      // TYPE
-      char dummy2[sizeof(Type)];
-
-      // FLOAT
-      char dummy3[sizeof(float)];
-
-      // INT
-      char dummy4[sizeof(int)];
-
-      // IDENTIFIER
-      char dummy5[sizeof(std::string)];
-
-      // types
-      char dummy6[sizeof(std::vector<Type>)];
-};
-
-    /// Symbol semantic values.
-    typedef variant<sizeof(union_type)> semantic_type;
 #else
     typedef YYSTYPE semantic_type;
 #endif
@@ -694,7 +652,18 @@ namespace yy {
     /// Syntax errors thrown from user actions.
     struct syntax_error : std::runtime_error
     {
-      syntax_error (const location_type& l, const std::string& m);
+      syntax_error (const location_type& l, const std::string& m)
+        : std::runtime_error (m)
+        , location (l)
+      {}
+
+      syntax_error (const syntax_error& s)
+        : std::runtime_error (s.what ())
+        , location (s.location)
+      {}
+
+      ~syntax_error () YY_NOEXCEPT YY_NOTHROW;
+
       location_type location;
     };
 
@@ -704,25 +673,61 @@ namespace yy {
       enum yytokentype
       {
         END = 0,
-        ATTRIBUTE = 258,
-        UNIFORM = 259,
-        SAMPLER = 260,
-        IDENTIFIER = 261,
-        FLOAT = 262,
-        INT = 263,
-        TYPE = 264,
-        ARROW = 265,
-        OR = 266,
-        AND = 267,
-        EQ = 268,
-        NE = 269,
-        PP = 270,
-        MM = 271,
-        PL_EQ = 272,
-        MI_EQ = 273,
-        MU_EQ = 274,
-        DI_EQ = 275,
-        MO_EQ = 276
+        BLOCK_COMMENT_ERROR = 258,
+        IDENTIFIER = 259,
+        CONSTANT = 260,
+        TYPE_NAME = 261,
+        ATTRIBUTE = 262,
+        UNIFORM = 263,
+        SAMPLER = 264,
+        IMPORT = 265,
+        INC_OP = 266,
+        DEC_OP = 267,
+        AND_OP = 268,
+        OR_OP = 269,
+        EQ_OP = 270,
+        NE_OP = 271,
+        LE_OP = 272,
+        GE_OP = 273,
+        MUL_ASSIGN = 274,
+        DIV_ASSIGN = 275,
+        MOD_ASSIGN = 276,
+        ADD_ASSIGN = 277,
+        SUB_ASSIGN = 278,
+        LEFT_OP = 279,
+        RIGHT_OP = 280,
+        LEFT_ASSIGN = 281,
+        RIGHT_ASSIGN = 282,
+        AND_ASSIGN = 283,
+        XOR_ASSIGN = 284,
+        OR_ASSIGN = 285,
+        NOT_ASSIGN = 286,
+        TYPEDEF = 287,
+        EXTERN = 288,
+        OPERATOR = 289,
+        CONST = 290,
+        INT = 291,
+        UINT = 292,
+        FLOAT = 293,
+        DOUBLE = 294,
+        BOOL = 295,
+        VOID = 296,
+        STRUCT = 297,
+        ENUM = 298,
+        ELLIPSIS = 299,
+        ARROW = 300,
+        CASE = 301,
+        DEFAULT = 302,
+        IF = 303,
+        ELSE = 304,
+        SWITCH = 305,
+        WHILE = 306,
+        DO = 307,
+        FOR = 308,
+        CONTINUE = 309,
+        BREAK = 310,
+        RETURN = 311,
+        DISCARD = 312
       };
     };
 
@@ -741,7 +746,7 @@ namespace yy {
     /// A complete symbol.
     ///
     /// Expects its Base type to provide access to the symbol type
-    /// via type_get().
+    /// via type_get ().
     ///
     /// Provide access to semantic value and location.
     template <typename Base>
@@ -751,41 +756,80 @@ namespace yy {
       typedef Base super_type;
 
       /// Default constructor.
-      basic_symbol ();
+      basic_symbol ()
+        : value ()
+        , location ()
+      {}
+
+#if 201103L <= YY_CPLUSPLUS
+      /// Move constructor.
+      basic_symbol (basic_symbol&& that);
+#endif
 
       /// Copy constructor.
-      basic_symbol (const basic_symbol& other);
+      basic_symbol (const basic_symbol& that);
 
       /// Constructor for valueless symbols, and symbols from each type.
-
-  basic_symbol (typename Base::kind_type t, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const Function v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const Type v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const float v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const int v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const std::string v, const location_type& l);
-
-  basic_symbol (typename Base::kind_type t, const std::vector<Type> v, const location_type& l);
-
-
-      /// Constructor for symbols with semantic value.
-      basic_symbol (typename Base::kind_type t,
-                    const semantic_type& v,
-                    const location_type& l);
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, location_type&& l)
+        : Base (t)
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const location_type& l)
+        : Base (t)
+        , location (l)
+      {}
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      basic_symbol (typename Base::kind_type t, std::string&& v, location_type&& l)
+        : Base (t)
+        , value (std::move (v))
+        , location (std::move (l))
+      {}
+#else
+      basic_symbol (typename Base::kind_type t, const std::string& v, const location_type& l)
+        : Base (t)
+        , value (v)
+        , location (l)
+      {}
+#endif
 
       /// Destroy the symbol.
-      ~basic_symbol ();
+      ~basic_symbol ()
+      {
+        clear ();
+      }
 
       /// Destroy contents, and record that is empty.
-      void clear ();
+      void clear ()
+      {
+        // User destructor.
+        symbol_number_type yytype = this->type_get ();
+        basic_symbol<Base>& yysym = *this;
+        (void) yysym;
+        switch (yytype)
+        {
+       default:
+          break;
+        }
+
+        // Type destructor.
+switch (yytype)
+    {
+      case 4: // IDENTIFIER
+        value.template destroy< std::string > ();
+        break;
+
+      default:
+        break;
+    }
+
+        Base::clear ();
+      }
 
       /// Whether empty.
-      bool empty () const;
+      bool empty () const YY_NOEXCEPT;
 
       /// Destructive move, \a s is emptied into this.
       void move (basic_symbol& s);
@@ -797,8 +841,10 @@ namespace yy {
       location_type location;
 
     private:
+#if YY_CPLUSPLUS < 201103L
       /// Assignment operator.
-      basic_symbol& operator= (const basic_symbol& other);
+      basic_symbol& operator= (const basic_symbol& that);
+#endif
     };
 
     /// Type access provider for token (enum) based symbols.
@@ -807,8 +853,13 @@ namespace yy {
       /// Default constructor.
       by_type ();
 
+#if 201103L <= YY_CPLUSPLUS
+      /// Move constructor.
+      by_type (by_type&& that);
+#endif
+
       /// Copy constructor.
-      by_type (const by_type& other);
+      by_type (const by_type& that);
 
       /// The symbol type as needed by the constructor.
       typedef token_type kind_type;
@@ -824,10 +875,10 @@ namespace yy {
 
       /// The (internal) type number (corresponding to \a type).
       /// \a empty when empty.
-      symbol_number_type type_get () const;
+      symbol_number_type type_get () const YY_NOEXCEPT;
 
       /// The token.
-      token_type token () const;
+      token_type token () const YY_NOEXCEPT;
 
       /// The symbol type.
       /// \a empty_symbol when empty.
@@ -836,93 +887,50 @@ namespace yy {
     };
 
     /// "External" symbols: returned by the scanner.
-    typedef basic_symbol<by_type> symbol_type;
+    struct symbol_type : basic_symbol<by_type>
+    {
+      /// Superclass.
+      typedef basic_symbol<by_type> super_type;
 
-    // Symbol constructors declarations.
-    static inline
-    symbol_type
-    make_END (const location_type& l);
+      /// Empty symbol.
+      symbol_type () {}
 
-    static inline
-    symbol_type
-    make_ATTRIBUTE (const location_type& l);
-
-    static inline
-    symbol_type
-    make_UNIFORM (const location_type& l);
-
-    static inline
-    symbol_type
-    make_SAMPLER (const location_type& l);
-
-    static inline
-    symbol_type
-    make_IDENTIFIER (const std::string& v, const location_type& l);
-
-    static inline
-    symbol_type
-    make_FLOAT (const float& v, const location_type& l);
-
-    static inline
-    symbol_type
-    make_INT (const int& v, const location_type& l);
-
-    static inline
-    symbol_type
-    make_TYPE (const Type& v, const location_type& l);
-
-    static inline
-    symbol_type
-    make_ARROW (const location_type& l);
-
-    static inline
-    symbol_type
-    make_OR (const location_type& l);
-
-    static inline
-    symbol_type
-    make_AND (const location_type& l);
-
-    static inline
-    symbol_type
-    make_EQ (const location_type& l);
-
-    static inline
-    symbol_type
-    make_NE (const location_type& l);
-
-    static inline
-    symbol_type
-    make_PP (const location_type& l);
-
-    static inline
-    symbol_type
-    make_MM (const location_type& l);
-
-    static inline
-    symbol_type
-    make_PL_EQ (const location_type& l);
-
-    static inline
-    symbol_type
-    make_MI_EQ (const location_type& l);
-
-    static inline
-    symbol_type
-    make_MU_EQ (const location_type& l);
-
-    static inline
-    symbol_type
-    make_DI_EQ (const location_type& l);
-
-    static inline
-    symbol_type
-    make_MO_EQ (const location_type& l);
-
+      /// Constructor for valueless symbols, and symbols from each type.
+#if 201103L <= YY_CPLUSPLUS
+      symbol_type (int tok, location_type l)
+        : super_type(token_type (tok), std::move (l))
+      {
+        YYASSERT (tok == token::END || tok == token::BLOCK_COMMENT_ERROR || tok == token::CONSTANT || tok == token::TYPE_NAME || tok == token::ATTRIBUTE || tok == token::UNIFORM || tok == token::SAMPLER || tok == token::IMPORT || tok == token::INC_OP || tok == token::DEC_OP || tok == token::AND_OP || tok == token::OR_OP || tok == token::EQ_OP || tok == token::NE_OP || tok == token::LE_OP || tok == token::GE_OP || tok == token::MUL_ASSIGN || tok == token::DIV_ASSIGN || tok == token::MOD_ASSIGN || tok == token::ADD_ASSIGN || tok == token::SUB_ASSIGN || tok == token::LEFT_OP || tok == token::RIGHT_OP || tok == token::LEFT_ASSIGN || tok == token::RIGHT_ASSIGN || tok == token::AND_ASSIGN || tok == token::XOR_ASSIGN || tok == token::OR_ASSIGN || tok == token::NOT_ASSIGN || tok == token::TYPEDEF || tok == token::EXTERN || tok == token::OPERATOR || tok == token::CONST || tok == token::INT || tok == token::UINT || tok == token::FLOAT || tok == token::DOUBLE || tok == token::BOOL || tok == token::VOID || tok == token::STRUCT || tok == token::ENUM || tok == token::ELLIPSIS || tok == token::ARROW || tok == token::CASE || tok == token::DEFAULT || tok == token::IF || tok == token::ELSE || tok == token::SWITCH || tok == token::WHILE || tok == token::DO || tok == token::FOR || tok == token::CONTINUE || tok == token::BREAK || tok == token::RETURN || tok == token::DISCARD || tok == 40 || tok == 41 || tok == 91 || tok == 93 || tok == 46 || tok == 44 || tok == 43 || tok == 45 || tok == 126 || tok == 33 || tok == 42 || tok == 47 || tok == 37 || tok == 60 || tok == 62 || tok == 38 || tok == 94 || tok == 124 || tok == 63 || tok == 58 || tok == 61 || tok == 59 || tok == 123 || tok == 125);
+      }
+#else
+      symbol_type (int tok, const location_type& l)
+        : super_type(token_type (tok), l)
+      {
+        YYASSERT (tok == token::END || tok == token::BLOCK_COMMENT_ERROR || tok == token::CONSTANT || tok == token::TYPE_NAME || tok == token::ATTRIBUTE || tok == token::UNIFORM || tok == token::SAMPLER || tok == token::IMPORT || tok == token::INC_OP || tok == token::DEC_OP || tok == token::AND_OP || tok == token::OR_OP || tok == token::EQ_OP || tok == token::NE_OP || tok == token::LE_OP || tok == token::GE_OP || tok == token::MUL_ASSIGN || tok == token::DIV_ASSIGN || tok == token::MOD_ASSIGN || tok == token::ADD_ASSIGN || tok == token::SUB_ASSIGN || tok == token::LEFT_OP || tok == token::RIGHT_OP || tok == token::LEFT_ASSIGN || tok == token::RIGHT_ASSIGN || tok == token::AND_ASSIGN || tok == token::XOR_ASSIGN || tok == token::OR_ASSIGN || tok == token::NOT_ASSIGN || tok == token::TYPEDEF || tok == token::EXTERN || tok == token::OPERATOR || tok == token::CONST || tok == token::INT || tok == token::UINT || tok == token::FLOAT || tok == token::DOUBLE || tok == token::BOOL || tok == token::VOID || tok == token::STRUCT || tok == token::ENUM || tok == token::ELLIPSIS || tok == token::ARROW || tok == token::CASE || tok == token::DEFAULT || tok == token::IF || tok == token::ELSE || tok == token::SWITCH || tok == token::WHILE || tok == token::DO || tok == token::FOR || tok == token::CONTINUE || tok == token::BREAK || tok == token::RETURN || tok == token::DISCARD || tok == 40 || tok == 41 || tok == 91 || tok == 93 || tok == 46 || tok == 44 || tok == 43 || tok == 45 || tok == 126 || tok == 33 || tok == 42 || tok == 47 || tok == 37 || tok == 60 || tok == 62 || tok == 38 || tok == 94 || tok == 124 || tok == 63 || tok == 58 || tok == 61 || tok == 59 || tok == 123 || tok == 125);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      symbol_type (int tok, std::string v, location_type l)
+        : super_type(token_type (tok), std::move (v), std::move (l))
+      {
+        YYASSERT (tok == token::IDENTIFIER);
+      }
+#else
+      symbol_type (int tok, const std::string& v, const location_type& l)
+        : super_type(token_type (tok), v, l)
+      {
+        YYASSERT (tok == token::IDENTIFIER);
+      }
+#endif
+    };
 
     /// Build a parser object.
-    conj_parser (lexcontext& ctx_yyarg);
-    virtual ~conj_parser ();
+     parser  (lexcontext& ctx_yyarg);
+    virtual ~ parser  ();
+
+    /// Parse.  An alias for parse ().
+    /// \returns  0 iff parsing succeeded.
+    int operator() ();
 
     /// Parse.
     /// \returns  0 iff parsing succeeded.
@@ -950,10 +958,853 @@ namespace yy {
     /// Report a syntax error.
     void error (const syntax_error& err);
 
+    // Implementation of make_symbol for each symbol type.
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_END (location_type l)
+      {
+        return symbol_type (token::END, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_END (const location_type& l)
+      {
+        return symbol_type (token::END, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_BLOCK_COMMENT_ERROR (location_type l)
+      {
+        return symbol_type (token::BLOCK_COMMENT_ERROR, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_BLOCK_COMMENT_ERROR (const location_type& l)
+      {
+        return symbol_type (token::BLOCK_COMMENT_ERROR, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_IDENTIFIER (std::string v, location_type l)
+      {
+        return symbol_type (token::IDENTIFIER, std::move (v), std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_IDENTIFIER (const std::string& v, const location_type& l)
+      {
+        return symbol_type (token::IDENTIFIER, v, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_CONSTANT (location_type l)
+      {
+        return symbol_type (token::CONSTANT, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_CONSTANT (const location_type& l)
+      {
+        return symbol_type (token::CONSTANT, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_TYPE_NAME (location_type l)
+      {
+        return symbol_type (token::TYPE_NAME, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_TYPE_NAME (const location_type& l)
+      {
+        return symbol_type (token::TYPE_NAME, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ATTRIBUTE (location_type l)
+      {
+        return symbol_type (token::ATTRIBUTE, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_ATTRIBUTE (const location_type& l)
+      {
+        return symbol_type (token::ATTRIBUTE, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_UNIFORM (location_type l)
+      {
+        return symbol_type (token::UNIFORM, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_UNIFORM (const location_type& l)
+      {
+        return symbol_type (token::UNIFORM, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_SAMPLER (location_type l)
+      {
+        return symbol_type (token::SAMPLER, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_SAMPLER (const location_type& l)
+      {
+        return symbol_type (token::SAMPLER, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_IMPORT (location_type l)
+      {
+        return symbol_type (token::IMPORT, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_IMPORT (const location_type& l)
+      {
+        return symbol_type (token::IMPORT, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_INC_OP (location_type l)
+      {
+        return symbol_type (token::INC_OP, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_INC_OP (const location_type& l)
+      {
+        return symbol_type (token::INC_OP, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_DEC_OP (location_type l)
+      {
+        return symbol_type (token::DEC_OP, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_DEC_OP (const location_type& l)
+      {
+        return symbol_type (token::DEC_OP, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_AND_OP (location_type l)
+      {
+        return symbol_type (token::AND_OP, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_AND_OP (const location_type& l)
+      {
+        return symbol_type (token::AND_OP, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_OR_OP (location_type l)
+      {
+        return symbol_type (token::OR_OP, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_OR_OP (const location_type& l)
+      {
+        return symbol_type (token::OR_OP, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_EQ_OP (location_type l)
+      {
+        return symbol_type (token::EQ_OP, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_EQ_OP (const location_type& l)
+      {
+        return symbol_type (token::EQ_OP, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_NE_OP (location_type l)
+      {
+        return symbol_type (token::NE_OP, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_NE_OP (const location_type& l)
+      {
+        return symbol_type (token::NE_OP, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LE_OP (location_type l)
+      {
+        return symbol_type (token::LE_OP, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_LE_OP (const location_type& l)
+      {
+        return symbol_type (token::LE_OP, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_GE_OP (location_type l)
+      {
+        return symbol_type (token::GE_OP, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_GE_OP (const location_type& l)
+      {
+        return symbol_type (token::GE_OP, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MUL_ASSIGN (location_type l)
+      {
+        return symbol_type (token::MUL_ASSIGN, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_MUL_ASSIGN (const location_type& l)
+      {
+        return symbol_type (token::MUL_ASSIGN, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_DIV_ASSIGN (location_type l)
+      {
+        return symbol_type (token::DIV_ASSIGN, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_DIV_ASSIGN (const location_type& l)
+      {
+        return symbol_type (token::DIV_ASSIGN, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_MOD_ASSIGN (location_type l)
+      {
+        return symbol_type (token::MOD_ASSIGN, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_MOD_ASSIGN (const location_type& l)
+      {
+        return symbol_type (token::MOD_ASSIGN, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ADD_ASSIGN (location_type l)
+      {
+        return symbol_type (token::ADD_ASSIGN, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_ADD_ASSIGN (const location_type& l)
+      {
+        return symbol_type (token::ADD_ASSIGN, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_SUB_ASSIGN (location_type l)
+      {
+        return symbol_type (token::SUB_ASSIGN, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_SUB_ASSIGN (const location_type& l)
+      {
+        return symbol_type (token::SUB_ASSIGN, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LEFT_OP (location_type l)
+      {
+        return symbol_type (token::LEFT_OP, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_LEFT_OP (const location_type& l)
+      {
+        return symbol_type (token::LEFT_OP, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_RIGHT_OP (location_type l)
+      {
+        return symbol_type (token::RIGHT_OP, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_RIGHT_OP (const location_type& l)
+      {
+        return symbol_type (token::RIGHT_OP, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_LEFT_ASSIGN (location_type l)
+      {
+        return symbol_type (token::LEFT_ASSIGN, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_LEFT_ASSIGN (const location_type& l)
+      {
+        return symbol_type (token::LEFT_ASSIGN, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_RIGHT_ASSIGN (location_type l)
+      {
+        return symbol_type (token::RIGHT_ASSIGN, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_RIGHT_ASSIGN (const location_type& l)
+      {
+        return symbol_type (token::RIGHT_ASSIGN, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_AND_ASSIGN (location_type l)
+      {
+        return symbol_type (token::AND_ASSIGN, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_AND_ASSIGN (const location_type& l)
+      {
+        return symbol_type (token::AND_ASSIGN, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_XOR_ASSIGN (location_type l)
+      {
+        return symbol_type (token::XOR_ASSIGN, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_XOR_ASSIGN (const location_type& l)
+      {
+        return symbol_type (token::XOR_ASSIGN, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_OR_ASSIGN (location_type l)
+      {
+        return symbol_type (token::OR_ASSIGN, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_OR_ASSIGN (const location_type& l)
+      {
+        return symbol_type (token::OR_ASSIGN, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_NOT_ASSIGN (location_type l)
+      {
+        return symbol_type (token::NOT_ASSIGN, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_NOT_ASSIGN (const location_type& l)
+      {
+        return symbol_type (token::NOT_ASSIGN, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_TYPEDEF (location_type l)
+      {
+        return symbol_type (token::TYPEDEF, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_TYPEDEF (const location_type& l)
+      {
+        return symbol_type (token::TYPEDEF, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_EXTERN (location_type l)
+      {
+        return symbol_type (token::EXTERN, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_EXTERN (const location_type& l)
+      {
+        return symbol_type (token::EXTERN, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_OPERATOR (location_type l)
+      {
+        return symbol_type (token::OPERATOR, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_OPERATOR (const location_type& l)
+      {
+        return symbol_type (token::OPERATOR, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_CONST (location_type l)
+      {
+        return symbol_type (token::CONST, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_CONST (const location_type& l)
+      {
+        return symbol_type (token::CONST, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_INT (location_type l)
+      {
+        return symbol_type (token::INT, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_INT (const location_type& l)
+      {
+        return symbol_type (token::INT, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_UINT (location_type l)
+      {
+        return symbol_type (token::UINT, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_UINT (const location_type& l)
+      {
+        return symbol_type (token::UINT, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_FLOAT (location_type l)
+      {
+        return symbol_type (token::FLOAT, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_FLOAT (const location_type& l)
+      {
+        return symbol_type (token::FLOAT, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_DOUBLE (location_type l)
+      {
+        return symbol_type (token::DOUBLE, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_DOUBLE (const location_type& l)
+      {
+        return symbol_type (token::DOUBLE, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_BOOL (location_type l)
+      {
+        return symbol_type (token::BOOL, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_BOOL (const location_type& l)
+      {
+        return symbol_type (token::BOOL, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_VOID (location_type l)
+      {
+        return symbol_type (token::VOID, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_VOID (const location_type& l)
+      {
+        return symbol_type (token::VOID, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_STRUCT (location_type l)
+      {
+        return symbol_type (token::STRUCT, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_STRUCT (const location_type& l)
+      {
+        return symbol_type (token::STRUCT, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ENUM (location_type l)
+      {
+        return symbol_type (token::ENUM, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_ENUM (const location_type& l)
+      {
+        return symbol_type (token::ENUM, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ELLIPSIS (location_type l)
+      {
+        return symbol_type (token::ELLIPSIS, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_ELLIPSIS (const location_type& l)
+      {
+        return symbol_type (token::ELLIPSIS, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ARROW (location_type l)
+      {
+        return symbol_type (token::ARROW, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_ARROW (const location_type& l)
+      {
+        return symbol_type (token::ARROW, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_CASE (location_type l)
+      {
+        return symbol_type (token::CASE, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_CASE (const location_type& l)
+      {
+        return symbol_type (token::CASE, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_DEFAULT (location_type l)
+      {
+        return symbol_type (token::DEFAULT, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_DEFAULT (const location_type& l)
+      {
+        return symbol_type (token::DEFAULT, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_IF (location_type l)
+      {
+        return symbol_type (token::IF, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_IF (const location_type& l)
+      {
+        return symbol_type (token::IF, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_ELSE (location_type l)
+      {
+        return symbol_type (token::ELSE, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_ELSE (const location_type& l)
+      {
+        return symbol_type (token::ELSE, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_SWITCH (location_type l)
+      {
+        return symbol_type (token::SWITCH, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_SWITCH (const location_type& l)
+      {
+        return symbol_type (token::SWITCH, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_WHILE (location_type l)
+      {
+        return symbol_type (token::WHILE, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_WHILE (const location_type& l)
+      {
+        return symbol_type (token::WHILE, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_DO (location_type l)
+      {
+        return symbol_type (token::DO, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_DO (const location_type& l)
+      {
+        return symbol_type (token::DO, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_FOR (location_type l)
+      {
+        return symbol_type (token::FOR, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_FOR (const location_type& l)
+      {
+        return symbol_type (token::FOR, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_CONTINUE (location_type l)
+      {
+        return symbol_type (token::CONTINUE, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_CONTINUE (const location_type& l)
+      {
+        return symbol_type (token::CONTINUE, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_BREAK (location_type l)
+      {
+        return symbol_type (token::BREAK, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_BREAK (const location_type& l)
+      {
+        return symbol_type (token::BREAK, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_RETURN (location_type l)
+      {
+        return symbol_type (token::RETURN, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_RETURN (const location_type& l)
+      {
+        return symbol_type (token::RETURN, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_DISCARD (location_type l)
+      {
+        return symbol_type (token::DISCARD, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_DISCARD (const location_type& l)
+      {
+        return symbol_type (token::DISCARD, l);
+      }
+#endif
+
+
   private:
     /// This class is not copyable.
-    conj_parser (const conj_parser&);
-    conj_parser& operator= (const conj_parser&);
+     parser  (const  parser &);
+     parser & operator= (const  parser &);
 
     /// State numbers.
     typedef int state_type;
@@ -977,7 +1828,7 @@ namespace yy {
     /// \param yyvalue   the value to check
     static bool yy_table_value_is_error_ (int yyvalue);
 
-    static const signed char yypact_ninf_;
+    static const short yypact_ninf_;
     static const signed char yytable_ninf_;
 
     /// Convert a scanner token number \a t to a symbol number.
@@ -986,7 +1837,7 @@ namespace yy {
     // Tables.
   // YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
   // STATE-NUM.
-  static const signed char yypact_[];
+  static const short yypact_[];
 
   // YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
   // Performed when YYTABLE does not specify something else to do.  Zero
@@ -994,17 +1845,17 @@ namespace yy {
   static const unsigned char yydefact_[];
 
   // YYPGOTO[NTERM-NUM].
-  static const signed char yypgoto_[];
+  static const short yypgoto_[];
 
   // YYDEFGOTO[NTERM-NUM].
-  static const signed char yydefgoto_[];
+  static const short yydefgoto_[];
 
   // YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
   // positive, shift that token.  If negative, reduce the rule whose
   // number is the opposite.  If YYTABLE_NINF, syntax error.
-  static const unsigned char yytable_[];
+  static const short yytable_[];
 
-  static const signed char yycheck_[];
+  static const short yycheck_[];
 
   // YYSTOS[STATE-NUM] -- The (internal number of the) accessing
   // symbol of state STATE-NUM.
@@ -1025,14 +1876,15 @@ namespace yy {
     static const char* const yytname_[];
 #if YYDEBUG
   // YYRLINE[YYN] -- Source line where rule number YYN was defined.
-  static const unsigned char yyrline_[];
+  static const unsigned short yyrline_[];
     /// Report on the debug stream that the rule \a r is going to be reduced.
     virtual void yy_reduce_print_ (int r);
     /// Print the state stack on the debug stream.
     virtual void yystack_print_ ();
 
-    // Debugging.
+    /// Debugging level.
     int yydebug_;
+    /// Debug stream.
     std::ostream* yycdebug_;
 
     /// \brief Display a symbol type, value and location.
@@ -1054,26 +1906,26 @@ namespace yy {
     struct by_state
     {
       /// Default constructor.
-      by_state ();
+      by_state () YY_NOEXCEPT;
 
       /// The symbol type as needed by the constructor.
       typedef state_type kind_type;
 
       /// Constructor.
-      by_state (kind_type s);
+      by_state (kind_type s) YY_NOEXCEPT;
 
       /// Copy constructor.
-      by_state (const by_state& other);
+      by_state (const by_state& that) YY_NOEXCEPT;
 
       /// Record that this symbol is empty.
-      void clear ();
+      void clear () YY_NOEXCEPT;
 
       /// Steal the symbol type from \a that.
       void move (by_state& that);
 
       /// The (internal) type number (corresponding to \a state).
       /// \a empty_symbol when empty.
-      symbol_number_type type_get () const;
+      symbol_number_type type_get () const YY_NOEXCEPT;
 
       /// The state number used to denote an empty symbol.
       enum { empty_state = -1 };
@@ -1090,11 +1942,140 @@ namespace yy {
       typedef basic_symbol<by_state> super_type;
       /// Construct an empty symbol.
       stack_symbol_type ();
+      /// Move or copy construction.
+      stack_symbol_type (YY_RVREF (stack_symbol_type) that);
       /// Steal the contents from \a sym to build this.
-      stack_symbol_type (state_type s, symbol_type& sym);
-      /// Assignment, needed by push_back.
-      stack_symbol_type& operator= (const stack_symbol_type& that);
+      stack_symbol_type (state_type s, YY_MOVE_REF (symbol_type) sym);
+#if YY_CPLUSPLUS < 201103L
+      /// Assignment, needed by push_back by some old implementations.
+      /// Moves the contents of that.
+      stack_symbol_type& operator= (stack_symbol_type& that);
+#endif
     };
+
+    /// A stack with random access from its top.
+    template <typename T, typename S = std::vector<T> >
+    class stack
+    {
+    public:
+      // Hide our reversed order.
+      typedef typename S::reverse_iterator iterator;
+      typedef typename S::const_reverse_iterator const_iterator;
+      typedef typename S::size_type size_type;
+
+      stack (size_type n = 200)
+        : seq_ (n)
+      {}
+
+      /// Random access.
+      ///
+      /// Index 0 returns the topmost element.
+      T&
+      operator[] (size_type i)
+      {
+        return seq_[size () - 1 - i];
+      }
+
+      /// Random access.
+      ///
+      /// Index 0 returns the topmost element.
+      T&
+      operator[] (int i)
+      {
+        return operator[] (size_type (i));
+      }
+
+      /// Random access.
+      ///
+      /// Index 0 returns the topmost element.
+      const T&
+      operator[] (size_type i) const
+      {
+        return seq_[size () - 1 - i];
+      }
+
+      /// Random access.
+      ///
+      /// Index 0 returns the topmost element.
+      const T&
+      operator[] (int i) const
+      {
+        return operator[] (size_type (i));
+      }
+
+      /// Steal the contents of \a t.
+      ///
+      /// Close to move-semantics.
+      void
+      push (YY_MOVE_REF (T) t)
+      {
+        seq_.push_back (T ());
+        operator[] (0).move (t);
+      }
+
+      /// Pop elements from the stack.
+      void
+      pop (int n = 1) YY_NOEXCEPT
+      {
+        for (; 0 < n; --n)
+          seq_.pop_back ();
+      }
+
+      /// Pop all elements from the stack.
+      void
+      clear () YY_NOEXCEPT
+      {
+        seq_.clear ();
+      }
+
+      /// Number of elements on the stack.
+      size_type
+      size () const YY_NOEXCEPT
+      {
+        return seq_.size ();
+      }
+
+      /// Iterator on top of the stack (going downwards).
+      const_iterator
+      begin () const YY_NOEXCEPT
+      {
+        return seq_.rbegin ();
+      }
+
+      /// Bottom of the stack.
+      const_iterator
+      end () const YY_NOEXCEPT
+      {
+        return seq_.rend ();
+      }
+
+      /// Present a slice of the top of a stack.
+      class slice
+      {
+      public:
+        slice (const stack& stack, int range)
+          : stack_ (stack)
+          , range_ (range)
+        {}
+
+        const T&
+        operator[] (int i) const
+        {
+          return stack_[range_ - i];
+        }
+
+      private:
+        const stack& stack_;
+        int range_;
+      };
+
+    private:
+      stack (const stack&);
+      stack& operator= (const stack&);
+      /// The wrapped container.
+      S seq_;
+    };
+
 
     /// Stack type.
     typedef stack<stack_symbol_type> stack_type;
@@ -1105,31 +2086,31 @@ namespace yy {
     /// Push a new state on the stack.
     /// \param m    a debug message to display
     ///             if null, no trace is output.
-    /// \param s    the symbol
+    /// \param sym  the symbol
     /// \warning the contents of \a s.value is stolen.
-    void yypush_ (const char* m, stack_symbol_type& s);
+    void yypush_ (const char* m, YY_MOVE_REF (stack_symbol_type) sym);
 
     /// Push a new look ahead token on the state on the stack.
     /// \param m    a debug message to display
     ///             if null, no trace is output.
     /// \param s    the state
     /// \param sym  the symbol (for its value and location).
-    /// \warning the contents of \a s.value is stolen.
-    void yypush_ (const char* m, state_type s, symbol_type& sym);
+    /// \warning the contents of \a sym.value is stolen.
+    void yypush_ (const char* m, state_type s, YY_MOVE_REF (symbol_type) sym);
 
-    /// Pop \a n symbols the three stacks.
-    void yypop_ (unsigned int n = 1);
+    /// Pop \a n symbols from the stack.
+    void yypop_ (int n = 1);
 
     /// Constants.
     enum
     {
       yyeof_ = 0,
-      yylast_ = 37,     ///< Last index in yytable_.
-      yynnts_ = 9,  ///< Number of nonterminal symbols.
-      yyfinal_ = 2, ///< Termination state number.
+      yylast_ = 1064,     ///< Last index in yytable_.
+      yynnts_ = 62,  ///< Number of nonterminal symbols.
+      yyfinal_ = 53, ///< Termination state number.
       yyterror_ = 1,
       yyerrcode_ = 256,
-      yyntokens_ = 36  ///< Number of tokens.
+      yyntokens_ = 82  ///< Number of tokens.
     };
 
 
@@ -1137,28 +2118,28 @@ namespace yy {
     lexcontext& ctx;
   };
 
-  // Symbol number corresponding to token number t.
-  inline
-  conj_parser::token_number_type
-  conj_parser::yytranslate_ (token_type t)
+   parser ::token_number_type
+   parser ::yytranslate_ (token_type t)
   {
+    // YYTRANSLATE[TOKEN-NUM] -- Symbol number corresponding to
+    // TOKEN-NUM as returned by yylex.
     static
     const token_number_type
     translate_table[] =
     {
-     0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,    34,     2,     2,     2,
-      29,    31,    28,    26,    22,    27,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,    24,    35,
-       2,    25,     2,    23,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,    67,     2,     2,     2,    70,    73,     2,
+      58,    59,    68,    64,    63,    65,    62,    69,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,    77,    79,
+      71,    78,    72,    76,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,    30,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,    60,     2,    61,    74,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,    32,     2,    33,     2,     2,     2,     2,
+       2,     2,     2,    80,    75,    81,    66,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -1173,63 +2154,54 @@ namespace yy {
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15,    16,    17,    18,    19,    20,    21
+      15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
+      25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
+      35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
+      45,    46,    47,    48,    49,    50,    51,    52,    53,    54,
+      55,    56,    57
     };
-    const unsigned int user_token_number_max_ = 276;
+    const unsigned user_token_number_max_ = 312;
     const token_number_type undef_token_ = 2;
 
-    if (static_cast<int>(t) <= yyeof_)
+    if (static_cast<int> (t) <= yyeof_)
       return yyeof_;
-    else if (static_cast<unsigned int> (t) <= user_token_number_max_)
+    else if (static_cast<unsigned> (t) <= user_token_number_max_)
       return translate_table[t];
     else
       return undef_token_;
   }
 
-  inline
-  conj_parser::syntax_error::syntax_error (const location_type& l, const std::string& m)
-    : std::runtime_error (m)
-    , location (l)
-  {}
-
   // basic_symbol.
+#if 201103L <= YY_CPLUSPLUS
   template <typename Base>
-  inline
-  conj_parser::basic_symbol<Base>::basic_symbol ()
-    : value ()
-  {}
-
-  template <typename Base>
-  inline
-  conj_parser::basic_symbol<Base>::basic_symbol (const basic_symbol& other)
-    : Base (other)
+   parser ::basic_symbol<Base>::basic_symbol (basic_symbol&& that)
+    : Base (std::move (that))
     , value ()
-    , location (other.location)
+    , location (std::move (that.location))
   {
-      switch (other.type_get ())
+    switch (this->type_get ())
     {
-      case 38: // function
-        value.copy< Function > (other.value);
+      case 4: // IDENTIFIER
+        value.move< std::string > (std::move (that.value));
         break;
 
-      case 9: // TYPE
-        value.copy< Type > (other.value);
+      default:
         break;
+    }
 
-      case 7: // FLOAT
-        value.copy< float > (other.value);
-        break;
+  }
+#endif
 
-      case 8: // INT
-        value.copy< int > (other.value);
-        break;
-
-      case 6: // IDENTIFIER
-        value.copy< std::string > (other.value);
-        break;
-
-      case 39: // types
-        value.copy< std::vector<Type> > (other.value);
+  template <typename Base>
+   parser ::basic_symbol<Base>::basic_symbol (const basic_symbol& that)
+    : Base (that)
+    , value ()
+    , location (that.location)
+  {
+    switch (this->type_get ())
+    {
+      case 4: // IDENTIFIER
+        value.copy< std::string > (YY_MOVE (that.value));
         break;
 
       default:
@@ -1239,404 +2211,115 @@ namespace yy {
   }
 
 
-  template <typename Base>
-  inline
-  conj_parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const semantic_type& v, const location_type& l)
-    : Base (t)
-    , value ()
-    , location (l)
-  {
-    (void) v;
-      switch (this->type_get ())
-    {
-      case 38: // function
-        value.copy< Function > (v);
-        break;
-
-      case 9: // TYPE
-        value.copy< Type > (v);
-        break;
-
-      case 7: // FLOAT
-        value.copy< float > (v);
-        break;
-
-      case 8: // INT
-        value.copy< int > (v);
-        break;
-
-      case 6: // IDENTIFIER
-        value.copy< std::string > (v);
-        break;
-
-      case 39: // types
-        value.copy< std::vector<Type> > (v);
-        break;
-
-      default:
-        break;
-    }
-}
-
-
-  // Implementation of basic_symbol constructor for each type.
 
   template <typename Base>
-  conj_parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const location_type& l)
-    : Base (t)
-    , value ()
-    , location (l)
-  {}
-
-  template <typename Base>
-  conj_parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const Function v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  conj_parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const Type v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  conj_parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const float v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  conj_parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const int v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  conj_parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::string v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-  template <typename Base>
-  conj_parser::basic_symbol<Base>::basic_symbol (typename Base::kind_type t, const std::vector<Type> v, const location_type& l)
-    : Base (t)
-    , value (v)
-    , location (l)
-  {}
-
-
-  template <typename Base>
-  inline
-  conj_parser::basic_symbol<Base>::~basic_symbol ()
-  {
-    clear ();
-  }
-
-  template <typename Base>
-  inline
-  void
-  conj_parser::basic_symbol<Base>::clear ()
-  {
-    // User destructor.
-    symbol_number_type yytype = this->type_get ();
-    basic_symbol<Base>& yysym = *this;
-    (void) yysym;
-    switch (yytype)
-    {
-   default:
-      break;
-    }
-
-    // Type destructor.
-    switch (yytype)
-    {
-      case 38: // function
-        value.template destroy< Function > ();
-        break;
-
-      case 9: // TYPE
-        value.template destroy< Type > ();
-        break;
-
-      case 7: // FLOAT
-        value.template destroy< float > ();
-        break;
-
-      case 8: // INT
-        value.template destroy< int > ();
-        break;
-
-      case 6: // IDENTIFIER
-        value.template destroy< std::string > ();
-        break;
-
-      case 39: // types
-        value.template destroy< std::vector<Type> > ();
-        break;
-
-      default:
-        break;
-    }
-
-    Base::clear ();
-  }
-
-  template <typename Base>
-  inline
   bool
-  conj_parser::basic_symbol<Base>::empty () const
+   parser ::basic_symbol<Base>::empty () const YY_NOEXCEPT
   {
     return Base::type_get () == empty_symbol;
   }
 
   template <typename Base>
-  inline
   void
-  conj_parser::basic_symbol<Base>::move (basic_symbol& s)
+   parser ::basic_symbol<Base>::move (basic_symbol& s)
   {
-    super_type::move(s);
-      switch (this->type_get ())
+    super_type::move (s);
+    switch (this->type_get ())
     {
-      case 38: // function
-        value.move< Function > (s.value);
-        break;
-
-      case 9: // TYPE
-        value.move< Type > (s.value);
-        break;
-
-      case 7: // FLOAT
-        value.move< float > (s.value);
-        break;
-
-      case 8: // INT
-        value.move< int > (s.value);
-        break;
-
-      case 6: // IDENTIFIER
-        value.move< std::string > (s.value);
-        break;
-
-      case 39: // types
-        value.move< std::vector<Type> > (s.value);
+      case 4: // IDENTIFIER
+        value.move< std::string > (YY_MOVE (s.value));
         break;
 
       default:
         break;
     }
 
-    location = s.location;
+    location = YY_MOVE (s.location);
   }
 
   // by_type.
-  inline
-  conj_parser::by_type::by_type ()
+   parser ::by_type::by_type ()
     : type (empty_symbol)
   {}
 
-  inline
-  conj_parser::by_type::by_type (const by_type& other)
-    : type (other.type)
+#if 201103L <= YY_CPLUSPLUS
+   parser ::by_type::by_type (by_type&& that)
+    : type (that.type)
+  {
+    that.clear ();
+  }
+#endif
+
+   parser ::by_type::by_type (const by_type& that)
+    : type (that.type)
   {}
 
-  inline
-  conj_parser::by_type::by_type (token_type t)
+   parser ::by_type::by_type (token_type t)
     : type (yytranslate_ (t))
   {}
 
-  inline
   void
-  conj_parser::by_type::clear ()
+   parser ::by_type::clear ()
   {
     type = empty_symbol;
   }
 
-  inline
   void
-  conj_parser::by_type::move (by_type& that)
+   parser ::by_type::move (by_type& that)
   {
     type = that.type;
     that.clear ();
   }
 
-  inline
   int
-  conj_parser::by_type::type_get () const
+   parser ::by_type::type_get () const YY_NOEXCEPT
   {
     return type;
   }
 
-  inline
-  conj_parser::token_type
-  conj_parser::by_type::token () const
+   parser ::token_type
+   parser ::by_type::token () const YY_NOEXCEPT
   {
     // YYTOKNUM[NUM] -- (External) token number corresponding to the
     // (internal) symbol number NUM (which must be that of a token).  */
     static
-    const unsigned short int
+    const unsigned short
     yytoken_number_[] =
     {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
-     275,   276,    44,    63,    58,    61,    43,    45,    42,    40,
-      91,    41,   123,   125,    36,    59
+     275,   276,   277,   278,   279,   280,   281,   282,   283,   284,
+     285,   286,   287,   288,   289,   290,   291,   292,   293,   294,
+     295,   296,   297,   298,   299,   300,   301,   302,   303,   304,
+     305,   306,   307,   308,   309,   310,   311,   312,    40,    41,
+      91,    93,    46,    44,    43,    45,   126,    33,    42,    47,
+      37,    60,    62,    38,    94,   124,    63,    58,    61,    59,
+     123,   125
     };
-    return static_cast<token_type> (yytoken_number_[type]);
+    return token_type (yytoken_number_[type]);
   }
-  // Implementation of make_symbol for each symbol type.
-  conj_parser::symbol_type
-  conj_parser::make_END (const location_type& l)
-  {
-    return symbol_type (token::END, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_ATTRIBUTE (const location_type& l)
-  {
-    return symbol_type (token::ATTRIBUTE, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_UNIFORM (const location_type& l)
-  {
-    return symbol_type (token::UNIFORM, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_SAMPLER (const location_type& l)
-  {
-    return symbol_type (token::SAMPLER, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_IDENTIFIER (const std::string& v, const location_type& l)
-  {
-    return symbol_type (token::IDENTIFIER, v, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_FLOAT (const float& v, const location_type& l)
-  {
-    return symbol_type (token::FLOAT, v, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_INT (const int& v, const location_type& l)
-  {
-    return symbol_type (token::INT, v, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_TYPE (const Type& v, const location_type& l)
-  {
-    return symbol_type (token::TYPE, v, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_ARROW (const location_type& l)
-  {
-    return symbol_type (token::ARROW, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_OR (const location_type& l)
-  {
-    return symbol_type (token::OR, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_AND (const location_type& l)
-  {
-    return symbol_type (token::AND, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_EQ (const location_type& l)
-  {
-    return symbol_type (token::EQ, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_NE (const location_type& l)
-  {
-    return symbol_type (token::NE, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_PP (const location_type& l)
-  {
-    return symbol_type (token::PP, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_MM (const location_type& l)
-  {
-    return symbol_type (token::MM, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_PL_EQ (const location_type& l)
-  {
-    return symbol_type (token::PL_EQ, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_MI_EQ (const location_type& l)
-  {
-    return symbol_type (token::MI_EQ, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_MU_EQ (const location_type& l)
-  {
-    return symbol_type (token::MU_EQ, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_DI_EQ (const location_type& l)
-  {
-    return symbol_type (token::DI_EQ, l);
-  }
-
-  conj_parser::symbol_type
-  conj_parser::make_MO_EQ (const location_type& l)
-  {
-    return symbol_type (token::MO_EQ, l);
-  }
-
-
 
 } // yy
-#line 1617 "parser.cpp.re" // lalr1.cc:408
+#line 2304 "parser.cpp.re"
 
 
 
 
 
-// User implementation prologue.
 
-#line 1625 "parser.cpp.re" // lalr1.cc:412
+
 // Unqualified %code blocks.
-#line 21 "parser.yy" // lalr1.cc:413
-
+#line 27 "parser.yy"
 
 struct lexcontext
 {
-    const char* cursor;
-    yy::location loc;
-
-	std::vector<Function> functions;
+	const char* cursor;
+	yy::location loc;
 };
 
-namespace yy { conj_parser::symbol_type yylex(lexcontext& ctx); }
+namespace yy { parser::symbol_type yylex(lexcontext& ctx); }
 
-#line 1640 "parser.cpp.re" // lalr1.cc:413
+#line 2323 "parser.cpp.re"
 
 
 #ifndef YY_
@@ -1648,6 +2331,15 @@ namespace yy { conj_parser::symbol_type yylex(lexcontext& ctx); }
 # endif
 # ifndef YY_
 #  define YY_(msgid) msgid
+# endif
+#endif
+
+// Whether we are compiled with exception support.
+#ifndef YY_EXCEPTIONS
+# if defined __GNUC__ && !defined __EXCEPTIONS
+#  define YY_EXCEPTIONS 0
+# else
+#  define YY_EXCEPTIONS 1
 # endif
 #endif
 
@@ -1668,7 +2360,7 @@ namespace yy { conj_parser::symbol_type yylex(lexcontext& ctx); }
         {                                                               \
           (Current).begin = (Current).end = YYRHSLOC (Rhs, 0).end;      \
         }                                                               \
-    while (/*CONSTCOND*/ false)
+    while (false)
 # endif
 
 
@@ -1687,7 +2379,7 @@ namespace yy { conj_parser::symbol_type yylex(lexcontext& ctx); }
     {                                           \
       *yycdebug_ << Title << ' ';               \
       yy_print_ (*yycdebug_, Symbol);           \
-      *yycdebug_ << std::endl;                  \
+      *yycdebug_ << '\n';                       \
     }                                           \
   } while (false)
 
@@ -1706,9 +2398,9 @@ namespace yy { conj_parser::symbol_type yylex(lexcontext& ctx); }
 #else // !YYDEBUG
 
 # define YYCDEBUG if (false) std::cerr
-# define YY_SYMBOL_PRINT(Title, Symbol)  YYUSE(Symbol)
-# define YY_REDUCE_PRINT(Rule)           static_cast<void>(0)
-# define YY_STACK_PRINT()                static_cast<void>(0)
+# define YY_SYMBOL_PRINT(Title, Symbol)  YYUSE (Symbol)
+# define YY_REDUCE_PRINT(Rule)           static_cast<void> (0)
+# define YY_STACK_PRINT()                static_cast<void> (0)
 
 #endif // !YYDEBUG
 
@@ -1720,9 +2412,9 @@ namespace yy { conj_parser::symbol_type yylex(lexcontext& ctx); }
 #define YYERROR         goto yyerrorlab
 #define YYRECOVERING()  (!!yyerrstatus_)
 
-
 namespace yy {
-#line 1726 "parser.cpp.re" // lalr1.cc:479
+#line 2417 "parser.cpp.re"
+
 
   /* Return YYSTR after stripping away unnecessary quotes and
      backslashes, so that it's suitable for yyerror.  The heuristic is
@@ -1730,11 +2422,11 @@ namespace yy {
      apostrophe, a comma, or backslash (other than backslash-backslash).
      YYSTR is taken from yytname.  */
   std::string
-  conj_parser::yytnamerr_ (const char *yystr)
+   parser ::yytnamerr_ (const char *yystr)
   {
     if (*yystr == '"')
       {
-        std::string yyr = "";
+        std::string yyr;
         char const *yyp = yystr;
 
         for (;;)
@@ -1747,7 +2439,10 @@ namespace yy {
             case '\\':
               if (*++yyp != '\\')
                 goto do_not_strip_quotes;
-              // Fall through.
+              else
+                goto append;
+
+            append:
             default:
               yyr += *yyp;
               break;
@@ -1763,7 +2458,7 @@ namespace yy {
 
 
   /// Build a parser object.
-  conj_parser::conj_parser (lexcontext& ctx_yyarg)
+   parser :: parser  (lexcontext& ctx_yyarg)
     :
 #if YYDEBUG
       yydebug_ (false),
@@ -1772,9 +2467,11 @@ namespace yy {
       ctx (ctx_yyarg)
   {}
 
-  conj_parser::~conj_parser ()
+   parser ::~ parser  ()
   {}
 
+   parser ::syntax_error::~syntax_error () YY_NOEXCEPT YY_NOTHROW
+  {}
 
   /*---------------.
   | Symbol types.  |
@@ -1783,39 +2480,33 @@ namespace yy {
 
 
   // by_state.
-  inline
-  conj_parser::by_state::by_state ()
+   parser ::by_state::by_state () YY_NOEXCEPT
     : state (empty_state)
   {}
 
-  inline
-  conj_parser::by_state::by_state (const by_state& other)
-    : state (other.state)
+   parser ::by_state::by_state (const by_state& that) YY_NOEXCEPT
+    : state (that.state)
   {}
 
-  inline
   void
-  conj_parser::by_state::clear ()
+   parser ::by_state::clear () YY_NOEXCEPT
   {
     state = empty_state;
   }
 
-  inline
   void
-  conj_parser::by_state::move (by_state& that)
+   parser ::by_state::move (by_state& that)
   {
     state = that.state;
     that.clear ();
   }
 
-  inline
-  conj_parser::by_state::by_state (state_type s)
+   parser ::by_state::by_state (state_type s) YY_NOEXCEPT
     : state (s)
   {}
 
-  inline
-  conj_parser::symbol_number_type
-  conj_parser::by_state::type_get () const
+   parser ::symbol_number_type
+   parser ::by_state::type_get () const YY_NOEXCEPT
   {
     if (state == empty_state)
       return empty_symbol;
@@ -1823,39 +2514,35 @@ namespace yy {
       return yystos_[state];
   }
 
-  inline
-  conj_parser::stack_symbol_type::stack_symbol_type ()
+   parser ::stack_symbol_type::stack_symbol_type ()
   {}
 
-
-  inline
-  conj_parser::stack_symbol_type::stack_symbol_type (state_type s, symbol_type& that)
-    : super_type (s, that.location)
+   parser ::stack_symbol_type::stack_symbol_type (YY_RVREF (stack_symbol_type) that)
+    : super_type (YY_MOVE (that.state), YY_MOVE (that.location))
   {
-      switch (that.type_get ())
+    switch (that.type_get ())
     {
-      case 38: // function
-        value.move< Function > (that.value);
+      case 4: // IDENTIFIER
+        value.YY_MOVE_OR_COPY< std::string > (YY_MOVE (that.value));
         break;
 
-      case 9: // TYPE
-        value.move< Type > (that.value);
+      default:
         break;
+    }
 
-      case 7: // FLOAT
-        value.move< float > (that.value);
-        break;
+#if 201103L <= YY_CPLUSPLUS
+    // that is emptied.
+    that.state = empty_state;
+#endif
+  }
 
-      case 8: // INT
-        value.move< int > (that.value);
-        break;
-
-      case 6: // IDENTIFIER
-        value.move< std::string > (that.value);
-        break;
-
-      case 39: // types
-        value.move< std::vector<Type> > (that.value);
+   parser ::stack_symbol_type::stack_symbol_type (state_type s, YY_MOVE_REF (symbol_type) that)
+    : super_type (s, YY_MOVE (that.location))
+  {
+    switch (that.type_get ())
+    {
+      case 4: // IDENTIFIER
+        value.move< std::string > (YY_MOVE (that.value));
         break;
 
       default:
@@ -1866,35 +2553,15 @@ namespace yy {
     that.type = empty_symbol;
   }
 
-  inline
-  conj_parser::stack_symbol_type&
-  conj_parser::stack_symbol_type::operator= (const stack_symbol_type& that)
+#if YY_CPLUSPLUS < 201103L
+   parser ::stack_symbol_type&
+   parser ::stack_symbol_type::operator= (stack_symbol_type& that)
   {
     state = that.state;
-      switch (that.type_get ())
+    switch (that.type_get ())
     {
-      case 38: // function
-        value.copy< Function > (that.value);
-        break;
-
-      case 9: // TYPE
-        value.copy< Type > (that.value);
-        break;
-
-      case 7: // FLOAT
-        value.copy< float > (that.value);
-        break;
-
-      case 8: // INT
-        value.copy< int > (that.value);
-        break;
-
-      case 6: // IDENTIFIER
-        value.copy< std::string > (that.value);
-        break;
-
-      case 39: // types
-        value.copy< std::vector<Type> > (that.value);
+      case 4: // IDENTIFIER
+        value.move< std::string > (that.value);
         break;
 
       default:
@@ -1902,14 +2569,15 @@ namespace yy {
     }
 
     location = that.location;
+    // that is emptied.
+    that.state = empty_state;
     return *this;
   }
-
+#endif
 
   template <typename Base>
-  inline
   void
-  conj_parser::yy_destroy_ (const char* yymsg, basic_symbol<Base>& yysym) const
+   parser ::yy_destroy_ (const char* yymsg, basic_symbol<Base>& yysym) const
   {
     if (yymsg)
       YY_SYMBOL_PRINT (yymsg, yysym);
@@ -1918,16 +2586,18 @@ namespace yy {
 #if YYDEBUG
   template <typename Base>
   void
-  conj_parser::yy_print_ (std::ostream& yyo,
+   parser ::yy_print_ (std::ostream& yyo,
                                      const basic_symbol<Base>& yysym) const
   {
     std::ostream& yyoutput = yyo;
     YYUSE (yyoutput);
     symbol_number_type yytype = yysym.type_get ();
+#if defined __GNUC__ && ! defined __clang__ && ! defined __ICC && __GNUC__ * 100 + __GNUC_MINOR__ <= 408
     // Avoid a (spurious) G++ 4.8 warning about "array subscript is
     // below array bounds".
     if (yysym.empty ())
       std::abort ();
+#endif
     yyo << (yytype < yyntokens_ ? "token" : "nterm")
         << ' ' << yytname_[yytype] << " ("
         << yysym.location << ": ";
@@ -1936,59 +2606,60 @@ namespace yy {
   }
 #endif
 
-  inline
   void
-  conj_parser::yypush_ (const char* m, state_type s, symbol_type& sym)
-  {
-    stack_symbol_type t (s, sym);
-    yypush_ (m, t);
-  }
-
-  inline
-  void
-  conj_parser::yypush_ (const char* m, stack_symbol_type& s)
+   parser ::yypush_ (const char* m, YY_MOVE_REF (stack_symbol_type) sym)
   {
     if (m)
-      YY_SYMBOL_PRINT (m, s);
-    yystack_.push (s);
+      YY_SYMBOL_PRINT (m, sym);
+    yystack_.push (YY_MOVE (sym));
   }
 
-  inline
   void
-  conj_parser::yypop_ (unsigned int n)
+   parser ::yypush_ (const char* m, state_type s, YY_MOVE_REF (symbol_type) sym)
+  {
+#if 201103L <= YY_CPLUSPLUS
+    yypush_ (m, stack_symbol_type (s, std::move (sym)));
+#else
+    stack_symbol_type ss (s, sym);
+    yypush_ (m, ss);
+#endif
+  }
+
+  void
+   parser ::yypop_ (int n)
   {
     yystack_.pop (n);
   }
 
 #if YYDEBUG
   std::ostream&
-  conj_parser::debug_stream () const
+   parser ::debug_stream () const
   {
     return *yycdebug_;
   }
 
   void
-  conj_parser::set_debug_stream (std::ostream& o)
+   parser ::set_debug_stream (std::ostream& o)
   {
     yycdebug_ = &o;
   }
 
 
-  conj_parser::debug_level_type
-  conj_parser::debug_level () const
+   parser ::debug_level_type
+   parser ::debug_level () const
   {
     return yydebug_;
   }
 
   void
-  conj_parser::set_debug_level (debug_level_type l)
+   parser ::set_debug_level (debug_level_type l)
   {
     yydebug_ = l;
   }
 #endif // YYDEBUG
 
-  inline conj_parser::state_type
-  conj_parser::yy_lr_goto_state_ (state_type yystate, int yysym)
+   parser ::state_type
+   parser ::yy_lr_goto_state_ (state_type yystate, int yysym)
   {
     int yyr = yypgoto_[yysym - yyntokens_] + yystate;
     if (0 <= yyr && yyr <= yylast_ && yycheck_[yyr] == yystate)
@@ -1997,20 +2668,26 @@ namespace yy {
       return yydefgoto_[yysym - yyntokens_];
   }
 
-  inline bool
-  conj_parser::yy_pact_value_is_default_ (int yyvalue)
+  bool
+   parser ::yy_pact_value_is_default_ (int yyvalue)
   {
     return yyvalue == yypact_ninf_;
   }
 
-  inline bool
-  conj_parser::yy_table_value_is_error_ (int yyvalue)
+  bool
+   parser ::yy_table_value_is_error_ (int yyvalue)
   {
     return yyvalue == yytable_ninf_;
   }
 
   int
-  conj_parser::parse ()
+   parser ::operator() ()
+  {
+    return parse ();
+  }
+
+  int
+   parser ::parse ()
   {
     // State.
     int yyn;
@@ -2030,11 +2707,11 @@ namespace yy {
     /// The return value of parse ().
     int yyresult;
 
-    // FIXME: This shoud be completely indented.  It is not yet to
-    // avoid gratuitous conflicts when merging into the master branch.
+#if YY_EXCEPTIONS
     try
+#endif // YY_EXCEPTIONS
       {
-    YYCDEBUG << "Starting parse" << std::endl;
+    YYCDEBUG << "Starting parse\n";
 
 
     /* Initialize the stack.  The initial state will be set in
@@ -2042,21 +2719,25 @@ namespace yy {
        location values to have been already stored, initialize these
        stacks with a primary value.  */
     yystack_.clear ();
-    yypush_ (YY_NULLPTR, 0, yyla);
+    yypush_ (YY_NULLPTR, 0, YY_MOVE (yyla));
 
-    // A new symbol was pushed on the stack.
+  /*-----------------------------------------------.
+  | yynewstate -- push a new symbol on the stack.  |
+  `-----------------------------------------------*/
   yynewstate:
-    YYCDEBUG << "Entering state " << yystack_[0].state << std::endl;
+    YYCDEBUG << "Entering state " << yystack_[0].state << '\n';
 
     // Accept?
     if (yystack_[0].state == yyfinal_)
-      goto yyacceptlab;
+      YYACCEPT;
 
     goto yybackup;
 
-    // Backup.
-  yybackup:
 
+  /*-----------.
+  | yybackup.  |
+  `-----------*/
+  yybackup:
     // Try to take a decision without lookahead.
     yyn = yypact_[yystack_[0].state];
     if (yy_pact_value_is_default_ (yyn))
@@ -2066,16 +2747,21 @@ namespace yy {
     if (yyla.empty ())
       {
         YYCDEBUG << "Reading a token: ";
+#if YY_EXCEPTIONS
         try
+#endif // YY_EXCEPTIONS
           {
             symbol_type yylookahead (yylex (ctx));
             yyla.move (yylookahead);
           }
+#if YY_EXCEPTIONS
         catch (const syntax_error& yyexc)
           {
+            YYCDEBUG << "Caught exception: " << yyexc.what() << '\n';
             error (yyexc);
             goto yyerrlab1;
           }
+#endif // YY_EXCEPTIONS
       }
     YY_SYMBOL_PRINT ("Next token is", yyla);
 
@@ -2100,8 +2786,9 @@ namespace yy {
       --yyerrstatus_;
 
     // Shift the lookahead token.
-    yypush_ ("Shifting", yyn, yyla);
+    yypush_ ("Shifting", yyn, YY_MOVE (yyla));
     goto yynewstate;
+
 
   /*-----------------------------------------------------------.
   | yydefault -- do the default action for the current state.  |
@@ -2112,41 +2799,22 @@ namespace yy {
       goto yyerrlab;
     goto yyreduce;
 
+
   /*-----------------------------.
-  | yyreduce -- Do a reduction.  |
+  | yyreduce -- do a reduction.  |
   `-----------------------------*/
   yyreduce:
     yylen = yyr2_[yyn];
     {
       stack_symbol_type yylhs;
-      yylhs.state = yy_lr_goto_state_(yystack_[yylen].state, yyr1_[yyn]);
+      yylhs.state = yy_lr_goto_state_ (yystack_[yylen].state, yyr1_[yyn]);
       /* Variants are always initialized to an empty instance of the
          correct type. The default '$$ = $1' action is NOT applied
          when using variants.  */
-        switch (yyr1_[yyn])
+      switch (yyr1_[yyn])
     {
-      case 38: // function
-        yylhs.value.build< Function > ();
-        break;
-
-      case 9: // TYPE
-        yylhs.value.build< Type > ();
-        break;
-
-      case 7: // FLOAT
-        yylhs.value.build< float > ();
-        break;
-
-      case 8: // INT
-        yylhs.value.build< int > ();
-        break;
-
-      case 6: // IDENTIFIER
-        yylhs.value.build< std::string > ();
-        break;
-
-      case 39: // types
-        yylhs.value.build< std::vector<Type> > ();
+      case 4: // IDENTIFIER
+        yylhs.value.emplace< std::string > ();
         break;
 
       default:
@@ -2154,78 +2822,46 @@ namespace yy {
     }
 
 
-      // Compute the default @$.
+      // Default location.
       {
-        slice<stack_symbol_type, stack_type> slice (yystack_, yylen);
-        YYLLOC_DEFAULT (yylhs.location, slice, yylen);
+        stack_type::slice range (yystack_, yylen);
+        YYLLOC_DEFAULT (yylhs.location, range, yylen);
+        yyerror_range[1].location = yylhs.location;
       }
 
       // Perform the reduction.
       YY_REDUCE_PRINT (yyn);
+#if YY_EXCEPTIONS
       try
+#endif // YY_EXCEPTIONS
         {
           switch (yyn)
             {
-  case 2:
-#line 62 "parser.yy" // lalr1.cc:859
-    {
-		ctx.functions.push_back(yystack_[0].value.as< Function > ());
-	}
-#line 2175 "parser.cpp.re" // lalr1.cc:859
-    break;
 
-  case 7:
-#line 73 "parser.yy" // lalr1.cc:859
-    {
-		yylhs.value.as< Function > () = Function(yystack_[6].value.as< float > ());
-	}
-#line 2183 "parser.cpp.re" // lalr1.cc:859
-    break;
+#line 2842 "parser.cpp.re"
 
-  case 8:
-#line 77 "parser.yy" // lalr1.cc:859
-    {
-		yylhs.value.as< Function > () = Function(yystack_[4].value.as< float > ());
-	}
-#line 2191 "parser.cpp.re" // lalr1.cc:859
-    break;
-
-  case 9:
-#line 98 "parser.yy" // lalr1.cc:859
-    {
-		yystack_[2].value.as< std::vector<Type> > ().push_back(yystack_[0].value.as< Type > ());
-	}
-#line 2199 "parser.cpp.re" // lalr1.cc:859
-    break;
-
-  case 10:
-#line 102 "parser.yy" // lalr1.cc:859
-    {
-		yylhs.value.as< std::vector<Type> > () = { yystack_[0].value.as< Type > () };
-	}
-#line 2207 "parser.cpp.re" // lalr1.cc:859
-    break;
-
-
-#line 2211 "parser.cpp.re" // lalr1.cc:859
             default:
               break;
             }
         }
+#if YY_EXCEPTIONS
       catch (const syntax_error& yyexc)
         {
+          YYCDEBUG << "Caught exception: " << yyexc.what() << '\n';
           error (yyexc);
           YYERROR;
         }
+#endif // YY_EXCEPTIONS
       YY_SYMBOL_PRINT ("-> $$ =", yylhs);
       yypop_ (yylen);
       yylen = 0;
       YY_STACK_PRINT ();
 
       // Shift the result of the reduction.
-      yypush_ (YY_NULLPTR, yylhs);
+      yypush_ (YY_NULLPTR, YY_MOVE (yylhs));
     }
     goto yynewstate;
+
 
   /*--------------------------------------.
   | yyerrlab -- here on detecting error.  |
@@ -2263,18 +2899,17 @@ namespace yy {
   | yyerrorlab -- error raised explicitly by YYERROR.  |
   `---------------------------------------------------*/
   yyerrorlab:
-
-    /* Pacify compilers like GCC when the user code never invokes
-       YYERROR and the label yyerrorlab therefore never appears in user
-       code.  */
+    /* Pacify compilers when the user code never invokes YYERROR and
+       the label yyerrorlab therefore never appears in user code.  */
     if (false)
-      goto yyerrorlab;
-    yyerror_range[1].location = yystack_[yylen - 1].location;
+      YYERROR;
+
     /* Do not reclaim the symbols of the rule whose action triggered
        this YYERROR.  */
     yypop_ (yylen);
     yylen = 0;
     goto yyerrlab1;
+
 
   /*-------------------------------------------------------------.
   | yyerrlab1 -- common code for both syntax error and YYERROR.  |
@@ -2312,20 +2947,30 @@ namespace yy {
 
       // Shift the error token.
       error_token.state = yyn;
-      yypush_ ("Shifting", error_token);
+      yypush_ ("Shifting", YY_MOVE (error_token));
     }
     goto yynewstate;
 
-    // Accept.
+
+  /*-------------------------------------.
+  | yyacceptlab -- YYACCEPT comes here.  |
+  `-------------------------------------*/
   yyacceptlab:
     yyresult = 0;
     goto yyreturn;
 
-    // Abort.
+
+  /*-----------------------------------.
+  | yyabortlab -- YYABORT comes here.  |
+  `-----------------------------------*/
   yyabortlab:
     yyresult = 1;
     goto yyreturn;
 
+
+  /*-----------------------------------------------------.
+  | yyreturn -- parsing is finished, return the result.  |
+  `-----------------------------------------------------*/
   yyreturn:
     if (!yyla.empty ())
       yy_destroy_ ("Cleanup: discarding lookahead", yyla);
@@ -2341,12 +2986,12 @@ namespace yy {
 
     return yyresult;
   }
+#if YY_EXCEPTIONS
     catch (...)
       {
-        YYCDEBUG << "Exception caught: cleaning lookahead and stack"
-                 << std::endl;
+        YYCDEBUG << "Exception caught: cleaning lookahead and stack\n";
         // Do not try to display the values of the reclaimed symbols,
-        // as their printer might throw an exception.
+        // as their printers might throw an exception.
         if (!yyla.empty ())
           yy_destroy_ (YY_NULLPTR, yyla);
 
@@ -2357,17 +3002,18 @@ namespace yy {
           }
         throw;
       }
+#endif // YY_EXCEPTIONS
   }
 
   void
-  conj_parser::error (const syntax_error& yyexc)
+   parser ::error (const syntax_error& yyexc)
   {
-    error (yyexc.location, yyexc.what());
+    error (yyexc.location, yyexc.what ());
   }
 
   // Generate an error message.
   std::string
-  conj_parser::yysyntax_error_ (state_type yystate, const symbol_type& yyla) const
+   parser ::yysyntax_error_ (state_type yystate, const symbol_type& yyla) const
   {
     // Number of reported tokens (one for the "unexpected", one per
     // "expected").
@@ -2438,12 +3084,13 @@ namespace yy {
         case N:                               \
           yyformat = S;                       \
         break
-        YYCASE_(0, YY_("syntax error"));
-        YYCASE_(1, YY_("syntax error, unexpected %s"));
-        YYCASE_(2, YY_("syntax error, unexpected %s, expecting %s"));
-        YYCASE_(3, YY_("syntax error, unexpected %s, expecting %s or %s"));
-        YYCASE_(4, YY_("syntax error, unexpected %s, expecting %s or %s or %s"));
-        YYCASE_(5, YY_("syntax error, unexpected %s, expecting %s or %s or %s or %s"));
+      default: // Avoid compiler warnings.
+        YYCASE_ (0, YY_("syntax error"));
+        YYCASE_ (1, YY_("syntax error, unexpected %s"));
+        YYCASE_ (2, YY_("syntax error, unexpected %s, expecting %s"));
+        YYCASE_ (3, YY_("syntax error, unexpected %s, expecting %s or %s"));
+        YYCASE_ (4, YY_("syntax error, unexpected %s, expecting %s or %s or %s"));
+        YYCASE_ (5, YY_("syntax error, unexpected %s, expecting %s or %s or %s or %s"));
 #undef YYCASE_
       }
 
@@ -2462,82 +3109,420 @@ namespace yy {
   }
 
 
-  const signed char conj_parser::yypact_ninf_ = -20;
+  const short  parser ::yypact_ninf_ = -170;
 
-  const signed char conj_parser::yytable_ninf_ = -1;
+  const signed char  parser ::yytable_ninf_ = -122;
 
-  const signed char
-  conj_parser::yypact_[] =
+  const short
+   parser ::yypact_[] =
   {
-     -20,     4,   -20,    -1,     0,     5,   -17,   -20,   -20,   -20,
-     -20,   -10,    -9,    -5,     9,     8,    11,    12,   -13,   -12,
-      -4,   -11,    -8,    19,   -20,    20,    21,   -20,    -3,    -2,
-     -20,   -19,    -7,   -20,   -20,    25,   -20,   -20,   -20,   -20,
-     -20,    -6,   -20
+     816,  -170,  -170,  -170,   881,  -170,  -170,  -170,  -170,  -170,
+    -170,     0,    11,   921,   790,  -170,   596,   881,  -170,   539,
+    -170,  -170,   551,   124,   684,  -170,  -170,  -170,   881,   -72,
+     790,   -61,    32,  -170,    -3,   790,     5,   790,   143,  -170,
+    -170,   -31,  -170,   482,  -170,  -170,   256,  -170,   596,  -170,
+     551,   856,   208,  -170,  -170,   790,   372,  -170,   660,    32,
+     -14,   -42,  -170,  -170,  -170,   790,  -170,  -170,   764,   394,
+    -170,   146,   921,  -170,   591,  -170,   551,  1014,  -170,   965,
+     965,   976,    -5,    37,    59,    62,   484,    79,    26,    61,
+     612,  -170,   724,  -170,  -170,  -170,  -170,  -170,  -170,  -170,
+      63,   986,   976,  -170,   129,   157,   199,     7,   210,    72,
+      96,   115,   187,    12,  -170,  -170,   -21,  -170,  -170,  -170,
+     313,   370,  -170,  -170,  -170,  -170,   127,  -170,  -170,  -170,
+    -170,   896,   150,   148,  -170,    71,  -170,  -170,  -170,  -170,
+     156,   429,  -170,  -170,   976,    47,  -170,   152,   -20,   976,
+      32,  -170,  -170,  -170,   168,   174,  -170,   179,   869,   937,
+    -170,   591,  -170,  -170,  -170,   976,  -170,  -170,   166,   484,
+     976,   976,   976,   193,   616,  -170,  -170,  -170,    52,    73,
+     188,  -170,  -170,   274,   976,   242,  -170,  -170,  -170,  -170,
+    -170,  -170,  -170,  -170,  -170,  -170,  -170,  -170,   976,  -170,
+     976,   976,   976,   976,   976,   976,   976,   976,   976,   976,
+     976,   976,   976,   976,   976,   976,   976,   976,   976,   976,
+    -170,  -170,   427,  -170,  -170,   804,  -170,  -170,  -170,   708,
+    -170,   248,  -170,  -170,  -170,   660,  -170,   976,  -170,  -170,
+    -170,  -170,  -170,  -170,  -170,   194,  -170,   195,  -170,   -10,
+     484,  -170,    83,    84,   109,   201,   616,  -170,  -170,   976,
+    -170,   110,  -170,   147,  -170,  -170,  -170,  -170,  -170,   129,
+     129,   157,   157,   199,   199,   199,   199,     7,     7,   210,
+      72,    96,   115,   187,    -8,  -170,  -170,  -170,  -170,  -170,
+    -170,  -170,  -170,  -170,   184,  -170,  -170,   484,   484,   484,
+     976,   961,  -170,  -170,   976,  -170,   976,  -170,  -170,   213,
+    -170,  -170,   117,   484,   120,  -170,  -170,   484,   191,  -170,
+     484,  -170,  -170,  -170
   };
 
   const unsigned char
-  conj_parser::yydefact_[] =
+   parser ::yydefact_[] =
   {
-       6,     0,     1,     0,     0,     0,     0,     2,     3,     4,
-       5,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,    15,     0,     0,    12,     0,     0,
-      10,     0,     0,    14,    16,     0,    12,    13,     8,    11,
-       9,     0,     7
+       0,    97,    83,    84,    77,    89,    90,    91,    92,    93,
+      88,     0,     0,     0,     0,   187,     0,    73,    96,    75,
+      94,    95,     0,   120,     0,   184,   186,    78,    75,   100,
+       0,   115,     0,   121,     0,   107,     0,   105,   137,    86,
+      71,     0,    79,    81,    74,    76,     0,   166,     0,   191,
+       0,     0,     0,     1,   185,     0,     0,   101,     0,     0,
+     118,     0,   116,   122,   106,     0,    85,   104,     0,     0,
+     138,   139,     0,    72,     0,   189,     0,     2,     3,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,   183,     0,    18,    19,    20,    21,   170,   162,     5,
+      14,    22,     0,    24,    28,    31,    34,    39,    42,    44,
+      46,    48,    50,    52,    54,    68,     0,   168,   154,   155,
+       0,     0,   156,   157,   158,   159,    81,   167,   190,    97,
+     127,   134,     0,   128,   130,     0,     2,   124,    22,    70,
+       0,     0,    99,   102,     0,     0,   108,   110,     0,     0,
+       0,   113,    87,   145,     0,     0,   141,     0,     0,     0,
+      80,     0,   149,    82,   188,     0,    15,    16,     0,     0,
+       0,     0,     0,     0,     0,   179,   180,   181,     0,     0,
+       0,    10,    11,     0,     0,     0,    57,    58,    59,    60,
+      61,    62,    63,    64,    65,    66,    67,    56,     0,    17,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+     171,   164,     0,   163,   169,     0,   132,   133,   125,     0,
+     126,     0,   123,    98,   111,     0,   103,     0,   114,   119,
+     117,   146,   140,   142,   147,     0,   143,     0,   152,     0,
+       0,   161,     0,     0,     0,     0,     0,   182,     4,     0,
+       7,     0,    12,     0,     9,    55,    25,    26,    27,    29,
+      30,    32,    33,    37,    38,    35,    36,    40,    41,    43,
+      45,    47,    49,    51,     0,    69,   165,   129,   131,   136,
+     109,   112,   148,   144,     0,   150,   160,     0,     0,     0,
+       0,     0,    23,     8,     0,     6,     0,   151,   153,   172,
+     174,   175,     0,     0,     0,    13,    53,     0,     0,   177,
+       0,   173,   176,   178
   };
 
-  const signed char
-  conj_parser::yypgoto_[] =
+  const short
+   parser ::yypgoto_[] =
   {
-     -20,   -20,   -20,   -20,     1,   -20,   -20,   -20,   -20
+    -170,  -170,  -170,  -170,   -52,  -170,   -88,    28,    30,   -16,
+      27,    50,    66,    67,    68,    88,  -170,   -51,   -17,  -170,
+     -43,   -59,    13,    16,  -170,   204,  -170,  -170,  -170,    46,
+    -170,   228,   -45,    17,  -170,    55,  -170,   241,   151,    -7,
+    -170,   -39,  -170,    86,  -170,   -58,   -15,  -170,  -159,  -170,
+     -83,  -170,    23,    60,   196,  -169,  -170,  -170,  -170,  -170,
+     295,  -170
   };
 
-  const signed char
-  conj_parser::yydefgoto_[] =
+  const short
+   parser ::yydefgoto_[] =
   {
-      -1,     1,     7,    31,    32,    39,     8,     9,    10
+      -1,    99,   100,   261,   101,   102,   103,   104,   105,   106,
+     107,   108,   109,   110,   111,   112,   113,   114,   115,   198,
+     116,   140,    47,    48,    41,    42,    17,    18,    36,    28,
+      20,    56,    57,    58,   145,   146,    21,    61,    62,    22,
+      23,   154,   133,   134,   135,    39,   155,    71,   163,   249,
+     117,   118,   119,    50,   121,   122,   123,   124,   125,    24,
+      25,    26
+  };
+
+  const short
+   parser ::yytable_[] =
+  {
+     138,   139,   248,   173,    29,   256,    34,   152,    55,    43,
+     157,   143,   132,    15,   199,    31,    16,   138,   139,    59,
+      27,   150,   168,    70,   207,   208,   217,   166,   167,   138,
+     139,    38,    72,    44,   180,    45,    60,    15,   224,   151,
+      16,   126,   219,   150,    45,    49,    19,   178,    73,   179,
+     138,   147,    64,   294,    67,   219,    63,   162,   220,    33,
+      37,   238,    33,   127,   149,   126,    75,   131,    65,   306,
+      19,   295,   169,   128,   181,   182,    37,    66,   209,   210,
+      30,    37,    38,    37,   131,   234,   251,   301,   218,   127,
+     239,    32,   138,   139,    33,   170,   143,   138,   139,   164,
+     247,    37,    37,    76,    33,   175,   120,   138,   139,    38,
+     235,    37,   266,   267,   268,   219,   227,   171,    33,   245,
+     172,   183,   179,   184,   226,   185,   236,   252,   253,   254,
+     230,   257,   258,   127,   231,   308,   219,   174,    37,   224,
+     176,   263,   297,   298,   162,   213,   219,   219,   138,   138,
+     138,   138,   138,   138,   138,   138,   138,   138,   138,   138,
+     138,   138,   138,   138,   138,   138,   262,   296,   299,   303,
+     214,   302,   219,   304,   131,   284,   318,    33,   291,   320,
+     219,   265,    51,   219,    52,   138,   139,    37,   136,    78,
+     215,   273,   274,   275,   276,    79,    80,   200,   201,   202,
+     216,    68,   285,    69,   158,    74,   159,   138,   305,   228,
+     219,   229,   136,    78,   309,   310,   311,   232,    34,    79,
+      80,   203,   204,   205,   206,   211,   212,   241,   147,   237,
+     319,   269,   270,   242,   321,   271,   272,   323,   277,   278,
+     243,   131,    92,   250,   255,   131,   264,   259,    93,    94,
+      95,    96,   289,   292,   138,   316,   293,   312,   314,   300,
+      77,    78,   317,   279,   161,   307,    92,    79,    80,   137,
+     322,    19,    93,    94,    95,    96,   160,   162,   136,    78,
+     280,    33,   281,   141,   282,    79,    80,   315,     2,     3,
+     290,     4,     5,     6,     7,     8,     9,    10,    11,    12,
+     148,   240,    81,    82,    83,   283,    84,    85,    86,    87,
+      88,    89,    90,    91,    92,   288,   222,    77,    78,    54,
+      93,    94,    95,    96,    79,    80,     0,    14,     0,     0,
+       0,     0,    92,   260,     0,    97,    46,    98,    93,    94,
+      95,    96,     0,     0,     0,     2,     3,     0,     4,     5,
+       6,     7,     8,     9,    10,    11,    12,     0,     0,    81,
+      82,    83,     0,    84,    85,    86,    87,    88,    89,    90,
+      91,    92,     0,     0,   136,    78,     1,    93,    94,    95,
+      96,    79,    80,     0,    14,     0,     0,     0,     0,     0,
+       0,     0,    97,    46,   221,     0,     0,     0,   136,    78,
+       0,     0,     0,     0,     0,    79,    80,    35,     5,     6,
+       7,     8,     9,    10,    11,    12,    81,    82,    83,     0,
+      84,    85,    86,    87,    88,    89,    90,    91,    92,     0,
+       0,   136,    78,     1,    93,    94,    95,    96,    79,    80,
+       0,     0,     0,    14,     0,     0,     0,     0,     0,    97,
+      46,   223,    92,   142,     0,   156,     0,     0,    93,    94,
+      95,    96,     0,     0,    35,     5,     6,     7,     8,     9,
+      10,    11,    12,    81,    82,    83,     0,    84,    85,    86,
+      87,    88,    89,    90,    91,    92,     1,     0,   136,    78,
+       0,    93,    94,    95,    96,    79,    80,     0,     0,     0,
+      14,     0,     0,     0,     0,     0,    97,    46,   286,     0,
+     233,     0,     0,     0,     2,     3,     0,     4,     5,     6,
+       7,     8,     9,    10,    11,    12,     0,     0,     0,     0,
+      81,    82,    83,     0,    84,    85,    86,    87,    88,    89,
+      90,    91,    92,     1,     0,     0,     0,     0,    93,    94,
+      95,    96,     0,    14,     0,     1,     0,     0,     0,     0,
+      74,     0,    46,    97,    46,     0,     0,     0,     0,     0,
+       0,     2,     3,     0,     4,     5,     6,     7,     8,     9,
+      10,    11,    12,     2,     3,     0,     4,     5,     6,     7,
+       8,     9,    10,    11,    12,   136,    78,     0,     0,     0,
+       1,     0,    79,    80,     0,     0,     0,     0,     0,     0,
+      14,     0,     0,     0,     0,     0,   136,    78,     0,  -121,
+     136,    78,    14,    79,    80,     0,     0,    79,    80,     0,
+       0,    46,     5,     6,     7,     8,     9,    10,    11,    12,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,    92,
+       0,     0,     0,     0,    13,    93,    94,    95,    96,     0,
+       0,     0,     0,     0,     1,     0,     0,    14,     0,     0,
+      92,   161,     0,     0,    92,    40,    93,    94,    95,    96,
+      93,    94,    95,    96,    53,     0,     0,     0,     1,     0,
+       0,   177,     0,     0,     0,    97,     5,     6,     7,     8,
+       9,    10,    11,    12,     0,     0,     0,     0,     0,     0,
+       0,     0,     1,     0,     0,     0,     2,     3,    13,     4,
+       5,     6,     7,     8,     9,    10,    11,    12,    77,    78,
+       0,    14,     0,     0,     0,    79,    80,   144,     0,     0,
+       2,     3,    13,     4,     5,     6,     7,     8,     9,    10,
+      11,    12,   287,     0,     0,    14,     0,     0,     0,    35,
+       5,     6,     7,     8,     9,    10,    11,    12,     1,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,    14,
+       0,     0,    92,     0,     0,     0,     0,     0,    93,    94,
+      95,    96,     0,     0,     1,    14,     2,     3,     0,     4,
+       5,     6,     7,     8,     9,    10,    11,    12,     1,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       1,     0,    68,   153,    69,    35,     5,     6,     7,     8,
+       9,    10,    11,    12,     0,    14,     2,     3,     0,     4,
+       5,     6,     7,     8,     9,    10,    11,    12,     2,     3,
+       0,     4,     5,     6,     7,     8,     9,    10,    11,    12,
+     129,    14,   225,   153,    69,     0,     0,     0,     0,     0,
+       0,     0,     0,     1,    13,    14,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     1,     0,    14,     2,     3,
+       0,     4,     5,     6,     7,     8,     9,    10,    11,    12,
+       1,     2,     3,     0,     4,     5,     6,     7,     8,     9,
+      10,    11,    12,     2,     3,   130,     4,     5,     6,     7,
+       8,     9,    10,    11,    12,     1,     0,    14,   244,     0,
+       0,     0,     5,     6,     7,     8,     9,    10,    11,    12,
+      14,   136,    78,     0,     0,     0,     0,     0,    79,    80,
+       0,     0,    14,     0,   225,     0,    69,     5,     6,     7,
+       8,     9,    10,    11,    12,   136,    78,    14,     0,   136,
+      78,     0,    79,    80,     0,     0,    79,    80,     0,    13,
+     136,    78,     0,     0,     0,     0,     0,    79,    80,     0,
+       0,     0,    14,     0,     0,    92,     0,     0,   246,     0,
+       0,    93,    94,    95,    96,   186,   187,   188,   189,   190,
+       0,     0,   191,   192,   193,   194,   195,   196,   -97,    92,
+     313,     0,     0,   165,     0,    93,    94,    95,    96,    93,
+      94,    95,    96,     0,    92,     0,     0,     0,     0,     0,
+      93,    94,    95,    96,     0,     0,   -97,   -97,     0,   -97,
+     -97,   -97,   -97,   -97,   -97,   -97,   -97,   -97,     0,     0,
+       0,     0,     0,     0,   197
+  };
+
+  const short
+   parser ::yycheck_[] =
+  {
+      52,    52,   161,    86,     4,   174,    13,    65,    80,    16,
+      69,    56,    51,     0,   102,     4,     0,    69,    69,    80,
+       4,    63,    81,    38,    17,    18,    14,    79,    80,    81,
+      81,    14,    63,    17,    92,    19,     4,    24,   121,    81,
+      24,    48,    63,    63,    28,    22,     0,    90,    79,    92,
+     102,    58,    35,    63,    37,    63,    59,    74,    79,    13,
+      14,    81,    16,    50,    78,    72,    43,    51,    63,    77,
+      24,    81,    77,    50,    11,    12,    30,    72,    71,    72,
+      80,    35,    65,    37,    68,   144,   169,   256,    76,    76,
+     149,    80,   144,   144,    48,    58,   141,   149,   149,    76,
+     159,    55,    56,    43,    58,    79,    46,   159,   159,    92,
+      63,    65,   200,   201,   202,    63,   131,    58,    72,   158,
+      58,    58,   165,    60,   131,    62,    79,   170,   171,   172,
+      59,    79,    59,   120,    63,   294,    63,    58,    92,   222,
+      79,   184,    59,    59,   161,    73,    63,    63,   200,   201,
+     202,   203,   204,   205,   206,   207,   208,   209,   210,   211,
+     212,   213,   214,   215,   216,   217,   183,   250,    59,    59,
+      74,   259,    63,    63,   158,   218,    59,   131,   237,    59,
+      63,   198,    58,    63,    60,   237,   237,   141,     4,     5,
+      75,   207,   208,   209,   210,    11,    12,    68,    69,    70,
+      13,    58,   219,    60,    58,    78,    60,   259,    61,    59,
+      63,    63,     4,     5,   297,   298,   299,    61,   225,    11,
+      12,    64,    65,    24,    25,    15,    16,    59,   235,    77,
+     313,   203,   204,    59,   317,   205,   206,   320,   211,   212,
+      61,   225,    58,    77,    51,   229,     4,    59,    64,    65,
+      66,    67,     4,    59,   306,   306,    61,   300,   301,    58,
+       4,     5,    49,   213,    80,    81,    58,    11,    12,    61,
+      79,   225,    64,    65,    66,    67,    72,   294,     4,     5,
+     214,   235,   215,    55,   216,    11,    12,   304,    32,    33,
+     235,    35,    36,    37,    38,    39,    40,    41,    42,    43,
+      59,   150,    46,    47,    48,   217,    50,    51,    52,    53,
+      54,    55,    56,    57,    58,   229,   120,     4,     5,    24,
+      64,    65,    66,    67,    11,    12,    -1,    71,    -1,    -1,
+      -1,    -1,    58,    59,    -1,    79,    80,    81,    64,    65,
+      66,    67,    -1,    -1,    -1,    32,    33,    -1,    35,    36,
+      37,    38,    39,    40,    41,    42,    43,    -1,    -1,    46,
+      47,    48,    -1,    50,    51,    52,    53,    54,    55,    56,
+      57,    58,    -1,    -1,     4,     5,     4,    64,    65,    66,
+      67,    11,    12,    -1,    71,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    79,    80,    81,    -1,    -1,    -1,     4,     5,
+      -1,    -1,    -1,    -1,    -1,    11,    12,    35,    36,    37,
+      38,    39,    40,    41,    42,    43,    46,    47,    48,    -1,
+      50,    51,    52,    53,    54,    55,    56,    57,    58,    -1,
+      -1,     4,     5,     4,    64,    65,    66,    67,    11,    12,
+      -1,    -1,    -1,    71,    -1,    -1,    -1,    -1,    -1,    79,
+      80,    81,    58,    81,    -1,    61,    -1,    -1,    64,    65,
+      66,    67,    -1,    -1,    35,    36,    37,    38,    39,    40,
+      41,    42,    43,    46,    47,    48,    -1,    50,    51,    52,
+      53,    54,    55,    56,    57,    58,     4,    -1,     4,     5,
+      -1,    64,    65,    66,    67,    11,    12,    -1,    -1,    -1,
+      71,    -1,    -1,    -1,    -1,    -1,    79,    80,    81,    -1,
+      81,    -1,    -1,    -1,    32,    33,    -1,    35,    36,    37,
+      38,    39,    40,    41,    42,    43,    -1,    -1,    -1,    -1,
+      46,    47,    48,    -1,    50,    51,    52,    53,    54,    55,
+      56,    57,    58,     4,    -1,    -1,    -1,    -1,    64,    65,
+      66,    67,    -1,    71,    -1,     4,    -1,    -1,    -1,    -1,
+      78,    -1,    80,    79,    80,    -1,    -1,    -1,    -1,    -1,
+      -1,    32,    33,    -1,    35,    36,    37,    38,    39,    40,
+      41,    42,    43,    32,    33,    -1,    35,    36,    37,    38,
+      39,    40,    41,    42,    43,     4,     5,    -1,    -1,    -1,
+       4,    -1,    11,    12,    -1,    -1,    -1,    -1,    -1,    -1,
+      71,    -1,    -1,    -1,    -1,    -1,     4,     5,    -1,    80,
+       4,     5,    71,    11,    12,    -1,    -1,    11,    12,    -1,
+      -1,    80,    36,    37,    38,    39,    40,    41,    42,    43,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    58,
+      -1,    -1,    -1,    -1,    58,    64,    65,    66,    67,    -1,
+      -1,    -1,    -1,    -1,     4,    -1,    -1,    71,    -1,    -1,
+      58,    80,    -1,    -1,    58,    79,    64,    65,    66,    67,
+      64,    65,    66,    67,     0,    -1,    -1,    -1,     4,    -1,
+      -1,    79,    -1,    -1,    -1,    79,    36,    37,    38,    39,
+      40,    41,    42,    43,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,     4,    -1,    -1,    -1,    32,    33,    58,    35,
+      36,    37,    38,    39,    40,    41,    42,    43,     4,     5,
+      -1,    71,    -1,    -1,    -1,    11,    12,    77,    -1,    -1,
+      32,    33,    58,    35,    36,    37,    38,    39,    40,    41,
+      42,    43,    44,    -1,    -1,    71,    -1,    -1,    -1,    35,
+      36,    37,    38,    39,    40,    41,    42,    43,     4,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    71,
+      -1,    -1,    58,    -1,    -1,    -1,    -1,    -1,    64,    65,
+      66,    67,    -1,    -1,     4,    71,    32,    33,    -1,    35,
+      36,    37,    38,    39,    40,    41,    42,    43,     4,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+       4,    -1,    58,    59,    60,    35,    36,    37,    38,    39,
+      40,    41,    42,    43,    -1,    71,    32,    33,    -1,    35,
+      36,    37,    38,    39,    40,    41,    42,    43,    32,    33,
+      -1,    35,    36,    37,    38,    39,    40,    41,    42,    43,
+       4,    71,    58,    59,    60,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,     4,    58,    71,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,     4,    -1,    71,    32,    33,
+      -1,    35,    36,    37,    38,    39,    40,    41,    42,    43,
+       4,    32,    33,    -1,    35,    36,    37,    38,    39,    40,
+      41,    42,    43,    32,    33,    59,    35,    36,    37,    38,
+      39,    40,    41,    42,    43,     4,    -1,    71,    59,    -1,
+      -1,    -1,    36,    37,    38,    39,    40,    41,    42,    43,
+      71,     4,     5,    -1,    -1,    -1,    -1,    -1,    11,    12,
+      -1,    -1,    71,    -1,    58,    -1,    60,    36,    37,    38,
+      39,    40,    41,    42,    43,     4,     5,    71,    -1,     4,
+       5,    -1,    11,    12,    -1,    -1,    11,    12,    -1,    58,
+       4,     5,    -1,    -1,    -1,    -1,    -1,    11,    12,    -1,
+      -1,    -1,    71,    -1,    -1,    58,    -1,    -1,    61,    -1,
+      -1,    64,    65,    66,    67,    19,    20,    21,    22,    23,
+      -1,    -1,    26,    27,    28,    29,    30,    31,     4,    58,
+      59,    -1,    -1,    58,    -1,    64,    65,    66,    67,    64,
+      65,    66,    67,    -1,    58,    -1,    -1,    -1,    -1,    -1,
+      64,    65,    66,    67,    -1,    -1,    32,    33,    -1,    35,
+      36,    37,    38,    39,    40,    41,    42,    43,    -1,    -1,
+      -1,    -1,    -1,    -1,    78
   };
 
   const unsigned char
-  conj_parser::yytable_[] =
+   parser ::yystos_[] =
   {
-      37,    37,    26,    35,     2,    11,    12,     3,     4,     5,
-       6,    13,    14,    36,    15,    16,    18,    19,    22,    17,
-      20,    21,    23,    25,    27,    28,    38,    42,    29,     0,
-      30,    24,    33,    34,    40,     0,     0,    41
-  };
-
-  const signed char
-  conj_parser::yycheck_[] =
-  {
-       7,     7,    10,    22,     0,     6,     6,     3,     4,     5,
-       6,     6,    29,    32,    24,    24,     7,     9,    31,    24,
-       9,     9,    34,    34,    32,     6,    33,    33,     8,    -1,
-       9,    35,    35,    35,     9,    -1,    -1,    36
+       0,     4,    32,    33,    35,    36,    37,    38,    39,    40,
+      41,    42,    43,    58,    71,   104,   105,   108,   109,   111,
+     112,   118,   121,   122,   141,   142,   143,   105,   111,     4,
+      80,     4,    80,   111,   121,    35,   110,   111,   115,   127,
+      79,   106,   107,   121,   105,   105,    80,   104,   105,   134,
+     135,    58,    60,     0,   142,    80,   113,   114,   115,    80,
+       4,   119,   120,    59,   115,    63,    72,   115,    58,    60,
+     128,   129,    63,    79,    78,   134,   135,     4,     5,    11,
+      12,    46,    47,    48,    50,    51,    52,    53,    54,    55,
+      56,    57,    58,    64,    65,    66,    67,    79,    81,    83,
+      84,    86,    87,    88,    89,    90,    91,    92,    93,    94,
+      95,    96,    97,    98,    99,   100,   102,   132,   133,   134,
+     135,   136,   137,   138,   139,   140,   121,   104,   134,     4,
+      59,   105,   123,   124,   125,   126,     4,    61,    86,    99,
+     103,   113,    81,   114,    77,   116,   117,   121,   119,    78,
+      63,    81,   127,    59,   123,   128,    61,   103,    58,    60,
+     107,    80,   100,   130,   134,    58,    86,    86,   103,    77,
+      58,    58,    58,   132,    58,    79,    79,    79,   102,   102,
+     127,    11,    12,    58,    60,    62,    19,    20,    21,    22,
+      23,    26,    27,    28,    29,    30,    31,    78,   101,    88,
+      68,    69,    70,    64,    65,    24,    25,    17,    18,    71,
+      72,    15,    16,    73,    74,    75,    13,    14,    76,    63,
+      79,    81,   136,    81,   132,    58,   121,   128,    59,    63,
+      59,    63,    61,    81,   103,    63,    79,    77,    81,   103,
+     120,    59,    59,    61,    59,   123,    61,   103,   130,   131,
+      77,   132,   102,   102,   102,    51,   137,    79,    59,    59,
+      59,    85,   100,   102,     4,   100,    88,    88,    88,    89,
+      89,    90,    90,    91,    91,    91,    91,    92,    92,    93,
+      94,    95,    96,    97,   102,   100,    81,    44,   125,     4,
+     117,   103,    59,    61,    63,    81,   132,    59,    59,    59,
+      58,   137,    88,    59,    63,    61,    77,    81,   130,   132,
+     132,   132,   102,    59,   102,   100,    99,    49,    59,   132,
+      59,   132,    79,   132
   };
 
   const unsigned char
-  conj_parser::yystos_[] =
+   parser ::yyr1_[] =
   {
-       0,    37,     0,     3,     4,     5,     6,    38,    42,    43,
-      44,     6,     6,     6,    29,    24,    24,    24,     7,     9,
-       9,     9,    31,    34,    35,    34,    10,    32,     6,     8,
-       9,    39,    40,    35,    35,    22,    32,     7,    33,    41,
-       9,    40,    33
+       0,    82,    83,    83,    83,    84,    84,    84,    84,    84,
+      84,    84,    85,    85,    86,    86,    86,    86,    87,    87,
+      87,    87,    88,    88,    89,    89,    89,    89,    90,    90,
+      90,    91,    91,    91,    92,    92,    92,    92,    92,    93,
+      93,    93,    94,    94,    95,    95,    96,    96,    97,    97,
+      98,    98,    99,    99,   100,   100,   101,   101,   101,   101,
+     101,   101,   101,   101,   101,   101,   101,   101,   102,   102,
+     103,   104,   104,   105,   105,   105,   105,   105,   105,   106,
+     106,   107,   107,   108,   108,   109,   110,   110,   111,   111,
+     111,   111,   111,   111,   111,   111,   111,   111,   112,   112,
+     112,   113,   113,   114,   115,   115,   115,   115,   116,   116,
+     117,   117,   117,   118,   118,   118,   119,   119,   120,   120,
+     121,   122,   122,   122,   122,   122,   122,   122,   123,   123,
+     124,   124,   125,   125,   125,   126,   126,   127,   127,   128,
+     129,   129,   129,   129,   129,   129,   129,   129,   129,   130,
+     130,   130,   131,   131,   132,   132,   132,   132,   132,   132,
+     133,   133,   134,   134,   134,   134,   135,   135,   136,   136,
+     137,   137,   138,   138,   138,   139,   139,   139,   139,   140,
+     140,   140,   140,   140,   141,   141,   142,   142,   143,   143,
+     143,   143
   };
 
   const unsigned char
-  conj_parser::yyr1_[] =
+   parser ::yyr2_[] =
   {
-       0,    36,    37,    37,    37,    37,    37,    38,    38,    39,
-      39,    40,    40,    41,    42,    43,    44
-  };
-
-  const unsigned char
-  conj_parser::yyr2_[] =
-  {
-       0,     2,     2,     2,     2,     2,     0,     9,     7,     3,
-       1,     2,     0,     1,     7,     5,     7
+       0,     2,     1,     1,     3,     1,     4,     3,     4,     3,
+       2,     2,     1,     3,     1,     2,     2,     2,     1,     1,
+       1,     1,     1,     4,     1,     3,     3,     3,     1,     3,
+       3,     1,     3,     3,     1,     3,     3,     3,     3,     1,
+       3,     3,     1,     3,     1,     3,     1,     3,     1,     3,
+       1,     3,     1,     5,     1,     3,     1,     1,     1,     1,
+       1,     1,     1,     1,     1,     1,     1,     1,     1,     3,
+       1,     2,     3,     1,     2,     1,     2,     1,     2,     1,
+       3,     1,     3,     1,     1,     3,     1,     3,     1,     1,
+       1,     1,     1,     1,     1,     1,     1,     1,     5,     4,
+       2,     1,     2,     3,     2,     1,     2,     1,     1,     3,
+       1,     2,     3,     4,     5,     2,     1,     3,     1,     3,
+       1,     1,     3,     4,     3,     4,     4,     3,     1,     3,
+       1,     3,     2,     2,     1,     1,     3,     1,     2,     1,
+       3,     2,     3,     3,     4,     2,     3,     3,     4,     1,
+       3,     4,     1,     3,     1,     1,     1,     1,     1,     1,
+       4,     3,     2,     3,     3,     4,     1,     2,     1,     2,
+       1,     2,     5,     7,     5,     5,     7,     6,     7,     2,
+       2,     2,     3,     1,     1,     2,     1,     1,     4,     3,
+       3,     2
   };
 
 
@@ -2545,28 +3530,72 @@ namespace yy {
   // YYTNAME[SYMBOL-NUM] -- String name of the symbol SYMBOL-NUM.
   // First, the terminals, then, starting at \a yyntokens_, nonterminals.
   const char*
-  const conj_parser::yytname_[] =
+  const  parser ::yytname_[] =
   {
-  "END", "error", "$undefined", "\"attribute\"", "\"uniform\"",
-  "\"sampler\"", "IDENTIFIER", "FLOAT", "INT", "TYPE", "\"->\"", "\"||\"",
-  "\"&&\"", "\"==\"", "\"!=\"", "\"++\"", "\"--\"", "\"+=\"", "\"-=\"",
-  "\"*=\"", "\"/=\"", "\"%=\"", "','", "'?'", "':'", "'='", "'+'", "'-'",
-  "'*'", "'('", "'['", "')'", "'{'", "'}'", "'$'", "';'", "$accept",
-  "program", "function", "types", "expressions", "expression", "attribute",
-  "uniform", "sampler", YY_NULLPTR
+  "END", "error", "$undefined", "BLOCK_COMMENT_ERROR", "IDENTIFIER",
+  "CONSTANT", "TYPE_NAME", "\"attribute\"", "\"uniform\"", "\"sampler\"",
+  "\"import\"", "\"++\"", "\"--\"", "\"&&\"", "\"||\"", "\"==\"", "\"!=\"",
+  "\"<=\"", "\">=\"", "\"*=\"", "\"/=\"", "\"%=\"", "\"+=\"", "\"-=\"",
+  "\"<<\"", "\">>\"", "\"<<=\"", "\">>=\"", "\"&=\"", "\"^=\"", "\"|=\"",
+  "\"~=\"", "\"typedef\"", "\"extern\"", "\"operator\"", "\"const\"",
+  "\"int\"", "\"uint\"", "\"float\"", "\"double\"", "\"bool\"", "\"void\"",
+  "\"struct\"", "\"enum\"", "\"...\"", "\"->\"", "\"case\"", "\"default\"",
+  "\"if\"", "\"else\"", "\"switch\"", "\"while\"", "\"do\"", "\"for\"",
+  "\"continue\"", "\"break\"", "\"return\"", "\"discard\"", "'('", "')'",
+  "'['", "']'", "'.'", "','", "'+'", "'-'", "'~'", "'!'", "'*'", "'/'",
+  "'%'", "'<'", "'>'", "'&'", "'^'", "'|'", "'?'", "':'", "'='", "';'",
+  "'{'", "'}'", "$accept", "primary_expression", "postfix_expression",
+  "argument_expression_list", "unary_expression", "unary_operator",
+  "cast_expression", "multiplicative_expression", "additive_expression",
+  "shift_expression", "relational_expression", "equality_expression",
+  "and_expression", "exclusive_or_expression", "inclusive_or_expression",
+  "logical_and_expression", "logical_or_expression",
+  "conditional_expression", "assignment_expression", "assignment_operator",
+  "expression", "constant_expression", "declaration",
+  "declaration_specifiers", "init_declarator_list", "init_declarator",
+  "storage_class_specifier", "type_list_specifier", "type_list",
+  "type_specifier", "struct_specifier", "struct_declaration_list",
+  "struct_declaration", "specifier_qualifier_list",
+  "struct_declarator_list", "struct_declarator", "enum_specifier",
+  "enumerator_list", "enumerator", "declarator", "direct_declarator",
+  "parameter_type_list", "parameter_list", "parameter_declaration",
+  "identifier_list", "type_name", "abstract_declarator",
+  "direct_abstract_declarator", "initializer", "initializer_list",
+  "statement", "labeled_statement", "compound_statement",
+  "declaration_list", "statement_list", "expression_statement",
+  "selection_statement", "iteration_statement", "jump_statement",
+  "translation_unit", "external_declaration", "function_definition", YY_NULLPTR
   };
 
 #if YYDEBUG
-  const unsigned char
-  conj_parser::yyrline_[] =
+  const unsigned short
+   parser ::yyrline_[] =
   {
-       0,    61,    61,    65,    66,    67,    68,    72,    76,    97,
-     101,   108,   109,   113,   117,   121,   125
+       0,    63,    63,    64,    65,    69,    70,    71,    72,    73,
+      74,    75,    79,    80,    84,    85,    86,    87,    91,    92,
+      93,    94,    98,    99,   103,   104,   105,   106,   110,   111,
+     112,   116,   117,   118,   122,   123,   124,   125,   126,   130,
+     131,   132,   136,   137,   141,   142,   146,   147,   151,   152,
+     156,   157,   161,   162,   166,   167,   171,   172,   173,   174,
+     175,   176,   177,   178,   179,   180,   181,   182,   186,   187,
+     191,   195,   196,   200,   201,   202,   203,   204,   205,   209,
+     210,   214,   215,   219,   220,   224,   228,   229,   233,   234,
+     235,   236,   237,   238,   239,   240,   241,   242,   246,   247,
+     248,   252,   253,   257,   261,   262,   263,   264,   268,   269,
+     273,   274,   275,   279,   280,   281,   285,   286,   290,   291,
+     295,   299,   300,   301,   302,   303,   304,   305,   309,   310,
+     314,   315,   319,   320,   321,   325,   326,   330,   331,   335,
+     339,   340,   341,   342,   343,   344,   345,   346,   347,   351,
+     352,   353,   357,   358,   362,   363,   364,   365,   366,   367,
+     371,   372,   376,   377,   378,   379,   383,   384,   388,   389,
+     393,   394,   398,   399,   400,   404,   405,   406,   407,   411,
+     412,   413,   414,   415,   419,   420,   424,   425,   429,   430,
+     431,   432
   };
 
   // Print the state stack on the debug stream.
   void
-  conj_parser::yystack_print_ ()
+   parser ::yystack_print_ ()
   {
     *yycdebug_ << "Stack now";
     for (stack_type::const_iterator
@@ -2574,18 +3603,18 @@ namespace yy {
            i_end = yystack_.end ();
          i != i_end; ++i)
       *yycdebug_ << ' ' << i->state;
-    *yycdebug_ << std::endl;
+    *yycdebug_ << '\n';
   }
 
   // Report on the debug stream that the rule \a yyrule is going to be reduced.
   void
-  conj_parser::yy_reduce_print_ (int yyrule)
+   parser ::yy_reduce_print_ (int yyrule)
   {
-    unsigned int yylno = yyrline_[yyrule];
+    unsigned yylno = yyrline_[yyrule];
     int yynrhs = yyr2_[yyrule];
     // Print the symbols being reduced, and their result.
     *yycdebug_ << "Reducing stack by rule " << yyrule - 1
-               << " (line " << yylno << "):" << std::endl;
+               << " (line " << yylno << "):\n";
     // The symbols being reduced.
     for (int yyi = 0; yyi < yynrhs; yyi++)
       YY_SYMBOL_PRINT ("   $" << yyi + 1 << " =",
@@ -2594,86 +3623,145 @@ namespace yy {
 #endif // YYDEBUG
 
 
-
 } // yy
-#line 2600 "parser.cpp.re" // lalr1.cc:1167
-#line 128 "parser.yy" // lalr1.cc:1168
+#line 3628 "parser.cpp.re"
+
+#line 435 "parser.yy"
 
 
-Type stot(std::string s)
+/*!types:re2c*/
+
+yy::parser::symbol_type yy::yylex(lexcontext& ctx)
 {
-	return VOID;
+	const char* YYMARKER;
+	const char* anchor = ctx.cursor;
+	unsigned int comment_scope = 0;
+#define walk() { ctx.loc.columns(ctx.cursor - anchor); }
+#define advance(label) { anchor = ctx.cursor; ctx.loc.step(); goto label; }
+#define token(name) { walk(); return parser::make_##name(ctx.loc); }
+#define tokenv(name, ...) { walk(); return parser::make_##name(__VA_ARGS__, ctx.loc); }
+	%{ /* Begin re2c lexer */
+	re2c:yyfill:enable = 0;
+	re2c:define:YYCTYPE  = "char";
+	re2c:define:YYCURSOR = "ctx.cursor";
+	
+	end = "\x00";
+	%}
+
+init:
+	%{
+	// Keywords
+	"typedef"                { token(TYPEDEF); }
+	"if"                     { token(IF); }
+	"else"                   { token(ELSE); }
+	"switch"                 { token(SWITCH); }
+	"case"                   { token(CASE); }
+	"for"                    { token(FOR); }
+	"do"                     { token(DO); }
+	"while"                  { token(WHILE); }
+	"break"                  { token(BREAK); }
+	"continue"               { token(CONTINUE); }
+	"struct"                 { token(STRUCT); }
+	"import"                 { token(IMPORT); }
+	"extern"                 { token(EXTERN); }
+	"const"                  { token(CONST); }
+	"return"                 { token(RETURN); }
+	"enum"                   { token(ENUM); }
+	"discard"                { token(DISCARD); }
+	"attribute"              { token(ATTRIBUTE); }
+	"uniform"                { token(UNIFORM); }
+	"sampler"                { token(SAMPLER); }
+	"operator"               { token(OPERATOR); }
+	"int"                    { token(INT); }
+	"uint"                   { token(UINT); }
+	"float"                  { token(FLOAT); }
+	"double"                 { token(DOUBLE); }
+	"bool"                   { token(BOOL); }
+
+	// Whitespace
+	"\r\n" | [\r\n]          { ctx.loc.lines();   advance(init); }
+	[\t\v\b\f ]              { ctx.loc.columns(); advance(init); }
+	end                      { token(END); }
+
+	// Identifiers
+	[a-zA-Z_] [a-zA-Z_0-9]*  { tokenv(IDENTIFIER, std::string(anchor, ctx.cursor)); }
+
+	// Literals
+	[0-9]+ [f]               { token(CONSTANT); }
+	[0-9]+                   { token(CONSTANT); }
+
+	// Comment
+	"//" [^\r\n]*            { walk(); advance(init); }
+	"/*"                     { comment_scope++; goto block_comment; }
+
+	// Multi-char operators and any other character (either an operator or an invalid symbol)
+	"..."                    { token(ELLIPSIS); }
+	"->"                     { token(ARROW); }
+	"&&"                     { token(AND_OP); }
+	"||"                     { token(OR_OP); }
+	"++"                     { token(INC_OP); }
+	"--"                     { token(DEC_OP); }
+	"!="                     { token(NE_OP); }
+	"=="                     { token(EQ_OP); }
+	"+="                     { token(ADD_ASSIGN); }
+	"-="                     { token(SUB_ASSIGN); }
+	"*="                     { token(MUL_ASSIGN); }
+	"/="                     { token(DIV_ASSIGN); }
+	"%="                     { token(MOD_ASSIGN); }
+	"|="                     { token(OR_ASSIGN); }
+	"&="                     { token(AND_ASSIGN); }
+	"^="                     { token(XOR_ASSIGN); }
+	"~="                     { token(NOT_ASSIGN); }
+	"<<="                    { token(LEFT_ASSIGN); }
+	">>="                    { token(RIGHT_ASSIGN); }
+	"<<"                     { token(LEFT_OP); }
+	">>"                     { token(RIGHT_OP); }
+	"<="                     { token(LE_OP); }
+	">="                     { token(GE_OP); }
+	*                        { walk(); return parser::symbol_type(parser::token_type(ctx.cursor[-1]&0xFF), ctx.loc); }
+	%}
+
+block_comment:
+	%{
+	// Block Comment
+	"/*"                     { comment_scope++; goto block_comment; }
+	"*/"                     { walk(); comment_scope--; if(!comment_scope) advance(init); goto block_comment; }
+	"\r\n" | [\r\n]          { ctx.loc.lines();   advance(block_comment); }
+	[\t\v\b\f ]              { ctx.loc.columns(); advance(block_comment); }
+	end                        { token(BLOCK_COMMENT_ERROR); }
+	*                        { goto block_comment; }
+	%} /* End lexer */
 }
 
-yy::conj_parser::symbol_type yy::yylex(lexcontext& ctx)
+void yy::parser::error(const location_type& l, const std::string& message)
 {
-    const char* anchor = ctx.cursor;
-    ctx.loc.step();
-    auto s = [&](auto func, auto&&... params) { ctx.loc.columns(ctx.cursor - anchor); return func(params..., ctx.loc); };
-%{ /* Begin re2c lexer */
-re2c:yyfill:enable   = 0;
-re2c:define:YYCTYPE  = "char";
-re2c:define:YYCURSOR = "ctx.cursor";
+	std::cerr << l.begin.filename->c_str() << ':' << l.begin.line << ':' << l.begin.column << '-' << l.end.column << ": " << message << '\n';
 
-// Keywords
-"attribute" { return s(conj_parser::make_ATTRIBUTE); }
-"uniform" { return s(conj_parser::make_UNIFORM); }
-"sampler" { return s(conj_parser::make_SAMPLER); }
+	// find a better way. dont open and skip for every single error
+	std::ifstream f(l.begin.filename->c_str());
+	std::string s;
 
-// Types:
-"float" | "int" { return s(conj_parser::make_TYPE, stot(std::string(anchor,ctx.cursor))); }
+	for (int i = 0; i < l.begin.line; i++)
+	{
+		std::getline(f, s);
+	}
 
-// Identifiers:
-[a-zA-Z_] [a-zA-Z_0-9]* { return s(conj_parser::make_IDENTIFIER, std::string(anchor,ctx.cursor)); }
+	std::cout << s << std::endl;
+   f.close();
 
-// String and integer literals:
-[0-9]+f                 { return s(conj_parser::make_FLOAT, std::stof(std::string(anchor,ctx.cursor))); }
-[0-9]+                  { return s(conj_parser::make_INT, std::stoi(std::string(anchor,ctx.cursor))); }
-
-// Whitespace and comments:
-"\000"                  { return s(conj_parser::make_END); }
-"\r\n" | [\r\n]         { ctx.loc.lines();   return yylex(ctx); }
-"//" [^\r\n]*           {                    return yylex(ctx); }
-[\t\v\b\f ]             { ctx.loc.columns(); return yylex(ctx); }
-
-// Multi-char operators and any other character (either an operator or an invalid symbol):
-"->"                    { return s(conj_parser::make_ARROW); }
-"&&"                    { return s(conj_parser::make_AND); }
-"||"                    { return s(conj_parser::make_OR); }
-"++"                    { return s(conj_parser::make_PP); }
-"--"                    { return s(conj_parser::make_MM); }
-"!="                    { return s(conj_parser::make_NE); }
-"=="                    { return s(conj_parser::make_EQ); }
-"+="                    { return s(conj_parser::make_PL_EQ); }
-"-="                    { return s(conj_parser::make_MI_EQ); }
-"*="                    { return s(conj_parser::make_MU_EQ); }
-"/="                    { return s(conj_parser::make_DI_EQ); }
-"%="                    { return s(conj_parser::make_MO_EQ); }
-.                       { return s([](auto...s){return conj_parser::symbol_type(s...);}, conj_parser::token_type(ctx.cursor[-1]&0xFF)); } // Return that character
-%} /* End lexer */
-}
-
-void yy::conj_parser::error(const location_type& l, const std::string& m)
-{
-    std::cerr << (l.begin.filename ? l.begin.filename->c_str() : "(undefined)");
-    std::cerr << ':' << l.begin.line << ':' << l.begin.column << '-' << l.end.column << ": " << m << '\n';
+std::cerr << std::string(l.begin.column - 1, ' ') << '^' << std::string(l.end.column - l.begin.column - 1, '~') << std::endl;
 }
 
 namespace kyte
 {
-	AST parse(const std::string& sourceCode, std::string debugName)
+	void parse(const std::string& sourceCode, std::string debugName)
 	{
 		lexcontext ctx;
 		ctx.cursor = sourceCode.c_str();
 		ctx.loc.begin.filename = &debugName;
 		ctx.loc.end.filename   = &debugName;
 
-		yy::conj_parser parser(ctx);
+		yy::parser parser(ctx);
 		parser.parse();
-
-		AST ast;
-		ast.functions = ctx.functions;
-
-		return ast;
 	}
 }

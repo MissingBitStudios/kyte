@@ -64,6 +64,9 @@ typedef fractional <float, double>;
 typedef numeric <whole, fractional>;
 typedef scalar <bool, numeric>;
 
+// Sampler
+typedef sampler <sampler2D, sampler3D>;
+
 // Operators
 extern operator+(a : T<vecn>, b : T) -> T;
 extern operator-(a : T<vecn>, b : T) -> T;
@@ -117,7 +120,7 @@ extern mix(float, float, float) -> float;
 extern step(float, float) -> float;
 extern smoothstep(float, float, float) -> float;
 
-// Geometric
+// Vector
 extern length(vector : vec) -> float;
 extern distance(float, float) -> float;
 extern dot(float, float) -> float;
@@ -127,7 +130,7 @@ extern faceforward(vec, vec, vec) -> vec;
 extern reflect(vec, vec) -> vec;
 extern refract(vec, vec, float) -> vec;
 
-// Vector
+// Matrix
 
 
 // Texture
