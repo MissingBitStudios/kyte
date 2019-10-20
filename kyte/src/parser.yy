@@ -25,10 +25,18 @@ struct lexcontext;
 
 %code
 {
+enum class IdentifierFlag
+{
+	TYPE_NAME,
+	VARIABLE_NAME,
+	FUNCTION_NAME
+};
+
 struct lexcontext
 {
 	const char* cursor;
 	yy::location loc;
+	IdentifierFlag identifierFlag;
 };
 
 namespace yy { parser::symbol_type yylex(lexcontext& ctx); }
@@ -36,7 +44,7 @@ namespace yy { parser::symbol_type yylex(lexcontext& ctx); }
 
 %token END 0
 %token BLOCK_COMMENT_ERROR
-%token IDENTIFIER CONSTANT TYPE_NAME
+%token IDENTIFIER CONSTANT TYPE_NAME FUNCTION_NAME VARIABLE_NAME
 %token ATTRIBUTE "attribute" UNIFORM "uniform" SAMPLER "sampler"
 %token IMPORT "import"
 %token INC_OP "++" DEC_OP "--"
@@ -53,7 +61,7 @@ namespace yy { parser::symbol_type yylex(lexcontext& ctx); }
 %token WHILE "while" DO "do" FOR "for"
 %token CONTINUE "continue" BREAK "break" RETURN "return" DISCARD "discard"
 
-%type<std::string> IDENTIFIER
+%type<std::string> IDENTIFIER TYPE_NAME FUNCTION_NAME VARIABLE_NAME
 
 %start translation_unit
 
@@ -434,8 +442,6 @@ function_definition
 
 %%
 
-/*!types:re2c*/
-
 yy::parser::symbol_type yy::yylex(lexcontext& ctx)
 {
 	const char* YYMARKER;
@@ -445,7 +451,18 @@ yy::parser::symbol_type yy::yylex(lexcontext& ctx)
 #define advance(label) { anchor = ctx.cursor; ctx.loc.step(); goto label; }
 #define token(name) { walk(); return parser::make_##name(ctx.loc); }
 #define tokenv(name, ...) { walk(); return parser::make_##name(__VA_ARGS__, ctx.loc); }
-	%{ /* Begin re2c lexer */
+
+	auto getIdentifier = [&](std::string& identifier)
+	{
+  		switch (ctx.identifierFlag)
+		{
+			case IdentifierFlag::FUNCTION_NAME: tokenv(FUNCTION_NAME, identifier);
+			case IdentifierFlag::VARIABLE_NAME: tokenv(VARIABLE_NAME, identifier);
+			case IdentifierFlag::TYPE_NAME: tokenv(TYPE_NAME, identifier);
+		}
+	};
+
+%{ /* Begin re2c lexer */
 	re2c:yyfill:enable = 0;
 	re2c:define:YYCTYPE  = "char";
 	re2c:define:YYCURSOR = "ctx.cursor";
@@ -489,7 +506,7 @@ init:
 	end                      { token(END); }
 
 	// Identifiers
-	[a-zA-Z_] [a-zA-Z_0-9]*  { tokenv(IDENTIFIER, std::string(anchor, ctx.cursor)); }
+	[a-zA-Z_] [a-zA-Z_0-9]*  { return getIdentifier(std::string(anchor, ctx.cursor)); }
 
 	// Literals
 	[0-9]+ [f]               { token(CONSTANT); }
