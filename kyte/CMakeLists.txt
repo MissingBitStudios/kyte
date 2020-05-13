@@ -5,16 +5,12 @@ add_library(kyte STATIC
 	src/parser.cpp
 	src/parser.yy
 
-	src/backend.cpp
-	src/glsl.cpp
-	src/hlsl.cpp
-	src/msl.cpp
-	src/spirv.cpp
-
 	include/kyte/kyte.hpp
 )
 
 target_include_directories(kyte PUBLIC include)
+
+target_link_libraries(kyte SPIRV-Tools SPIRV-Tools-opt SPIRV-Tools-link spirv-cross-glsl spirv-cross-msl spirv-cross-hlsl)
 
 set_target_properties(kyte PROPERTIES FOLDER "kyte")
 

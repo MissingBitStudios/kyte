@@ -1,151 +1,95 @@
 #include "kyte_p.hpp"
 
-#include <sstream>
+#include <spirv-tools/libspirv.hpp>
+#include <spirv-tools/optimizer.hpp>
+#include <spirv-tools/linker.hpp>
 
-#define callback(method, param) if (compilerCallback) { param = compilerCallback->method(param); }
+#include <spirv_parser.hpp>
+#include <spirv_glsl.hpp>
+#include <spirv_msl.hpp>
+#include <spirv_hlsl.hpp>
+
+#include <iostream>
 
 namespace kyte
 {
-	Function::Function(float f)
+	bool compile(const std::string& source, const std::vector<Target>& targets)
 	{
+		spv_target_env env = SPV_ENV_UNIVERSAL_1_5;
+		spvtools::SpirvTools core(env);
+		spvtools::Optimizer opt(env);
 
-	}
+		auto print_msg_to_stderr = [](spv_message_level_t, const char*,
+			const spv_position_t&, const char* m) {
+				std::cerr << "error: " << m << std::endl;
+		};
 
-	Function::Function()
-	{
+		core.SetMessageConsumer(print_msg_to_stderr);
+		opt.SetMessageConsumer(print_msg_to_stderr);
 
-	}
+		std::vector<uint32_t> binary;
+		if (!core.Assemble(source, &binary)) return false;
+		if (!core.Validate(binary)) return false;
+		if (!opt.Run(binary.data(), binary.size(), &binary)) return false;
 
-	CompilerCallback::CompilerCallback(BackendType backendType, unsigned int languageVersion)
-		: backend(backendType), version(languageVersion)
-	{
+		std::string disassembly;
+		if (!core.Disassemble(binary, &disassembly)) return 1;
+		std::cout << disassembly << "\n";
 
-	}
+		spirv_cross::Parser parser(std::move(binary));
+		parser.parse();
 
-	CompilerCallback::~CompilerCallback()
-	{
+		std::unique_ptr<spirv_cross::CompilerGLSL> compiler;
 
-	}
-
-	std::string CompilerCallback::BeforeParse(const std::string& sourceCode)
-	{
-		return sourceCode;
-	}
-
-	AST CompilerCallback::AfterParse(const AST& ast)
-	{
-		return ast;
-	}
-
-	std::string CompilerCallback::AfterCompile(const std::string& sourceCode)
-	{
-		return sourceCode;
-	}
-
-	std::string preprocess(const std::string& sourceCode, BackendType backendType, unsigned int languageVersion)
-	{
-		return sourceCode;
-	}
-
-	std::string compileSource(std::string sourceCode, BackendType backendType, unsigned int languageVersion, CompilerCallback* compilerCallback)
-	{
-		Backend* backend = nullptr;
-		switch (backendType)
+		for (Target target : targets)
 		{
-		case GLSL:
-			backend = new GLSLBackend(languageVersion);
-			break;
-		case HLSL:
-			break;
-		case METAL:
-			break;
-		case SPIRV:
-			break;
-		default:
-			break;
-		}
-
-		if (!backend)
-		{
-			// error
-		}
-
-		callback(BeforeParse, sourceCode);
-
-		sourceCode = preprocess(sourceCode, backendType, languageVersion);
-
-		AST ast;
-		parse(sourceCode);
-
-		callback(AfterParse, ast);
-
-		std::string output = backend->compile(ast);
-
-		callback(AfterCompile, output);
-
-		return output;
-	}
-
-
-	std::string toHex(unsigned char c)
-	{
-		const char* keys = "0123456789ABCDEF";
-		std::string result = "0x";
-		result += keys[c / 16];
-		result += keys[c % 16];
-		return result;
-	}
-
-	void replace(std::string& str, const std::string& oldStr, const std::string& newStr)
-	{
-		size_t pos = 0;
-		while ((pos = str.find(oldStr, pos)) != std::string::npos)
-		{
-			str.replace(pos, oldStr.length(), newStr);
-			pos += newStr.length();
-		}
-	}
-
-	std::string formatString(std::string format, ShaderData shaderData)
-	{
-		const char* t[SHADER_TYPE_COUNT] = { "fs", "vs" };
-		const char* b[BACKEND_TYPE_COUNT] = { "glsl", "hlsl", "metal", "spirv" };
-		
-		replace(format, "%t", t[shaderData.type]);
-		replace(format, "%b", b[shaderData.backend]);
-		replace(format, "%n", shaderData.programName);
-
-		return format;
-	}
-
-	std::string header(std::string outputFormat, std::vector<ShaderData> shaderDatas)
-	{
-		std::ostringstream out;
-
-		for (ShaderData data : shaderDatas)
-		{
-			std::string name = formatString(outputFormat, data);
-			out << "static const int " + name + "_len = " << data.binarySize << ";\n";
-			out << "static const unsigned char " + name + "[] = {\n\t";
-			for (size_t j = 0; j < data.binarySize; ++j)
+			switch (target.platform)
 			{
-				out << toHex((unsigned char)data.binary[j]);
-				if (j == data.binarySize - 1)
-				{
-					out << "\n";
-				}
-				else
-				{
-					out << ",";
-					if ((j + 1) % 25 == 0)
-					{
-						out << "\n\t";
-					}
-				}
+			case Platform::GLSL:
+				break;
+			case Platform::HLSL:
+				break;
+			case Platform::MSL:
+				break;
+			default:
+				break;
 			}
-			out << "};\n\n";
+			if (platforms == Platform::GLSL)
+			{
+				spirv_cross::CompilerGLSL glsl(std::move(binary));
+				spirv_cross::CompilerGLSL::Options options;
+				// set options
+				options.version = 450;
+				glsl.set_common_options(options);
+				std::string source = glsl.compile();
+
+				std::cout << source << std::endl;
+			}
+
+			if (platforms & Platform::MSL)
+			{
+				compiler.reset(new spirv_cross::CompilerMSL(std::move(parser.get_parsed_ir())));
+				auto* msl_compiler = static_cast<spirv_cross::CompilerMSL*>(compiler.get());
+				spirv_cross::CompilerMSL::Options options = msl_compiler->get_msl_options();
+				// set options
+				msl_compiler->set_msl_options(options);
+				std::string source = msl_compiler->compile();
+
+				std::cout << source << std::endl;
+			}
+
+			if (platforms & Platform::HLSL)
+			{
+				spirv_cross::CompilerHLSL hlsl(std::move(binary));
+				spirv_cross::CompilerHLSL::Options options;
+				// set options
+				hlsl.set_hlsl_options(options);
+				std::string source = hlsl.compile();
+
+				std::cout << source << std::endl;
+			}
 		}
 
-		return out.str();
+		return true;
 	}
 }
