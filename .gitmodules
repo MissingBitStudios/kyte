@@ -7,3 +7,6 @@
 [submodule "dependencies/SPIRV-Headers"]
 	path = dependencies/SPIRV-Headers
 	url = https://github.com/KhronosGroup/SPIRV-Headers.git
+[submodule "dependencies/argparse"]
+	path = dependencies/argparse
+	url = https://github.com/p-ranav/argparse.git

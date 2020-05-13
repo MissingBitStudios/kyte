@@ -3703,15 +3703,15 @@ yy::parser::symbol_type yy::yylex(lexcontext& ctx)
 #define token(name) { walk(); return parser::make_##name(ctx.loc); }
 #define tokenv(name, ...) { walk(); return parser::make_##name(__VA_ARGS__, ctx.loc); }
 
-auto getIdentifier = [&](std::string& identifier)
-{
-  	switch (ctx.identifierFlag)
+	auto getIdentifier = [&](std::string& identifier)
 	{
-		case IdentifierFlag::FUNCTION_NAME: tokenv(FUNCTION_NAME, identifier);
-		case IdentifierFlag::VARIABLE_NAME: tokenv(VARIABLE_NAME, identifier);
-		case IdentifierFlag::TYPE_NAME: tokenv(TYPE_NAME, identifier);
-	}
-};
+  		switch (ctx.identifierFlag)
+		{
+			case IdentifierFlag::FUNCTION_NAME: tokenv(FUNCTION_NAME, identifier);
+			case IdentifierFlag::VARIABLE_NAME: tokenv(VARIABLE_NAME, identifier);
+			case IdentifierFlag::TYPE_NAME: tokenv(TYPE_NAME, identifier);
+		}
+	};
 
 %{ /* Begin re2c lexer */
 	re2c:yyfill:enable = 0;

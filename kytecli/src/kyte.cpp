@@ -1,76 +1,35 @@
+#include <argparse.hpp>
 #include <kyte/kyte.hpp>
 
-#include <fstream>
-#include <string>
-#include <vector>
-
-#include <iostream>
-
-using namespace kyte;
+enum StatusCode
+{
+    SUCCESS,
+    ARGUMENT_PARSE_ERROR
+};
 
 int main(int argc, char** argv)
 {
-	std::vector<std::string> sources;
-	std::string output;
-	std::string header;
+    argparse::ArgumentParser program("kytecli");
 
-	int i = 1;
-	while (i < argc)
-	{
-		std::string arg = argv[i];
-		if (arg == "-o")
-		{
-			if (output.empty())
-			{
-				if (i + 1 < argc)
-				{
-					output = argv[i + 1];
-					i += 2;
-				}
-				else
-				{
-					std::cerr << "-o: output rule must follow -o option" << std::endl;
-					return 1;
-				}
-			}
-			else
-			{
-				std::cerr << "-o: only one output string allowed" << std::endl;
-				return 1;
-			}
-		}
-		else if (arg == "-h")
-		{
-			if (header.empty())
-			{
-				if (i + 1 < argc)
-				{
-					header = argv[i + 1];
-					i += 2;
-				}
-				else
-				{
-					std::cerr << "-h: header path must follow -h option" << std::endl;
-					return 1;
-				}
-			}
-			else
-			{
-				std::cerr << "-h: header flag may only be used once" << std::endl;
-				return 1;
-			}
-		}
-		else
-		{
-			sources.push_back(arg);
-			i++;
-		}
-	}
+    program.add_argument("--source")
+        .help("display the square of a given integer")
+        .action([](const std::string& value) { return std::stoi(value); });
 
-	for (std::string source : sources)
-	{
-		std::cout << "source: " << source << "\n";
-	}
-	std::cout << "output: " << output << "\n"
-	          << "header: " << header << "\n";
+    program.add_argument("--verbose")
+        .help("increase output verbosity")
+        .default_value(false)
+        .implicit_value(true);
+
+    try
+    {
+        program.parse_args(argc, argv);
+    }
+    catch (const std::runtime_error & err)
+    {
+        std::cout << err.what() << std::endl;
+        std::cout << program;
+        exit(ARGUMENT_PARSE_ERROR);
+    }
+
+	return SUCCESS;
 }

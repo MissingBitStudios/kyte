@@ -35,4 +35,4 @@
 .vs
 
 # Build Directory
-build
+/build
