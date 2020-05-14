@@ -1,0 +1,19 @@
+language: cpp
+
+git:
+  depth: 3
+
+matrix:
+  include:
+    - name: "Visual Studio 2017"
+      os: windows
+
+    - name: "Linux clang"
+      os: linux
+      compiler: clang
+
+script:
+  - mkdir build && cd build
+  - cmake $CMAKE_FLAGS -DKYTE_TESTS=ON ..
+  - cmake --build .
+  - ctest
