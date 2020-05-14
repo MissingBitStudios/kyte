@@ -11,11 +11,22 @@ int main(int argc, char** argv)
 {
     argparse::ArgumentParser program("kytecli");
 
-    program.add_argument("--source")
-        .help("display the square of a given integer")
-        .action([](const std::string& value) { return std::stoi(value); });
+    // get number of sources passed in cuz argparse sux
+    int i, j;
+    for (i = 1; i < argc && std::strcmp(argv[i], "-k"); i++);
+    for (j = i + 1; j < argc && argv[j][0] != '-'; j++);
+    int source_count = j - i - 1 > 1 ? j - i - 1 : 1;
 
-    program.add_argument("--verbose")
+    program.add_argument("-k")
+        .help("list of source files")
+        .nargs(source_count)
+        .required();
+    
+    program.add_argument("-o")
+        .help("output object")
+        .default_value(std::string("a.spv"));
+
+    program.add_argument("-v")
         .help("increase output verbosity")
         .default_value(false)
         .implicit_value(true);
@@ -31,51 +42,12 @@ int main(int argc, char** argv)
         exit(ARGUMENT_PARSE_ERROR);
     }
 
+    std::cout << program.get<std::string>("-o") << " " << std::to_string(program["-v"] == true) << std::endl;
+
+    auto sources = program.get<std::vector<std::string>>("-k");
+    for (std::string source : sources)
     {
-        std::string source = R"SOURCE(
-; SPIR-V
-; Version: 1.0
-; Generator: Khronos Glslang Reference Front End; 3
-; Bound: 18
-; Schema: 0
-               OpCapability Shader
-          %1 = OpExtInstImport "GLSL.std.450"
-               OpMemoryModel Logical GLSL450
-               OpEntryPoint Vertex %main "main" %_entryPointOutput
-               OpSource HLSL 500
-               OpName %main "main"
-               OpName %_main_ "@main("
-               OpName %_entryPointOutput "@entryPointOutput"
-               OpDecorate %_entryPointOutput Invariant
-               OpDecorate %_entryPointOutput BuiltIn Position
-       %void = OpTypeVoid
-          %3 = OpTypeFunction %void
-      %float = OpTypeFloat 32
-    %v4float = OpTypeVector %float 4
-          %8 = OpTypeFunction %v4float
-    %float_1 = OpConstant %float 1
-         %12 = OpConstantComposite %v4float %float_1 %float_1 %float_1 %float_1
-%_ptr_Output_v4float = OpTypePointer Output %v4float
-%_entryPointOutput = OpVariable %_ptr_Output_v4float Output
-       %main = OpFunction %void None %3
-          %5 = OpLabel
-         %17 = OpFunctionCall %v4float %_main_
-               OpStore %_entryPointOutput %17
-               OpReturn
-               OpFunctionEnd
-     %_main_ = OpFunction %v4float None %8
-         %10 = OpLabel
-               OpReturnValue %12
-               OpFunctionEnd
-        )SOURCE";
-
-        std::vector<kyte::Target> targets = {
-            {
-                kyte::Platform::GLSL
-            }
-        };
-
-        kyte::compile(source, targets);
+        std::cout << source << std::endl;
     }
 
 	return SUCCESS;

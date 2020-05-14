@@ -10,3 +10,6 @@
 [submodule "dependencies/argparse"]
 	path = dependencies/argparse
 	url = https://github.com/p-ranav/argparse.git
+[submodule "dependencies/googletest"]
+	path = dependencies/googletest
+	url = https://github.com/google/googletest.git

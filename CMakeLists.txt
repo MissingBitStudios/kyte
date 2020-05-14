@@ -15,6 +15,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(KYTE_CLI     "Build CLI."                         ON)
 option(KYTE_GRAMMAR "Build Grammar with Bison and re2c." OFF)
+option(KYTE_TESTS   "Build tests."                       OFF)
 
 add_subdirectory(dependencies)
 
@@ -22,6 +23,11 @@ add_subdirectory(kyte)
 
 if(KYTE_CLI)
   add_subdirectory(kytecli)
+endif()
+
+if(KYTE_TESTS)
+  enable_testing()
+  add_subdirectory(test)
 endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)

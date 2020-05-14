@@ -36,60 +36,6 @@ namespace kyte
 		if (!core.Disassemble(binary, &disassembly)) return 1;
 		std::cout << disassembly << "\n";
 
-		spirv_cross::Parser parser(std::move(binary));
-		parser.parse();
-
-		std::unique_ptr<spirv_cross::CompilerGLSL> compiler;
-
-		for (Target target : targets)
-		{
-			switch (target.platform)
-			{
-			case Platform::GLSL:
-				break;
-			case Platform::HLSL:
-				break;
-			case Platform::MSL:
-				break;
-			default:
-				break;
-			}
-			if (platforms == Platform::GLSL)
-			{
-				spirv_cross::CompilerGLSL glsl(std::move(binary));
-				spirv_cross::CompilerGLSL::Options options;
-				// set options
-				options.version = 450;
-				glsl.set_common_options(options);
-				std::string source = glsl.compile();
-
-				std::cout << source << std::endl;
-			}
-
-			if (platforms & Platform::MSL)
-			{
-				compiler.reset(new spirv_cross::CompilerMSL(std::move(parser.get_parsed_ir())));
-				auto* msl_compiler = static_cast<spirv_cross::CompilerMSL*>(compiler.get());
-				spirv_cross::CompilerMSL::Options options = msl_compiler->get_msl_options();
-				// set options
-				msl_compiler->set_msl_options(options);
-				std::string source = msl_compiler->compile();
-
-				std::cout << source << std::endl;
-			}
-
-			if (platforms & Platform::HLSL)
-			{
-				spirv_cross::CompilerHLSL hlsl(std::move(binary));
-				spirv_cross::CompilerHLSL::Options options;
-				// set options
-				hlsl.set_hlsl_options(options);
-				std::string source = hlsl.compile();
-
-				std::cout << source << std::endl;
-			}
-		}
-
 		return true;
 	}
 }

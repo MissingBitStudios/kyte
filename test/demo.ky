@@ -35,7 +35,7 @@ demo_local_functions() -> int
 
 demo_inline_spir() -> void
 {
-	spir"
+	spir("
 		OpCapability Shader
 		OpMemoryModel Logical Simple
 		OpEntryPoint GLCompute %3 "main"
@@ -46,7 +46,7 @@ demo_inline_spir() -> void
 	%4 = OpLabel
 		OpReturn
 		OpFunctionEnd
-	"spir;
+	");
 }
 
 demo_structs() -> void

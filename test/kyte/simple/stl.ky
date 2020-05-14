@@ -1,0 +1,7 @@
+ping_pong := (value : int) : int {
+	return value;
+}
+
+dead := () {
+
+}

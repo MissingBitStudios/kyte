@@ -1,0 +1,6 @@
+import stl;
+
+main := () : int {
+	dead();
+	return ping_pong(0);
+}
