@@ -11,14 +11,20 @@ namespace kyte
 	class Binary
 	{
 	public:
-		void writeWord(uint32_t word);
-		void writeLiteralString(const std::string& literalString);
-		void writeOpcode(uint16_t wordCount, spv::Op opCode);
-		void writeInstruction(spv::Op opCode);
-		void writeInstruction(spv::Op opCode, std::vector<std::variant<uint32_t, std::string>> operands);
+		uint16_t writeWord(uint32_t word);
+		uint16_t writeLiteralString(const char* literalString);
+		uint16_t writeOpcode(uint16_t wordCount, spv::Op opCode);
+		uint16_t writeInstruction(spv::Op opCode);
+		template<typename ...Ts>
+		uint16_t writeInstruction(spv::Op opCode, Ts... operands);
 
 		const std::vector<uint32_t>& get();
 	private:
+		uint16_t writeOperands(std::variant<uint32_t, const char*> operand);
+		template<typename ...Ts>
+		uint16_t writeOperands(std::variant<uint32_t, const char*> operand, Ts... operands);
 		std::vector<uint32_t> binary;
 	};
-}
+} // namespace kyte
+
+#include "binary.tpp"

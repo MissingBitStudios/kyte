@@ -2,6 +2,7 @@ add_library(kyte STATIC
 	src/kyte.cpp
 	src/kyte_p.hpp
 	src/binary.cpp
+	src/binary.tpp
 	src/parser.cpp
 	src/parser.yy
 

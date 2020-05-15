@@ -13,6 +13,7 @@
 
 namespace kyte
 {
+	// https://www.khronos.org/registry/spir-v/specs/unified1/SPIRV.html
 	std::vector<uint32_t> compile(const std::vector<SourceFile>& sourceFiles)
 	{
 		Binary b;
@@ -25,9 +26,38 @@ namespace kyte
 		b.writeWord(0); // Reserved
 
 		// Begin Instruction Stream
-		b.writeInstruction(spv::OpCapability, {spv::CapabilityLinkage});
-		b.writeInstruction(spv::OpCapability, {spv::CapabilityShader});
-		b.writeInstruction(spv::OpMemoryModel, { spv::AddressingModelLogical, spv::MemoryModelGLSL450 });
+		// OpCapability Instructions
+		b.writeInstruction(spv::OpCapability, spv::CapabilityLinkage);
+		b.writeInstruction(spv::OpCapability, spv::CapabilityShader);
+		
+		// OpExtension Instructions
+		
+		// OpExtInstImport Instructions
+		b.writeInstruction(spv::OpExtInstImport, 1, "GLSL.std.450");
+		
+		// OpMemoryModel Instruction
+		b.writeInstruction(spv::OpMemoryModel, spv::AddressingModelLogical, spv::MemoryModelGLSL450);
+		
+		// OpEntryPoint Instructions
+		
+		// OpExecutionMode/OpExecutionModeId Instructions
+
+		// Debug
+		// OpString/OpSourceExtension/OpSource/OpSourceContinued Instructions
+		b.writeInstruction(spv::OpSource, kyte::SourceLanguageKyte, kyte::Version);
+		// OpName/OpMemberName Instructions
+		// OpModuleProcessed Instructions
+
+		// Annotation
+		// OpDecorate/OpMemberDecorate/OpGroupDecorate/OpGroupMemberDecorate/OpDecorationGroup
+
+		// Type Declarations
+
+		// Functions
+		// Function Declarations
+
+		// Function Definitions
+		//b.writeInstruction(spv::OpNop);
 
 		std::vector<uint32_t> binary = b.get();
 
@@ -52,4 +82,4 @@ namespace kyte
 
 		return std::move(binary);
 	}
-}
+} // namespace kyte

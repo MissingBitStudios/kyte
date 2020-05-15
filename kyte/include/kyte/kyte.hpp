@@ -6,6 +6,8 @@
 namespace kyte
 {
 	const uint32_t MagicNumber = 23;
+	const uint32_t Version = 1;
+	const uint32_t SourceLanguageKyte = 0;
 
 	struct SourceFile
 	{
