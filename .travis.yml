@@ -3,10 +3,17 @@ language: cpp
 git:
   depth: 3
 
+addons:
+  apt:
+    packages:
+    - python3
+
 matrix:
   include:
     - name: "Visual Studio 2017"
       os: windows
+      before_script:
+        - choco install python3
 
     - name: "Linux clang"
       os: linux
