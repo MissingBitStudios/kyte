@@ -1,15 +1,9 @@
 #include "kyte_p.hpp"
 
+#include <iostream>
+
 #include <spirv-tools/libspirv.hpp>
 #include <spirv-tools/optimizer.hpp>
-#include <spirv-tools/linker.hpp>
-
-#include <spirv_parser.hpp>
-#include <spirv_glsl.hpp>
-#include <spirv_msl.hpp>
-#include <spirv_hlsl.hpp>
-
-#include <iostream>
 
 namespace kyte
 {
@@ -49,15 +43,23 @@ namespace kyte
 		// OpModuleProcessed Instructions
 
 		// Annotation
-		// OpDecorate/OpMemberDecorate/OpGroupDecorate/OpGroupMemberDecorate/OpDecorationGroup
+		// OpDecorate/OpMemberDecorate/OpGroupDecorate/OpGroupMemberDecorate/OpDecorationGroup Instructions
 
-		// Type Declarations
+		// OpTypeXXX/OpConstantXXX/OpSpecXXX/OpVariable(Storage Class != Function) Instructions
+		// Preffered location of OpUndef Instructions
+		// This section is the first section to allow use of OpLine/OpNoLine Instructions
 
-		// Functions
 		// Function Declarations
+		// Per function
+		// OpFunction
+			// OpFunctionParameter...
+		// opFunctionEnd
 
 		// Function Definitions
-		//b.writeInstruction(spv::OpNop);
+		// OpFunction
+			// OpFunctionParameter...
+			// Block...
+		// opFunctionEnd
 
 		std::vector<uint32_t> binary = b.get();
 

@@ -27,7 +27,7 @@ namespace kyte
 		{
 			word |= literalString[i] << 8 * size;
 			size++;
-			if (size >= 4 || literalString[i] == '\0')
+			if (size >= 4 || i == literalStringLength)
 			{
 				wordCount += writeWord(word);
 				word = size = 0;
