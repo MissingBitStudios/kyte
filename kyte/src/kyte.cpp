@@ -15,7 +15,22 @@ namespace kyte
 {
 	std::vector<uint32_t> compile(const std::vector<SourceFile>& sourceFiles)
 	{
-		/*
+		Binary b;
+
+		// Header
+		b.writeWord(spv::MagicNumber);
+		b.writeWord(spv::Version);
+		b.writeWord(kyte::MagicNumber); // Generator’s magic number
+		b.writeWord(255); // Bound
+		b.writeWord(0); // Reserved
+
+		// Begin Instruction Stream
+		b.writeInstruction(spv::OpCapability, {spv::CapabilityLinkage});
+		b.writeInstruction(spv::OpCapability, {spv::CapabilityShader});
+		b.writeInstruction(spv::OpMemoryModel, { spv::AddressingModelLogical, spv::MemoryModelGLSL450 });
+
+		std::vector<uint32_t> binary = b.get();
+
 		spv_target_env env = SPV_ENV_UNIVERSAL_1_5;
 		spvtools::SpirvTools core(env);
 		spvtools::Optimizer opt(env);
@@ -28,16 +43,13 @@ namespace kyte
 		core.SetMessageConsumer(print_msg_to_stderr);
 		opt.SetMessageConsumer(print_msg_to_stderr);
 
-		std::vector<uint32_t> binary;
-		if (!core.Assemble(source, &binary)) return false;
-		if (!core.Validate(binary)) return false;
-		if (!opt.Run(binary.data(), binary.size(), &binary)) return false;
+		if (!core.Validate(binary)) throw std::exception();
+		if (!opt.Run(binary.data(), binary.size(), &binary)) throw std::exception();
 
 		std::string disassembly;
-		if (!core.Disassemble(binary, &disassembly)) return 1;
+		if (!core.Disassemble(binary, &disassembly)) throw std::exception();
 		std::cout << disassembly << "\n";
-		*/
 
-		return std::vector<uint32_t>();
+		return std::move(binary);
 	}
 }

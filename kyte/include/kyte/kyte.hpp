@@ -5,6 +5,8 @@
 
 namespace kyte
 {
+	const uint32_t MagicNumber = 23;
+
 	struct SourceFile
 	{
 		std::string name;
