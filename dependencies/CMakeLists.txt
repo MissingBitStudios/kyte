@@ -3,6 +3,7 @@ add_subdirectory(argparse)
 
 #googletest
 if(KYTE_TESTS)
+	set(gtest_force_shared_crt  ON CACHE INTERNAL "")
 	set(BUILD_GMOCK             OFF CACHE INTERNAL "")
 	set(INSTALL_GTEST           OFF CACHE INTERNAL "")
 	add_subdirectory(googletest)

@@ -1,5 +1,7 @@
 # Kyte
 
+[![Build Status](https://travis-ci.org/MissingBitStudios/kyte.svg?branch=master)](https://travis-ci.org/github/MissingBitStudios/kyte)
+
 Kyte is a shader language and compiler.
 
 ## Getting Started
