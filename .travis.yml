@@ -1,9 +1,6 @@
 language: cpp
 os: windows
 
-git:
-  depth: 3
-
 before_script:
   - choco install python --version 3.8.0
 
