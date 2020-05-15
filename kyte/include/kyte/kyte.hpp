@@ -5,20 +5,11 @@
 
 namespace kyte
 {
-	enum class Platform : uint8_t
+	struct SourceFile
 	{
-		SPIRV,
-		GLSL,
-		ESSL,
-		ASMJS,
-		HLSL,
-		MSL
+		std::string name;
+		std::string source;
 	};
 
-	struct Target
-	{
-		Platform platform;
-	};
-
-	bool compile(const std::string& source, const std::vector<Target>& targets);
-}
+	std::vector<uint32_t> compile(const std::vector<SourceFile>& sourceFiles);
+} // namespace kyte

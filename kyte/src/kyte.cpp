@@ -13,8 +13,9 @@
 
 namespace kyte
 {
-	bool compile(const std::string& source, const std::vector<Target>& targets)
+	std::vector<uint32_t> compile(const std::vector<SourceFile>& sourceFiles)
 	{
+		/*
 		spv_target_env env = SPV_ENV_UNIVERSAL_1_5;
 		spvtools::SpirvTools core(env);
 		spvtools::Optimizer opt(env);
@@ -35,7 +36,8 @@ namespace kyte
 		std::string disassembly;
 		if (!core.Disassemble(binary, &disassembly)) return 1;
 		std::cout << disassembly << "\n";
+		*/
 
-		return true;
+		return std::vector<uint32_t>();
 	}
 }
