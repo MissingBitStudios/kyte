@@ -1,6 +1,8 @@
 # Kyte
 
+[![Latest Release](https://img.shields.io/github/v/release/MissingBitStudios/kyte)](https://github.com/MissingBitStudios/kyte/releases)
 [![Build Status](https://travis-ci.org/MissingBitStudios/kyte.svg?branch=master)](https://travis-ci.org/github/MissingBitStudios/kyte)
+[![Documentation Status](https://readthedocs.org/projects/kyte/badge/?version=latest)](https://kyte.readthedocs.io/en/latest/?badge=latest)
 
 Kyte is a shader language and compiler.
 
@@ -23,10 +25,19 @@ cmake ..
 cmake --build .
 ```
 
+## Documentation
+
+The Syntax, API reference, and command line options are available on https://kyte.readthedocs.io
+
 ## Built With
 
+* [argparse](https://github.com/p-ranav/argparse)
 * [Bison](https://www.gnu.org/software/bison/)
+* [googletest](https://github.com/google/googletest)
 * [re2c](http://re2c.org/)
+* [SPIRV-Cross](https://github.com/KhronosGroup/SPIRV-Cross)
+* [SPIRV-Headers](https://github.com/KhronosGroup/SPIRV-Headers)
+* [SPIRV-Tools](https://github.com/KhronosGroup/SPIRV-Tools)
 
 ## Contributing
 

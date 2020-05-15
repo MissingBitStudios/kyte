@@ -1,8 +1,9 @@
 # Visual Studio
 .vs
 
-# Build Directory
+# Build Directories
 /build
+/docs/build
 
 # re2c
 *.cpp.re
