@@ -36,3 +36,6 @@
 
 # Build Directory
 /build
+
+# re2c
+*.cpp.re
