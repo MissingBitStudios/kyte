@@ -13,7 +13,8 @@ namespace kyte
 	const uint32_t MagicNumber = 23;
 	const uint32_t Version = 1;
 	const uint32_t SourceLanguageKyte = spv::SourceLanguageUnknown;
-	const uint32_t GLSL_STD_450_EXT_INST_ID = 1;
+	const char* const GLSL_STD_EXT_INST_NAME = "GLSL.std.450";
+	const uint32_t GLSL_STD_EXT_INST_ID = 1;
 
 	const spv_target_env SpvTargetEnv = SPV_ENV_UNIVERSAL_1_5;
 

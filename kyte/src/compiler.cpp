@@ -4,21 +4,22 @@
 
 namespace kyte
 {
-	// https://www.khronos.org/registry/spir-v/specs/unified1/SPIRV.html
-	std::vector<uint32_t> Compiler::compile(const std::string& source)
+	std::vector<uint32_t> Compiler::compile(const std::string& source) const
 	{
 		// AST Transform
 		// parse(source);
 
-		// Binarification
+		// Binarification https://www.khronos.org/registry/spir-v/specs/unified1/SPIRV.html
 		Binary b;
 
 		// Header
-		b.writeWord(spv::MagicNumber); // https://www.khronos.org/registry/spir-v/specs/unified1/SPIRV.html#_a_id_magic_a_magic_number
-		b.writeWord(spv::Version); // SPIR-V Version
-		b.writeWord(kyte::MagicNumber); // Generator’s magic number
-		b.writeWord(255); // Bound
-		b.writeWord(0); // Reserved
+		b.writeWords(
+			spv::MagicNumber, // https://www.khronos.org/registry/spir-v/specs/unified1/SPIRV.html#_a_id_magic_a_magic_number
+			spv::Version, // SPIR-V Version
+			kyte::MagicNumber, // Generator’s magic number
+			255, // Bound
+			0 // Reserved
+		);
 
 		// Begin Instruction Stream
 		// OpCapability Instructions
@@ -28,7 +29,7 @@ namespace kyte
 		// OpExtension Instructions
 		
 		// OpExtInstImport Instructions
-		b.writeInstruction(spv::OpExtInstImport, kyte::GLSL_STD_450_EXT_INST_ID, "GLSL.std.450"); // https://www.khronos.org/registry/spir-v/specs/1.0/GLSL.std.450.html
+		b.writeInstruction(spv::OpExtInstImport, kyte::GLSL_STD_EXT_INST_ID, kyte::GLSL_STD_EXT_INST_NAME); // https://www.khronos.org/registry/spir-v/specs/1.0/GLSL.std.450.html
 		
 		// OpMemoryModel Instruction
 		b.writeInstruction(spv::OpMemoryModel, spv::AddressingModelLogical, spv::MemoryModelGLSL450);

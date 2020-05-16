@@ -1,6 +1,6 @@
 #include "kyte_p.hpp"
 
-#include <climits>
+#include <climits> // CHAR_BIT
 
 namespace kyte
 {
@@ -62,8 +62,8 @@ namespace kyte
 			if (size >= 4 || *c == '\0')
 			{
 				wordCount += writeWord(word);
-				word = size = 0;
 				if (*c == '\0') return wordCount;
+				word = size = 0;
 			}
 		}
 	}

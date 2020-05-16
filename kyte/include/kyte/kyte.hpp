@@ -16,7 +16,7 @@ namespace kyte
 	class Compiler
 	{
 	public:
-		std::vector<uint32_t> compile(const std::string& source);
+		std::vector<uint32_t> compile(const std::string& source) const;
 		const Options& getOptions() const;
 		void setOptions(const Options& newOptions);
 	private:
