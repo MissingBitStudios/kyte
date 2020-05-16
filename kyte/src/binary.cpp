@@ -1,5 +1,7 @@
 #include "kyte_p.hpp"
 
+#include <climits>
+
 namespace kyte
 {
 	uint16_t Binary::writeWord(uint32_t word)
@@ -10,7 +12,7 @@ namespace kyte
 
 	uint16_t Binary::writeWord64(uint64_t word)
 	{
-		uint32_t high = (uint32_t)(word >> 32);
+		uint32_t high = (uint32_t)(word >> sizeof(uint32_t) * CHAR_BIT);
 		uint32_t low = (uint32_t)word;
 		uint16_t wordCount = writeWord(low);
 		wordCount += writeWord(high);
@@ -51,7 +53,7 @@ namespace kyte
 
 		for (;; c++)
 		{
-			word |= *c << 8 * size;
+			word |= *c << size * sizeof(char) * CHAR_BIT;
 			size++;
 			if (size >= 4 || *c == '\0')
 			{
