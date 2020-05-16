@@ -11,7 +11,7 @@ add_library(kyte STATIC
 
 target_include_directories(kyte PUBLIC include)
 
-target_link_libraries(kyte SPIRV-Tools SPIRV-Tools-opt SPIRV-Tools-link spirv-cross-glsl spirv-cross-msl spirv-cross-hlsl)
+target_link_libraries(kyte SPIRV-Tools SPIRV-Tools-opt SPIRV-Tools-link)
 
 set_target_properties(kyte PROPERTIES FOLDER "kyte")
 

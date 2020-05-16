@@ -1,8 +1,5 @@
 // Kyte Standard Library
 // Types
-// Predefined
-const VOID_FUNCTION := (() -> void);
-
 // Mat
 const mat2b := bool[2][2];
 const mat3b := bool[3][3];
@@ -70,102 +67,23 @@ const scalar := <bool, numeric>;
 // Sampler
 const sampler := <sampler2D, sampler3D>;
 
-// Operators
-extern operator+(a : T<vecn>, b : T) -> T;
-extern operator-(a : T<vecn>, b : T) -> T;
-extern operator*(a : T<vecn>, b : T) -> T;
-extern operator/(a : T<vecn>, b : T) -> T;
-
-extern operator+(a : T<matn>, b : T) -> T;
-extern operator-(a : T<matn>, b : T) -> T;
-extern operator*(a : T<matn>, b : T) -> T;
-extern operator/(a : T<matn>, b : T) -> T;
-
 // Functions
-// Angle
-extern radians(degrees : T<numeric, vecn>) -> T;
-extern degrees(radians : T<numeric, vecn>) -> T;
-
-// Trigonometry
-extern sin(angle : T<numeric, vecn>) -> T;
-extern cos(angle : T<numeric, vecn>) -> T;
-extern tan(angle : T<numeric, vecn>) -> T;
-extern asin(x : T<numeric, vecn>) -> T;
-extern acos(x : T<numeric, vecn>) -> T;
-extern atan(y : T<numeric, vecn>, x : T) -> T;
-extern atan(y_over_x : T<numeric, vecn>) -> T;
-extern sinh(x : T<numeric, vecn>) -> T;
-extern cosh(x : T<numeric, vecn>) -> T;
-extern tanh(x : T<numeric, vecn>) -> T;
-extern asinh(x : T<numeric, vecn>) -> T;
-extern acosh(x : T<numeric, vecn>) -> T;
-extern atanh(x : T<numeric, vecn>) -> T;
-
-// Exponential
-extern pow(base : T<numeric, vecn>, exponent : T) -> T;
-extern exp(exponent : T<numeric, vecn>) -> T;
-extern log(float) -> float;
-extern ln(float) -> float;
-extern exp2(float) -> float;
-extern log2(float) -> float;
-extern sqrt(float) -> float;
-
-// Arithmetic
-extern abs(x : T<numeric>) -> T;
-extern floor(float) -> int;
-extern ceil(float) -> int;
-extern fract(float) -> float;
-extern mod(float, float) -> float;
-extern min(float, float) -> float;
-extern max(float, float) -> float;
-extern clamp(low : T<numeric>, high : T, x : T) -> float;
-extern mix(float, float, float) -> float;
-extern step(float, float) -> float;
-extern smoothstep(float, float, float) -> float;
-
-// Vector
-extern length(vector : vec) -> float;
-extern distance(float, float) -> float;
-extern dot(float, float) -> float;
-extern cross(float, float) -> vec3;
-extern normalize(vector : T<vec>) -> T;
-extern faceforward(vec, vec, vec) -> vec;
-extern reflect(vec, vec) -> vec;
-extern refract(vec, vec, float) -> vec;
-
-// Matrix
-
-
-// Texture
-extern sample(sampler2D, vec2f) -> vec4f;
-extern sample(sampler3D, vec3f) -> vec4f;
+@inline
+@iknowwhatimdoing
+const cos := (value : float) $ float
+{
+	spirv{
+		$RESULT = OpExtInst $FLOAT $GLSL_STD_450_EXT_INST_ID Cos $ARGUMENT1
+	};
+}
 
 // Misc
-cast(value : any, T : type) -> T
+const cast := (value : any, T : type) $ T
 {
 	return (T)value;
 }
 
-typeof(var : T<any>) -> type
+const typeof := (var : T<any>) $ type
 {
 	return T;
-}
-
-iterate(collection : T<any>[], iterator_function : ((T) -> void)) -> void
-{
-	for (i := 0; i < collection.size; i++)
-	{
-		iterator_function(collection[i]);
-	}
-}
-// iterate : (T<any>[][], (T) -> void) -> void;
-iterate := (collection : T<any>[X][Y], iterator_function : (T) -> void) -> void
-{
-	for (i := 0; i < X; i++)
-	{
-		for (j := 0; j < Y; j++)
-		{
-			iterator_function(collection[i][j]);
-		}
-	}
 }

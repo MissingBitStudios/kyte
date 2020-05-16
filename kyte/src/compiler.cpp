@@ -1,6 +1,5 @@
 #include "kyte_p.hpp"
 
-#include <algorithm> // std::find
 #include <iostream> // std::cout, std::cerr, std::endl
 
 namespace kyte
@@ -28,7 +27,7 @@ namespace kyte
 		// OpExtension Instructions
 		
 		// OpExtInstImport Instructions
-		b.writeInstruction(spv::OpExtInstImport, kyte::GLSL_STD_450_EXT_INST_ID, "GLSL.std.450");
+		b.writeInstruction(spv::OpExtInstImport, kyte::GLSL_STD_450_EXT_INST_ID, "GLSL.std.450"); // https://www.khronos.org/registry/spir-v/specs/1.0/GLSL.std.450.html
 		
 		// OpMemoryModel Instruction
 		b.writeInstruction(spv::OpMemoryModel, spv::AddressingModelLogical, spv::MemoryModelGLSL450);
@@ -37,9 +36,9 @@ namespace kyte
 		
 		// OpExecutionMode/OpExecutionModeId Instructions
 
+		// Debug
 		if (options.debugInfo)
 		{
-			// Debug
 			// OpString/OpSourceExtension/OpSource/OpSourceContinued Instructions
 			b.writeInstruction(spv::OpSource, kyte::SourceLanguageKyte, kyte::Version);
 			// OpName/OpMemberName Instructions
@@ -67,25 +66,31 @@ namespace kyte
 
 		std::vector<uint32_t> binary = b.get();
 
-		// Validation
-		spvtools::SpirvTools core(kyte::SpvTargetEnv);
+		if (options.validate || options.showDisassembly)
+		{
+			spvtools::SpirvTools core(kyte::SpvTargetEnv);
 
-		auto print_msg_to_stderr = [](spv_message_level_t, const char*,
-			const spv_position_t&, const char* m) {
-				std::cerr << "error: " << m << std::endl;
-		};
+			auto print_msg_to_stderr = [](spv_message_level_t, const char*,
+				const spv_position_t&, const char* m) {
+					std::cerr << "error: " << m << std::endl;
+			};
 
-		core.SetMessageConsumer(print_msg_to_stderr);
+			core.SetMessageConsumer(print_msg_to_stderr);
 
-		if (!core.Validate(binary)) throw std::exception();
+			// Validation
+			if (options.validate)
+			{
+				if (!core.Validate(binary)) throw std::exception();
+			}
 
-		// @Temp
-		std::string disassembly;
-		if (!core.Disassemble(binary, &disassembly)) throw std::exception();
-		std::cout << disassembly << "\n";
-
-		// Clean up
-		visitedModules.clear();
+			// Disassembly
+			if (options.showDisassembly)
+			{
+				std::string disassembly;
+				if (!core.Disassemble(binary, &disassembly)) throw std::exception();
+				std::cout << disassembly << "\n";
+			}
+		}
 
 		return binary;
 	}
@@ -97,18 +102,10 @@ namespace kyte
 
 	void Compiler::setOptions(const Options& newOptions)
 	{
-		options = newOptions;
-	}
-
-	std::string Compiler::loadModule(const std::string& module)
-	{
-		if (std::find(visitedModules.begin(), visitedModules.end(), module) != visitedModules.end()) {
-			return "";
-		}
-		else
+		if (newOptions.optimizationLevel < 0 || newOptions.optimizationLevel > 4)
 		{
-			visitedModules.push_back(module);
-			return resolve(module);
+			throw std::exception("Invalid optimization level");
 		}
+		options = newOptions;
 	}
 } // namespace kyte

@@ -27,7 +27,7 @@ cmake --build .
 
 ## Documentation
 
-The Syntax, API reference, and command line options are available on https://kyte.readthedocs.io
+The language syntax, API reference, and kytec command-line options are available on https://kyte.readthedocs.io
 
 ## Built With
 
@@ -57,8 +57,3 @@ See also the list of [contributors](https://github.com/MissingBitStudios/kyte/gr
 ## License
 
 This project is licensed under the Creative Commons Attribution 4.0 International Public License (CC-BY-4.0) - see the [LICENSE.md](LICENSE.md) file for details.
-
-## Acknowledgements
-
-* Thank you to the authors of Bison and re2c.
-* Thank you to [Bisqwit](https://www.youtube.com/user/Bisqwit) for his informative [compiler series](https://github.com/bisqwit/compiler_series).
