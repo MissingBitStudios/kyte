@@ -34,6 +34,8 @@ namespace kyte
 		uint16_t writeOperands(std::variant<uint32_t, const char*> operand, Ts... operands);
 		std::vector<uint32_t> binary;
 	};
+
+	void parse(const std::string& sourceCode);
 } // namespace kyte
 
 #include "binary.tpp"

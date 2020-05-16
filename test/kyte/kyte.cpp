@@ -13,15 +13,15 @@ TEST(Compile, Simple)
 	const main := () $ int {
 		dead();
 		return ping_pong(0);
-	}
+	};
 
-	const ping_pong : = (value : int) $ int {
+	const ping_pong := (value : int) $ int {
 		return value;
-	}
+	};
 
-	const dead: = () $ {
+	const dead := () $ {
 
-	}
+	};
 	)SIMPLE";
 	
 	kyte::Compiler c;
