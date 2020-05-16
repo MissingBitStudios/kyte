@@ -8,7 +8,7 @@ namespace kyte
 	std::vector<uint32_t> Compiler::compile(const std::string& source)
 	{
 		// AST Transform
-		parse(source);
+		// parse(source);
 
 		// Binarification
 		Binary b;

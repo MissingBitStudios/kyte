@@ -8,6 +8,35 @@ namespace kyte
 		return 1;
 	}
 
+	uint16_t Binary::writeWord64(uint64_t word)
+	{
+		uint32_t high = (uint32_t)(word >> 32);
+		uint32_t low = (uint32_t)word;
+		uint16_t wordCount = writeWord(low);
+		wordCount += writeWord(high);
+		return wordCount;
+	}
+
+	uint16_t Binary::writeInt(int32_t value)
+	{
+		return writeWord(reinterpret_cast<uint32_t&>(value));
+	}
+
+	uint16_t Binary::writeInt64(int64_t value)
+	{
+		return writeWord64(reinterpret_cast<uint64_t&>(value));
+	}
+
+	uint16_t Binary::writeFloat(float value)
+	{
+		return writeWord(reinterpret_cast<uint32_t&>(value));
+	}
+
+	uint16_t Binary::writeFloat64(double value)
+	{
+		return writeWord64(reinterpret_cast<uint64_t&>(value));
+	}
+
 	/* A string is interpreted as a nul-terminated stream of characters. The
 	character set is Unicode in the UTF-8 encoding scheme. The UTF-8 octets
 	(8-bit bytes) are packed four per word, following the little-endian

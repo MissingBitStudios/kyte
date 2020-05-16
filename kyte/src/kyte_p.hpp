@@ -20,6 +20,11 @@ namespace kyte
 	{
 	public:
 		uint16_t writeWord(uint32_t word);
+		uint16_t writeWord64(uint64_t word);
+		uint16_t writeInt(int32_t value);
+		uint16_t writeInt64(int64_t value);
+		uint16_t writeFloat(int32_t value);
+		uint16_t writeFloat64(int64_t value);
 		uint16_t writeLiteralString(const char* literalString);
 		uint16_t writeOpcode(uint16_t wordCount, spv::Op opCode);
 		uint16_t writeInstruction(spv::Op opCode);
