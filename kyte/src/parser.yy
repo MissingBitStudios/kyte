@@ -83,7 +83,7 @@ init:
 	[a-zA-Z_][a-zA-Z_0-9]*   { tokenv(IDENTIFIER, std::string(anchor, ctx.cursor)); }
 
 	// Literals
-	[-]?[0-9]+                 { tokenv(INTEGER_LITERAL, std::stoi(std::string(anchor, ctx.cursor))); }
+	[-]?[0-9]+               { tokenv(INTEGER_LITERAL, std::stoi(std::string(anchor, ctx.cursor))); }
 
 	// Whitespace
 	"\r\n" | [\r\n]          { ctx.loc.lines();   advance(init); }

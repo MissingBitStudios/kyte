@@ -2,6 +2,14 @@
 
 namespace kyte
 {
+
+	template<typename ...Ts>
+	uint16_t Binary::writeWords(uint32_t word, Ts... words)
+	{
+		uint16_t wordCount = writeWords(word);
+		return wordCount + writeWords(words...);
+	}
+
 	template<typename ...Ts>
 	uint16_t Binary::writeInstruction(spv::Op opCode, Ts... operands)
 	{

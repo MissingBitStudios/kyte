@@ -10,13 +10,17 @@ namespace kyte
 		return 1;
 	}
 
+	uint16_t Binary::writeWords(uint32_t word)
+	{
+		return writeWord(word);
+	}
+	
+	/*The low-order 32 bits appear in the first operand.*/
 	uint16_t Binary::writeWord64(uint64_t word)
 	{
 		uint32_t high = (uint32_t)(word >> sizeof(uint32_t) * CHAR_BIT);
 		uint32_t low = (uint32_t)word;
-		uint16_t wordCount = writeWord(low);
-		wordCount += writeWord(high);
-		return wordCount;
+		return writeWords(low, high);
 	}
 
 	uint16_t Binary::writeInt(int32_t value)

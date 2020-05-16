@@ -20,6 +20,8 @@ namespace kyte
 	{
 	public:
 		uint16_t writeWord(uint32_t word);
+		template<typename ...Ts>
+		uint16_t writeWords(uint32_t word, Ts... words);
 		uint16_t writeWord64(uint64_t word);
 		uint16_t writeInt(int32_t value);
 		uint16_t writeInt64(int64_t value);
@@ -34,6 +36,7 @@ namespace kyte
 
 		const std::vector<uint32_t>& get();
 	private:
+		uint16_t writeWords(uint32_t word);
 		uint16_t writeOperands(std::variant<uint32_t, const char*> operand);
 		template<typename ...Ts>
 		uint16_t writeOperands(std::variant<uint32_t, const char*> operand, Ts... operands);
