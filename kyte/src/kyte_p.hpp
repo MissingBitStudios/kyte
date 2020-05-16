@@ -3,6 +3,7 @@
 #include "kyte/kyte.hpp"
 
 #include <spirv/unified1/spirv.hpp>
+#include <spirv/unified1/GLSL.std.450.h>
 #include <spirv-tools/libspirv.hpp>
 
 #include <variant>
@@ -30,11 +31,13 @@ namespace kyte
 		uint16_t writeLiteralString(const char* literalString);
 		uint16_t writeOpcode(uint16_t wordCount, spv::Op opCode);
 		uint16_t writeInstruction(spv::Op opCode);
-		uint16_t writeInstruction(spv::Op opCode, std::vector<std::variant<uint32_t, const char*>> operands);
 		template<typename ...Ts>
 		uint16_t writeInstruction(spv::Op opCode, Ts... operands);
+		uint16_t writeExtInstruction(uint32_t setId, uint32_t instruction, uint32_t resultTypeId, uint32_t resultId);
+		template<typename ...Ts>
+		uint16_t writeExtInstruction(uint32_t setId, uint32_t instruction, uint32_t resultTypeId, uint32_t resultId, Ts... operands);
 
-		const std::vector<uint32_t>& get();
+		const std::vector<uint32_t>& get() const;
 	private:
 		uint16_t writeWords(uint32_t word);
 		uint16_t writeOperands(std::variant<uint32_t, const char*> operand);

@@ -80,22 +80,6 @@ namespace kyte
 		return writeOpcode(1, opCode);
 	}
 
-	uint16_t Binary::writeInstruction(spv::Op opCode, std::vector<std::variant<uint32_t, const char*>> operands)
-	{
-		uint16_t wordCount = writeOpcode(0, opCode);
-
-		size_t m = binary.size() - 1;
-
-		for (std::variant<uint32_t, const char*> operand : operands)
-		{
-			wordCount += writeOperands(operand);
-		}
-
-		binary[m] |= wordCount << spv::WordCountShift;
-
-		return wordCount;
-	}
-
 	uint16_t Binary::writeOperands(std::variant<uint32_t, const char*> operand)
 	{
 		if (std::holds_alternative<uint32_t>(operand))
@@ -108,7 +92,14 @@ namespace kyte
 		}
 	}
 
-	const std::vector<uint32_t>& Binary::get()
+	uint16_t Binary::writeExtInstruction(uint32_t setId, uint32_t instruction, uint32_t resultTypeId, uint32_t resultId)
+	{
+		writeOpcode(5, spv::OpExtInst);
+		writeWords(resultTypeId, resultId, setId, instruction);
+		return 5;
+	}
+
+	const std::vector<uint32_t>& Binary::get() const
 	{
 		return binary;
 	}
