@@ -2,15 +2,32 @@
 
 #include <kyte/kyte.hpp>
 
+#include <unordered_map>
+
 namespace {
+
+class TestCompiler : public kyte::Compiler
+{
+public:
+	TestCompiler(std::unordered_map<std::string, std::string> sources)
+		: sources(sources) {}
+
+	virtual std::string resolve(const std::string& module)
+	{
+		return sources.at(module);
+	}
+private:
+	std::unordered_map<std::string, std::string> sources;
+};
+
 TEST(Compile, Simple)
 {
 	std::string stl_ky = R"STL(
-	ping_pong : = (value : int) : int{
+	const ping_pong : = (value : int) $ int {
 		return value;
 	}
 
-	dead: = (){
+	const dead: = () $ {
 
 	}
 	)STL";
@@ -18,19 +35,23 @@ TEST(Compile, Simple)
 	std::string simple_ky = R"SIMPLE(
 	import stl;
 	
-	main := () : int {
+	@vertex
+	const main := () $ int {
 		dead();
 		return ping_pong(0);
 	}
 	)SIMPLE";
-
-	std::vector<kyte::SourceFile> sources = {
-		{ "stl", stl_ky },
-		{ "simple", simple_ky }
-	};
 	
+	TestCompiler c({
+		{ "stl", stl_ky }
+	});
+
+	kyte::Options o;
+	o.debugInfo = true;
+	c.setOptions(o);
+
 	EXPECT_NO_THROW({
-		kyte::compile(sources);
+		c.compile(simple_ky);
 	});
 }
 } // end namespace

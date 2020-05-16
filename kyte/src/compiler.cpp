@@ -1,33 +1,34 @@
 #include "kyte_p.hpp"
 
-#include <iostream>
-
-#include <spirv-tools/libspirv.hpp>
-#include <spirv-tools/optimizer.hpp>
+#include <algorithm> // std::find
+#include <iostream> // std::cout, std::cerr, std::endl
 
 namespace kyte
 {
 	// https://www.khronos.org/registry/spir-v/specs/unified1/SPIRV.html
-	std::vector<uint32_t> compile(const std::vector<SourceFile>& sourceFiles)
+	std::vector<uint32_t> Compiler::compile(const std::string& source)
 	{
+		// AST Transform
+
+		// Binarification
 		Binary b;
 
 		// Header
-		b.writeWord(spv::MagicNumber);
-		b.writeWord(spv::Version);
+		b.writeWord(spv::MagicNumber); // https://www.khronos.org/registry/spir-v/specs/unified1/SPIRV.html#_a_id_magic_a_magic_number
+		b.writeWord(spv::Version); // SPIR-V Version
 		b.writeWord(kyte::MagicNumber); // Generator’s magic number
 		b.writeWord(255); // Bound
 		b.writeWord(0); // Reserved
 
 		// Begin Instruction Stream
 		// OpCapability Instructions
-		b.writeInstruction(spv::OpCapability, spv::CapabilityLinkage);
+		b.writeInstruction(spv::OpCapability, spv::CapabilityLinkage); // @Temp
 		b.writeInstruction(spv::OpCapability, spv::CapabilityShader);
 		
 		// OpExtension Instructions
 		
 		// OpExtInstImport Instructions
-		b.writeInstruction(spv::OpExtInstImport, 1, "GLSL.std.450");
+		b.writeInstruction(spv::OpExtInstImport, kyte::GLSL_STD_450_EXT_INST_ID, "GLSL.std.450");
 		
 		// OpMemoryModel Instruction
 		b.writeInstruction(spv::OpMemoryModel, spv::AddressingModelLogical, spv::MemoryModelGLSL450);
@@ -36,11 +37,14 @@ namespace kyte
 		
 		// OpExecutionMode/OpExecutionModeId Instructions
 
-		// Debug
-		// OpString/OpSourceExtension/OpSource/OpSourceContinued Instructions
-		b.writeInstruction(spv::OpSource, kyte::SourceLanguageKyte, kyte::Version);
-		// OpName/OpMemberName Instructions
-		// OpModuleProcessed Instructions
+		if (options.debugInfo)
+		{
+			// Debug
+			// OpString/OpSourceExtension/OpSource/OpSourceContinued Instructions
+			b.writeInstruction(spv::OpSource, kyte::SourceLanguageKyte, kyte::Version);
+			// OpName/OpMemberName Instructions
+			// OpModuleProcessed Instructions
+		}
 
 		// Annotation
 		// OpDecorate/OpMemberDecorate/OpGroupDecorate/OpGroupMemberDecorate/OpDecorationGroup Instructions
@@ -63,9 +67,8 @@ namespace kyte
 
 		std::vector<uint32_t> binary = b.get();
 
-		spv_target_env env = SPV_ENV_UNIVERSAL_1_5;
-		spvtools::SpirvTools core(env);
-		spvtools::Optimizer opt(env);
+		// Validation
+		spvtools::SpirvTools core(kyte::SpvTargetEnv);
 
 		auto print_msg_to_stderr = [](spv_message_level_t, const char*,
 			const spv_position_t&, const char* m) {
@@ -73,15 +76,39 @@ namespace kyte
 		};
 
 		core.SetMessageConsumer(print_msg_to_stderr);
-		opt.SetMessageConsumer(print_msg_to_stderr);
 
 		if (!core.Validate(binary)) throw std::exception();
-		if (!opt.Run(binary.data(), binary.size(), &binary)) throw std::exception();
 
+		// @Temp
 		std::string disassembly;
 		if (!core.Disassemble(binary, &disassembly)) throw std::exception();
 		std::cout << disassembly << "\n";
 
-		return std::move(binary);
+		// Clean up
+		visitedModules.clear();
+
+		return binary;
+	}
+
+	const Options& Compiler::getOptions() const
+	{
+		return options;
+	}
+
+	void Compiler::setOptions(const Options& newOptions)
+	{
+		options = newOptions;
+	}
+
+	std::string Compiler::loadModule(const std::string& module)
+	{
+		if (std::find(visitedModules.begin(), visitedModules.end(), module) != visitedModules.end()) {
+			return "";
+		}
+		else
+		{
+			visitedModules.push_back(module);
+			return resolve(module);
+		}
 	}
 } // namespace kyte

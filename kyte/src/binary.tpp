@@ -5,11 +5,11 @@ namespace kyte
 	template<typename ...Ts>
 	uint16_t Binary::writeInstruction(spv::Op opCode, Ts... operands)
 	{
-		writeOpcode(0, opCode);
+		uint16_t wordCount = writeOpcode(0, opCode);
 
 		auto m = binary.size() - 1;
 
-		uint16_t wordCount = 1 + writeOperands(operands...);
+		wordCount += writeOperands(operands...);
 
 		binary[m] |= wordCount << spv::WordCountShift;
 

@@ -5,15 +5,23 @@
 
 namespace kyte
 {
-	const uint32_t MagicNumber = 23;
-	const uint32_t Version = 1;
-	const uint32_t SourceLanguageKyte = 0;
-
-	struct SourceFile
+	struct Options
 	{
-		std::string name;
-		std::string source;
+		bool debugInfo = false;
+		uint8_t optimizationLevel = 0;
 	};
 
-	std::vector<uint32_t> compile(const std::vector<SourceFile>& sourceFiles);
+	class Compiler
+	{
+	public:
+		std::vector<uint32_t> compile(const std::string& source);
+		const Options& getOptions() const;
+		void setOptions(const Options& newOptions);
+	protected:
+		virtual std::string resolve(const std::string& module) = 0;
+	private:
+		std::string loadModule(const std::string& module);
+		std::vector<std::string> visitedModules;
+		Options options;
+	};
 } // namespace kyte

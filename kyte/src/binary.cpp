@@ -1,7 +1,5 @@
 #include "kyte_p.hpp"
 
-#include <type_traits>
-
 namespace kyte
 {
 	uint16_t Binary::writeWord(uint32_t word)
@@ -47,6 +45,22 @@ namespace kyte
 	uint16_t Binary::writeInstruction(spv::Op opCode)
 	{
 		return writeOpcode(1, opCode);
+	}
+
+	uint16_t Binary::writeInstruction(spv::Op opCode, std::vector<std::variant<uint32_t, const char*>> operands)
+	{
+		uint16_t wordCount = writeOpcode(0, opCode);
+
+		size_t m = binary.size() - 1;
+
+		for (std::variant<uint32_t, const char*> operand : operands)
+		{
+			wordCount += writeOperands(operand);
+		}
+
+		binary[m] |= wordCount << spv::WordCountShift;
+
+		return wordCount;
 	}
 
 	uint16_t Binary::writeOperands(std::variant<uint32_t, const char*> operand)
