@@ -15,6 +15,7 @@
 %code requires
 {
 #include <iostream>
+#include <algorithm> // max
 
 struct lexcontext;
 }//%code requires
@@ -46,54 +47,9 @@ namespace yy { parser::symbol_type yylex(lexcontext& ctx); }
 
 %%
 
-value
-	: INTEGER_LITERAL
-	: function_definition
-	;
-
-expression
-	: "return" value;
-
-statement
-	: expression ';'
-	;
-
-statement_list
-	: statement
-	| statement_list statement
-	;
-
-compound_statement
-	: '{' '}'
-	| '{' statement_list '}'
-	;
-
-function_parameter_list
-	: parameter_declaration
-	| parameter_list ',' parameter_declaration
-	;
-
-function_parameter_declaration
-	: declaration_specifiers declarator
-	| declaration_specifiers abstract_declarator
-	| declaration_specifiers
-	;
-
-function_declaration
-	: '(' function_paramater_list ')' '$'
-	;
-
-function_definition
-	: function_declaration compound_statement
-
-declaration
-	: IDENTIFIER ':' IDENTIFIER ';'
-	: "const" IDENTIFIER ':' IDENTIFIER ';'
-	;
-
 translation_unit
-	: declaration
-	| translation_unit declaration
+	: IDENTIFIER
+	| translation_unit IDENTIFIER
 	;
 
 %%
@@ -124,10 +80,10 @@ init:
 	"@vertex"                { token(VERTEX_TAG); }
 
 	// Identifier
-	[a-zA-Z_][a-zA-Z_0-9]*  { tokenv(IDENTIFIER, std::string(anchor, ctx.cursor)); }
+	[a-zA-Z_][a-zA-Z_0-9]*   { tokenv(IDENTIFIER, std::string(anchor, ctx.cursor)); }
 
 	// Literals
-	[0-9]+                   { tokenv(INTEGER_LITERAL, std::stoi(std::string(anchor, ctx.cursor))); }
+	-?[0-9]+                 { tokenv(INTEGER_LITERAL, std::stoi(std::string(anchor, ctx.cursor))); }
 
 	// Whitespace
 	"\r\n" | [\r\n]          { ctx.loc.lines();   advance(init); }

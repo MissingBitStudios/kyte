@@ -43,25 +43,23 @@ namespace kyte
 	convention (i.e., the first octet is in the lowest-order 8 bits of the word).
 	The final word contains the string’s nul-termination character (0), and all
 	contents past the end of the string in the final word are padded with 0. */
-	uint16_t Binary::writeLiteralString(const char* literalString)
+	uint16_t Binary::writeLiteralString(const char* c)
 	{
 		uint16_t wordCount = 0;
 		uint32_t word = 0;
 		uint8_t size = 0;
-		size_t literalStringLength = std::strlen(literalString);
 
-		for (size_t i = 0; i <= literalStringLength; i++)
+		for (;; c++)
 		{
-			word |= literalString[i] << 8 * size;
+			word |= *c << 8 * size;
 			size++;
-			if (size >= 4 || i == literalStringLength)
+			if (size >= 4 || *c == '\0')
 			{
 				wordCount += writeWord(word);
 				word = size = 0;
+				if (*c == '\0') return wordCount;
 			}
 		}
-
-		return wordCount;
 	}
 
 	/*The 16 high-order bits are the WordCount of the instruction.

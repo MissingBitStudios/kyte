@@ -23,8 +23,8 @@ namespace kyte
 		uint16_t writeWord64(uint64_t word);
 		uint16_t writeInt(int32_t value);
 		uint16_t writeInt64(int64_t value);
-		uint16_t writeFloat(int32_t value);
-		uint16_t writeFloat64(int64_t value);
+		uint16_t writeFloat(float value);
+		uint16_t writeFloat64(double value);
 		uint16_t writeLiteralString(const char* literalString);
 		uint16_t writeOpcode(uint16_t wordCount, spv::Op opCode);
 		uint16_t writeInstruction(spv::Op opCode);
@@ -40,7 +40,7 @@ namespace kyte
 		std::vector<uint32_t> binary;
 	};
 
-	void parse(const std::string& sourceCode);
+	// void parse(const std::string& sourceCode);
 } // namespace kyte
 
 #include "binary.tpp"
