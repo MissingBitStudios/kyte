@@ -13,9 +13,9 @@ namespace kyte
 	template<typename ...Ts>
 	uint16_t Binary::writeInstruction(spv::Op opCode, Ts... operands)
 	{
-		uint16_t wordCount = writeOpcode(0, opCode);
+		size_t m = binary.size();
 
-		size_t m = binary.size() - 1;
+		uint16_t wordCount = writeOpcode(0, opCode);
 
 		wordCount += writeOperands(operands...);
 
@@ -29,7 +29,8 @@ namespace kyte
 	{
 		size_t m = binary.size();
 
-		uint16_t wordCount = writeExtInstruction(setId, instruction, resultTypeId, ResultId);
+		uint16_t wordCount = writeOpcode(0, spv::OpExtInst);
+		wordCount += writeWords(resultTypeId, resultId, setId, instruction);
 
 		wordCount += writeOperands(operands...);
 
