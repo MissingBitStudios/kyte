@@ -1,4 +1,4 @@
-import os, re
+import re
 
 def spirv():
 	constant = re.compile(r"^static const unsigned int ([a-zA-Z_][a-zA-Z0-9_]*) = ([0-9a-z]+);")
