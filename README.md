@@ -20,6 +20,7 @@ These instructions will get you a copy of the project up and running on your loc
 ```sh
 git clone https://github.com/MissingBitStudios/kyte.git
 cd kyte
+git submodule update --init --recursive
 mkdir build
 cd build
 cmake ..
