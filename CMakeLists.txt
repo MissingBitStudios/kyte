@@ -15,6 +15,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(KYTE_COMPILER "Build Compiler."                    ON )
 option(KYTE_DOCS     "Build documentation."               OFF)
+option(KYTE_GEN_STL  "Generate STL files."                OFF)
 option(KYTE_GRAMMAR  "Build Grammar with Bison and re2c." OFF)
 option(KYTE_INSTALL  "Generate install targets"           OFF)
 option(KYTE_TESTS    "Build tests."                       OFF)
@@ -29,6 +30,10 @@ endif()
 
 if(KYTE_DOCS)
   add_subdirectory(docs)
+endif()
+
+if(KYTE_GEN_STL)
+  add_subdirectory(kytestl)
 endif()
 
 if(KYTE_TESTS)

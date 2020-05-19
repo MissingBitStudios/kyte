@@ -1,4 +1,6 @@
 // Kyte Standard Library
+const glsl := include("glslext.ky");
+
 // Types
 // Mat
 const mat2b := bool[2][2];
@@ -68,14 +70,12 @@ const scalar := <bool, numeric>;
 const sampler := <sampler2D, sampler3D>;
 
 // Functions
-@inline
 @iknowwhatimdoing
-const cos := (value : float) $ float
-{
-	spirv{
-		$RESULT = OpExtInst $FLOAT $GLSL_STD_450_EXT_INST_ID Cos $ARGUMENT1
-	};
-}
+@inline
+@export
+const cos := (t : float) $ r : float {
+  glsl.op(glsl.Cos, r, t);
+};
 
 // Misc
 const cast := (value : any, T : type) $ T
