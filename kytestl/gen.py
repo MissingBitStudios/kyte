@@ -61,7 +61,7 @@ def ocl():
 			if rep != line:
 				k.write(rep)
 			if line.startswith("    //"):
-				k.write("\n%s" % line)
+				k.write("\n\t%s" % line.strip())
 			if line == "};\n":
 				k.write("};\n\n")
 			line = c.readline()

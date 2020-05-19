@@ -1,7 +1,6 @@
 @export
 const OpenCLOp := enum {
-    // Section 2.1: Math extended instructions
-	Acos := 0,
+	// Section 2.1: Math extended instructions	Acos := 0,
 	Acosh := 1,
 	Acospi := 2,
 	Asin := 3,
@@ -97,8 +96,7 @@ const OpenCLOp := enum {
 	Native_sqrt := 93,
 	Native_tan := 94,
 
-    // Section 2.2: Integer instructions
-	SAbs := 141,
+	// Section 2.2: Integer instructions	SAbs := 141,
 	SAbs_diff := 142,
 	SAdd_sat := 143,
 	UAdd_sat := 144,
@@ -133,8 +131,7 @@ const OpenCLOp := enum {
 	UMul_hi := 203,
 	UMad_hi := 204,
 
-    // Section 2.3: Common instructions
-	FClamp := 95,
+	// Section 2.3: Common instructions	FClamp := 95,
 	Degrees := 96,
 	FMax_common := 97,
 	FMin_common := 98, 
@@ -144,8 +141,7 @@ const OpenCLOp := enum {
 	Smoothstep := 102,
 	Sign := 103,
 
-    // Section 2.4: Geometric instructions
-	Cross := 104,
+	// Section 2.4: Geometric instructions	Cross := 104,
 	Distance := 105, 
 	Length := 106,
 	Normalize := 107,
@@ -153,12 +149,10 @@ const OpenCLOp := enum {
 	Fast_length := 109,
 	Fast_normalize := 110,
 
-    // Section 2.5: Relational instructions
-	Bitselect := 186,
+	// Section 2.5: Relational instructions	Bitselect := 186,
 	Select := 187,
 
-    // Section 2.6: Vector Data Load and Store instructions
-	Vloadn := 171,
+	// Section 2.6: Vector Data Load and Store instructions	Vloadn := 171,
 	Vstoren := 172,
 	Vload_half := 173,
 	Vload_halfn := 174,
@@ -170,12 +164,10 @@ const OpenCLOp := enum {
 	Vstorea_halfn := 180,
 	Vstorea_halfn_r := 181,
 
-    // Section 2.7: Miscellaneous Vector instructions
-	Shuffle := 182,
+	// Section 2.7: Miscellaneous Vector instructions	Shuffle := 182,
 	Shuffle2 := 183,
 
-    // Section 2.8: Misc instructions 
-	Printf := 184,
+	// Section 2.8: Misc instructions	Printf := 184,
 	Prefetch := 185,
 };
 

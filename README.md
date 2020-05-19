@@ -13,6 +13,7 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 * CMake
+* Python >= 3 (Because SPIRV-Tools has it marked as required even with tests disabled for some reason)
 
 ### Checkout
 
@@ -25,9 +26,17 @@ cmake ..
 cmake --build .
 ```
 
+### Install
+
+Run cmake with the `KYTE_INSTALL` option on then run the following command.
+
+```sh
+cmake --install
+```
+
 ## Documentation
 
-The language syntax, API reference, and kytec command-line options are available on https://kyte.readthedocs.io
+The language syntax, API reference, and kytec command-line options are available on https://kyte.readthedocs.io.
 
 ## Built With
 
