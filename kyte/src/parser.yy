@@ -53,319 +53,76 @@ namespace yy { parser::symbol_type yylex(lexcontext& ctx); }
 %token LEFT_OP "<<" RIGHT_OP ">>"
 %token LEFT_ASSIGN "<<=" RIGHT_ASSIGN ">>=" AND_ASSIGN "&="
 %token XOR_ASSIGN "^=" OR_ASSIGN "|=" NOT_ASSIGN "~="
-%token TYPEDEF "typedef" EXTERN "extern" OPERATOR "operator" CONST "const"
-%token INT "int" UINT "uint" FLOAT "float" DOUBLE "double" BOOL "bool" VOID "void"
+%token DECL_ASSIGN ":=" ASSIGN "=" SET_TYPE ":"
+%token OPERATOR "operator" CONST "const"
+%token INT "int" UINT "uint" FLOAT "float" DOUBLE "double" BOOL "bool"
 %token STRUCT "struct" ENUM "enum"
 %token ELLIPSIS "..." ARROW "->"
 %token CASE "case" DEFAULT "default" IF "if" ELSE "else" SWITCH "switch"
 %token WHILE "while" DO "do" FOR "for"
 %token CONTINUE "continue" BREAK "break" RETURN "return" DISCARD "discard"
-
-%type<std::string> IDENTIFIER TYPE_NAME FUNCTION_NAME VARIABLE_NAME
+%type<std::string> IDENTIFIER
 
 %start translation_unit
 
 %%
 
-primary_expression
-	: IDENTIFIER
-	| CONSTANT
-	| '(' expression ')'
+// whole translation unit with import and functions
+translation_unit
+	: external_declaration
+	| translation_unit external_declaration
 	;
 
-postfix_expression
-	: primary_expression
-	| postfix_expression '[' expression ']'
-	| postfix_expression '(' ')'
-	| postfix_expression '(' argument_expression_list ')'
-	| postfix_expression '.' IDENTIFIER
-	| postfix_expression "++"
-	| postfix_expression "--"
+// imports and functions
+external_declaration
+    : declaration
+    | external_declaration declaration
+    | external_declaration tag declaration
+    | %empty
 	;
 
-argument_expression_list
-	: assignment_expression
-	| argument_expression_list ',' assignment_expression
+tag
+    : '@' tag_word
+    | tag '@' tag_word
+    ;
+
+tag_word
+    : "inline"
+    | "iknowwhatiamdoing"
+    | "private"
+    | "vertex"
+    | "fragment"
+    | "geometry"
+    | "compute"
+    | "tesselation"
 	;
 
-unary_expression
-	: postfix_expression
-	| "++" unary_expression
-	| "--" unary_expression
-	| unary_operator cast_expression
-	;
-
-unary_operator
-	: '+'
-	| '-'
-	| '~'
-	| '!'
-	;
-
-cast_expression
-	: unary_expression
-	| '(' type_name ')' cast_expression
-	;
-
-multiplicative_expression
-	: cast_expression
-	| multiplicative_expression '*' cast_expression
-	| multiplicative_expression '/' cast_expression
-	| multiplicative_expression '%' cast_expression
-	;
-
-additive_expression
-	: multiplicative_expression
-	| additive_expression '+' multiplicative_expression
-	| additive_expression '-' multiplicative_expression
-	;
-
-shift_expression
-	: additive_expression
-	| shift_expression "<<" additive_expression
-	| shift_expression ">>" additive_expression
-	;
-
-relational_expression
-	: shift_expression
-	| relational_expression '<' shift_expression
-	| relational_expression '>' shift_expression
-	| relational_expression "<=" shift_expression
-	| relational_expression ">=" shift_expression
-	;
-
-equality_expression
-	: relational_expression
-	| equality_expression "==" relational_expression
-	| equality_expression "!=" relational_expression
-	;
-
-and_expression
-	: equality_expression
-	| and_expression '&' equality_expression
-	;
-
-exclusive_or_expression
-	: and_expression
-	| exclusive_or_expression '^' and_expression
-	;
-
-inclusive_or_expression
-	: exclusive_or_expression
-	| inclusive_or_expression '|' exclusive_or_expression
-	;
-
-logical_and_expression
-	: inclusive_or_expression
-	| logical_and_expression "&&" inclusive_or_expression
-	;
-
-logical_or_expression
-	: logical_and_expression
-	| logical_or_expression "||" logical_and_expression
-	;
-
-conditional_expression
-	: logical_or_expression
-	| logical_or_expression '?' expression ':' conditional_expression
-	;
-
-assignment_expression
-	: conditional_expression
-	| unary_expression assignment_operator assignment_expression
-	;
-
-assignment_operator
-	: '='
-	| "*="
-	| "/="
-	| "%="
-	| "+="
-	| "-="
-	| "<<="
-	| ">>="
-	| "&="
-	| "^="
-	| "|="
-	| "~="
-	;
-
-expression
-	: assignment_expression
-	| expression ',' assignment_expression
-	;
-
-constant_expression
-	: conditional_expression
-	;
-
+// declarations for functions and variables
 declaration
-	: declaration_specifiers ';'
-	| declaration_specifiers init_declarator_list ';'
-	;
+    : function_declaration ";"
+    | declaration function_declaration ";"
+    | variable_declaration
+    | declaration variable_declaration
+    ;
 
-declaration_specifiers
-	: storage_class_specifier
-	| storage_class_specifier declaration_specifiers
-	| type_specifier
-	| type_specifier declaration_specifiers
-	| "const"
-	| "const" declaration_specifiers
-	;
+function_declaration
+    : IDENTIFIER ":=" '(' function_arguments ')' compound_statement // void function declaration
+    | CONST IDENTIFIER ":=" '(' function_arguments ')' compound_statement // const void function declaration
+    | IDENTIFIER ":=" '(' function_arguments ')' "$" TYPE_NAME compound_statement // function declaration with return
+    | CONST IDENTIFIER ":=" '(' function_arguments ')' "$" TYPE_NAME compound_statement // const function declaration with return
+    ;
 
-init_declarator_list
-	: init_declarator
-	| init_declarator_list ',' init_declarator
-	;
+function_arguments
+    : IDENTIFIER ":" TYPE_NAME
+    | function_arguments "," IDENTIFIER ":" TYPE_NAME
+    ;
 
-init_declarator
-	: declarator
-	| declarator '=' initializer
-	;
+variable_declaration
+    : IDENTIFIER ":=" expression_statement // variable declaration
+    | CONST IDENTIFIER ":=" expression_statement // const declaration
+    ;
 
-storage_class_specifier
-	: "typedef"
-	| "extern"
-	;
-
-type_list_specifier
-	: '<' type_list '>'
-	;
-
-type_list
-	: type_name
-	| type_list ',' type_name
-	;
-
-type_specifier
-	: "void"
-	| "int"
-	| "uint"
-	| "float"
-	| "double"
-	| "bool"
-	| struct_specifier
-	| enum_specifier
-	| type_list_specifier
-	| IDENTIFIER
-	;
-
-struct_specifier
-	: "struct" IDENTIFIER '{' struct_declaration_list '}'
-	| "struct" '{' struct_declaration_list '}'
-	| "struct" IDENTIFIER
-	;
-
-struct_declaration_list
-	: struct_declaration
-	| struct_declaration_list struct_declaration
-	;
-
-struct_declaration
-	: specifier_qualifier_list struct_declarator_list ';'
-	;
-
-specifier_qualifier_list
-	: type_specifier specifier_qualifier_list
-	| type_specifier
-	| "const" specifier_qualifier_list
-	| "const"
-	;
-
-struct_declarator_list
-	: struct_declarator
-	| struct_declarator_list ',' struct_declarator
-	;
-
-struct_declarator
-	: declarator
-	| ':' constant_expression
-	| declarator ':' constant_expression
-	;
-
-enum_specifier
-	: "enum" '{' enumerator_list '}'
-	| "enum" IDENTIFIER '{' enumerator_list '}'
-	| "enum" IDENTIFIER
-	;
-
-enumerator_list
-	: enumerator
-	| enumerator_list ',' enumerator
-	;
-
-enumerator
-	: IDENTIFIER
-	| IDENTIFIER '=' constant_expression
-	;
-
-declarator
-	: direct_declarator
-	;
-
-direct_declarator
-	: type_specifier
-	| '(' declarator ')'
-	| direct_declarator '[' constant_expression ']'
-	| direct_declarator '[' ']'
-	| direct_declarator '(' parameter_type_list ')'
-	| direct_declarator '(' identifier_list ')'
-	| direct_declarator '(' ')'
-	;
-
-parameter_type_list
-	: parameter_list
-	| parameter_list ',' "..."
-	;
-
-parameter_list
-	: parameter_declaration
-	| parameter_list ',' parameter_declaration
-	;
-
-parameter_declaration
-	: declaration_specifiers declarator
-	| declaration_specifiers abstract_declarator
-	| declaration_specifiers
-	;
-
-identifier_list
-	: IDENTIFIER
-	| identifier_list ',' IDENTIFIER
-	;
-
-type_name
-	: specifier_qualifier_list
-	| specifier_qualifier_list abstract_declarator
-	;
-
-abstract_declarator
-	: direct_abstract_declarator
-	;
-
-direct_abstract_declarator
-	: '(' abstract_declarator ')'
-	| '[' ']'
-	| '[' constant_expression ']'
-	| direct_abstract_declarator '[' ']'
-	| direct_abstract_declarator '[' constant_expression ']'
-	| '(' ')'
-	| '(' parameter_type_list ')'
-	| direct_abstract_declarator '(' ')'
-	| direct_abstract_declarator '(' parameter_type_list ')'
-	;
-
-initializer
-	: assignment_expression
-	| '{' initializer_list '}'
-	| '{' initializer_list ',' '}'
-	;
-
-initializer_list
-	: initializer
-	| initializer_list ',' initializer
-	;
-
+// any kind of statement
 statement
 	: labeled_statement
 	| compound_statement
@@ -373,13 +130,16 @@ statement
 	| selection_statement
 	| iteration_statement
 	| jump_statement
+    | declaration
 	;
 
+// follow switch statements
 labeled_statement
-	: "case" constant_expression ':' statement
-	| "default" ':' statement
+	: CASE expression ':' statement
+	| DEFAULT ':' statement
 	;
 
+// used for functions, if statements, loops, etc.
 compound_statement
 	: '{' '}'
 	| '{' statement_list '}'
@@ -403,64 +163,66 @@ expression_statement
 	;
 
 selection_statement
-	: "if" '(' expression ')' statement
-	| "if" '(' expression ')' statement "else" statement
-	| "switch" '(' expression ')' statement
+	: IF '(' expression ')' statement
+	| IF '(' expression ')' statement ELSE statement
+	| SWITCH '(' expression ')' labeled_statement
 	;
 
 iteration_statement
-	: "while" '(' expression ')' statement
-	| "do" statement "while" '(' expression ')' ';'
-	| "for" '(' expression_statement expression_statement ')' statement
-	| "for" '(' expression_statement expression_statement expression ')' statement
+	: WHILE '(' expression ')' statement
+	| DO statement WHILE '(' expression ')' ';'
+	| FOR '(' expression_statement expression_statement ')' statement
+	| FOR '(' expression_statement expression_statement expression ')' statement
 	;
 
 jump_statement
-	: "continue" ';'
-	| "break" ';'
-	| "return" ';'
-	| "return" expression ';'
-	| "discard"
+	: CONTINUE ';'
+	| BREAK ';'
+	| RETURN ';'
+	| RETURN expression ';'
+	| DISCARD
 	;
 
-translation_unit
-	: external_declaration
-	| translation_unit external_declaration
+assignment_operator
+	: ASSIGN // "="
+    | DECL_ASSIGN // ":="
+	| MUL_ASSIGN // "*="
+	| DIV_ASSIGN // "/="
+	| MOD_ASSIGN // "%="
+	| ADD_ASSIGN // "+="
+	| SUB_ASSIGN // "-="
+	| LEFT_ASSIGN // "<<="
+	| RIGHT_ASSIGN // ">>="
+	| AND_ASSIGN // "&="
+	| XOR_ASSIGN // "^="
+	| OR_ASSIGN // "|="
+	| NOT_ASSIGN // "~="
 	;
 
-external_declaration
-	: function_definition
-	| declaration
-	;
+// all the expression stuff below
 
-function_definition
-	: declaration_specifiers declarator declaration_list compound_statement
-	| declaration_specifiers declarator compound_statement
-	| declarator declaration_list compound_statement
-	| declarator compound_statement
-	;
+expression
+    : IDENTIFIER
+    | CONSTANT
+    | function_call_expression
+    ;
+
+function_call_expression
+    : IDENTIFIER "(" argument_list ")"
+    ;
+
+argument_list
+    : IDENTIFIER
+    | CONSTANT
+    | argument_list "," IDENTIFIER
+    | argument_list "," CONSTANT
+    ;
 
 %%
 
-yy::parser::symbol_type yy::yylex(lexcontext& ctx)
-{
-	const char* YYMARKER;
-	const char* anchor = ctx.cursor;
-	unsigned int comment_scope = 0;
-#define walk() { ctx.loc.columns(ctx.cursor - anchor); }
-#define advance(label) { anchor = ctx.cursor; ctx.loc.step(); goto label; }
-#define token(name) { walk(); return parser::make_##name(ctx.loc); }
-#define tokenv(name, ...) { walk(); return parser::make_##name(__VA_ARGS__, ctx.loc); }
 
-	auto getIdentifier = [&](std::string& identifier)
-	{
-  		switch (ctx.identifierFlag)
-		{
-			case IdentifierFlag::FUNCTION_NAME: tokenv(FUNCTION_NAME, identifier);
-			case IdentifierFlag::VARIABLE_NAME: tokenv(VARIABLE_NAME, identifier);
-			case IdentifierFlag::TYPE_NAME: tokenv(TYPE_NAME, identifier);
-		}
-	};
+
+
 
 %{ /* Begin re2c lexer */
 	re2c:yyfill:enable = 0;
@@ -473,7 +235,6 @@ yy::parser::symbol_type yy::yylex(lexcontext& ctx)
 init:
 	%{
 	// Keywords
-	"typedef"                { token(TYPEDEF); }
 	"if"                     { token(IF); }
 	"else"                   { token(ELSE); }
 	"switch"                 { token(SWITCH); }
@@ -485,7 +246,6 @@ init:
 	"continue"               { token(CONTINUE); }
 	"struct"                 { token(STRUCT); }
 	"import"                 { token(IMPORT); }
-	"extern"                 { token(EXTERN); }
 	"const"                  { token(CONST); }
 	"return"                 { token(RETURN); }
 	"enum"                   { token(ENUM); }
@@ -511,6 +271,9 @@ init:
 	// Literals
 	[0-9]+ [f]               { token(CONSTANT); }
 	[0-9]+                   { token(CONSTANT); }
+    
+    // Strings
+    [a-zA-Z0-9_.-/\:]        { token(CONSTANT); }
 
 	// Comment
 	"//" [^\r\n]*            { walk(); advance(init); }
@@ -536,6 +299,8 @@ init:
 	"~="                     { token(NOT_ASSIGN); }
 	"<<="                    { token(LEFT_ASSIGN); }
 	">>="                    { token(RIGHT_ASSIGN); }
+	":="                     { token(DECL_ASSIGN); }
+	"="                      { token(ASSIGN); }
 	"<<"                     { token(LEFT_OP); }
 	">>"                     { token(RIGHT_OP); }
 	"<="                     { token(LE_OP); }
