@@ -1,4 +1,3 @@
-@export
 const OpenCLOp := enum {
 	// Section 2.1: Math extended instructions	Acos := 0,
 	Acosh := 1,
@@ -171,12 +170,10 @@ const OpenCLOp := enum {
 	Prefetch := 185,
 };
 
-@export
-const OPEN_CL_EXT_INST := 2;
+const OPEN_CL_EXT_INST := 1;
 
 @iknowwhatimdoing
 @inline
-@export
 const op := (op : OpenCLOp, r : &T<any>, params : any...) $ {
 	__spirv(OpExtInst, T, r, OPEN_CL_EXT_INST, op, params...);
 };

@@ -1,19 +1,9 @@
-@export
 const MagicNumber := 0x07230203;
-
-@export
 const Version := 0x00010500;
-
-@export
 const Revision := 3;
-
-@export
 const OpCodeMask := 0xffff;
-
-@export
 const WordCountShift := 16;
 
-@export
 const SourceLanguage := enum {
 	SourceLanguageUnknown := 0,
 	SourceLanguageESSL := 1,
@@ -24,7 +14,6 @@ const SourceLanguage := enum {
 	SourceLanguageMax := 0x7fffffff,
 };
 
-@export
 const ExecutionModel := enum {
 	ExecutionModelVertex := 0,
 	ExecutionModelTessellationControl := 1,
@@ -50,7 +39,6 @@ const ExecutionModel := enum {
 	ExecutionModelMax := 0x7fffffff,
 };
 
-@export
 const AddressingModel := enum {
 	AddressingModelLogical := 0,
 	AddressingModelPhysical32 := 1,
@@ -60,7 +48,6 @@ const AddressingModel := enum {
 	AddressingModelMax := 0x7fffffff,
 };
 
-@export
 const MemoryModel := enum {
 	MemoryModelSimple := 0,
 	MemoryModelGLSL450 := 1,
@@ -70,7 +57,6 @@ const MemoryModel := enum {
 	MemoryModelMax := 0x7fffffff,
 };
 
-@export
 const ExecutionMode := enum {
 	ExecutionModeInvocations := 0,
 	ExecutionModeSpacingEqual := 1,
@@ -131,7 +117,6 @@ const ExecutionMode := enum {
 	ExecutionModeMax := 0x7fffffff,
 };
 
-@export
 const StorageClass := enum {
 	StorageClassUniformConstant := 0,
 	StorageClassInput := 1,
@@ -163,7 +148,6 @@ const StorageClass := enum {
 	StorageClassMax := 0x7fffffff,
 };
 
-@export
 const Dim := enum {
 	Dim1D := 0,
 	Dim2D := 1,
@@ -175,7 +159,6 @@ const Dim := enum {
 	DimMax := 0x7fffffff,
 };
 
-@export
 const SamplerAddressingMode := enum {
 	SamplerAddressingModeNone := 0,
 	SamplerAddressingModeClampToEdge := 1,
@@ -185,14 +168,12 @@ const SamplerAddressingMode := enum {
 	SamplerAddressingModeMax := 0x7fffffff,
 };
 
-@export
 const SamplerFilterMode := enum {
 	SamplerFilterModeNearest := 0,
 	SamplerFilterModeLinear := 1,
 	SamplerFilterModeMax := 0x7fffffff,
 };
 
-@export
 const ImageFormat := enum {
 	ImageFormatUnknown := 0,
 	ImageFormatRgba32f := 1,
@@ -237,7 +218,6 @@ const ImageFormat := enum {
 	ImageFormatMax := 0x7fffffff,
 };
 
-@export
 const ImageChannelOrder := enum {
 	ImageChannelOrderR := 0,
 	ImageChannelOrderA := 1,
@@ -262,7 +242,6 @@ const ImageChannelOrder := enum {
 	ImageChannelOrderMax := 0x7fffffff,
 };
 
-@export
 const ImageChannelDataType := enum {
 	ImageChannelDataTypeSnormInt8 := 0,
 	ImageChannelDataTypeSnormInt16 := 1,
@@ -284,7 +263,6 @@ const ImageChannelDataType := enum {
 	ImageChannelDataTypeMax := 0x7fffffff,
 };
 
-@export
 const ImageOperandsShift := enum {
 	ImageOperandsBiasShift := 0,
 	ImageOperandsLodShift := 1,
@@ -307,7 +285,6 @@ const ImageOperandsShift := enum {
 	ImageOperandsMax := 0x7fffffff,
 };
 
-@export
 const ImageOperandsMask := enum {
 	ImageOperandsMaskNone := 0,
 	ImageOperandsBiasMask := 0x00000001,
@@ -330,7 +307,6 @@ const ImageOperandsMask := enum {
 	ImageOperandsZeroExtendMask := 0x00002000,
 };
 
-@export
 const FPFastMathModeShift := enum {
 	FPFastMathModeNotNaNShift := 0,
 	FPFastMathModeNotInfShift := 1,
@@ -340,7 +316,6 @@ const FPFastMathModeShift := enum {
 	FPFastMathModeMax := 0x7fffffff,
 };
 
-@export
 const FPFastMathModeMask := enum {
 	FPFastMathModeMaskNone := 0,
 	FPFastMathModeNotNaNMask := 0x00000001,
@@ -350,7 +325,6 @@ const FPFastMathModeMask := enum {
 	FPFastMathModeFastMask := 0x00000010,
 };
 
-@export
 const FPRoundingMode := enum {
 	FPRoundingModeRTE := 0,
 	FPRoundingModeRTZ := 1,
@@ -359,14 +333,12 @@ const FPRoundingMode := enum {
 	FPRoundingModeMax := 0x7fffffff,
 };
 
-@export
 const LinkageType := enum {
 	LinkageTypeExport := 0,
 	LinkageTypeImport := 1,
 	LinkageTypeMax := 0x7fffffff,
 };
 
-@export
 const AccessQualifier := enum {
 	AccessQualifierReadOnly := 0,
 	AccessQualifierWriteOnly := 1,
@@ -374,7 +346,6 @@ const AccessQualifier := enum {
 	AccessQualifierMax := 0x7fffffff,
 };
 
-@export
 const FunctionParameterAttribute := enum {
 	FunctionParameterAttributeZext := 0,
 	FunctionParameterAttributeSext := 1,
@@ -387,7 +358,6 @@ const FunctionParameterAttribute := enum {
 	FunctionParameterAttributeMax := 0x7fffffff,
 };
 
-@export
 const Decoration := enum {
 	DecorationRelaxedPrecision := 0,
 	DecorationSpecId := 1,
@@ -461,7 +431,6 @@ const Decoration := enum {
 	DecorationMax := 0x7fffffff,
 };
 
-@export
 const BuiltIn := enum {
 	BuiltInPosition := 0,
 	BuiltInPointSize := 1,
@@ -583,21 +552,18 @@ const BuiltIn := enum {
 	BuiltInMax := 0x7fffffff,
 };
 
-@export
 const SelectionControlShift := enum {
 	SelectionControlFlattenShift := 0,
 	SelectionControlDontFlattenShift := 1,
 	SelectionControlMax := 0x7fffffff,
 };
 
-@export
 const SelectionControlMask := enum {
 	SelectionControlMaskNone := 0,
 	SelectionControlFlattenMask := 0x00000001,
 	SelectionControlDontFlattenMask := 0x00000002,
 };
 
-@export
 const LoopControlShift := enum {
 	LoopControlUnrollShift := 0,
 	LoopControlDontUnrollShift := 1,
@@ -611,7 +577,6 @@ const LoopControlShift := enum {
 	LoopControlMax := 0x7fffffff,
 };
 
-@export
 const LoopControlMask := enum {
 	LoopControlMaskNone := 0,
 	LoopControlUnrollMask := 0x00000001,
@@ -625,7 +590,6 @@ const LoopControlMask := enum {
 	LoopControlPartialCountMask := 0x00000100,
 };
 
-@export
 const FunctionControlShift := enum {
 	FunctionControlInlineShift := 0,
 	FunctionControlDontInlineShift := 1,
@@ -634,7 +598,6 @@ const FunctionControlShift := enum {
 	FunctionControlMax := 0x7fffffff,
 };
 
-@export
 const FunctionControlMask := enum {
 	FunctionControlMaskNone := 0,
 	FunctionControlInlineMask := 0x00000001,
@@ -643,7 +606,6 @@ const FunctionControlMask := enum {
 	FunctionControlConstMask := 0x00000008,
 };
 
-@export
 const MemorySemanticsShift := enum {
 	MemorySemanticsAcquireShift := 1,
 	MemorySemanticsReleaseShift := 2,
@@ -665,7 +627,6 @@ const MemorySemanticsShift := enum {
 	MemorySemanticsMax := 0x7fffffff,
 };
 
-@export
 const MemorySemanticsMask := enum {
 	MemorySemanticsMaskNone := 0,
 	MemorySemanticsAcquireMask := 0x00000002,
@@ -687,7 +648,6 @@ const MemorySemanticsMask := enum {
 	MemorySemanticsVolatileMask := 0x00008000,
 };
 
-@export
 const MemoryAccessShift := enum {
 	MemoryAccessVolatileShift := 0,
 	MemoryAccessAlignedShift := 1,
@@ -701,7 +661,6 @@ const MemoryAccessShift := enum {
 	MemoryAccessMax := 0x7fffffff,
 };
 
-@export
 const MemoryAccessMask := enum {
 	MemoryAccessMaskNone := 0,
 	MemoryAccessVolatileMask := 0x00000001,
@@ -715,7 +674,6 @@ const MemoryAccessMask := enum {
 	MemoryAccessNonPrivatePointerKHRMask := 0x00000020,
 };
 
-@export
 const Scope := enum {
 	ScopeCrossDevice := 0,
 	ScopeDevice := 1,
@@ -728,7 +686,6 @@ const Scope := enum {
 	ScopeMax := 0x7fffffff,
 };
 
-@export
 const GroupOperation := enum {
 	GroupOperationReduce := 0,
 	GroupOperationInclusiveScan := 1,
@@ -740,7 +697,6 @@ const GroupOperation := enum {
 	GroupOperationMax := 0x7fffffff,
 };
 
-@export
 const KernelEnqueueFlags := enum {
 	KernelEnqueueFlagsNoWait := 0,
 	KernelEnqueueFlagsWaitKernel := 1,
@@ -748,19 +704,16 @@ const KernelEnqueueFlags := enum {
 	KernelEnqueueFlagsMax := 0x7fffffff,
 };
 
-@export
 const KernelProfilingInfoShift := enum {
 	KernelProfilingInfoCmdExecTimeShift := 0,
 	KernelProfilingInfoMax := 0x7fffffff,
 };
 
-@export
 const KernelProfilingInfoMask := enum {
 	KernelProfilingInfoMaskNone := 0,
 	KernelProfilingInfoCmdExecTimeMask := 0x00000001,
 };
 
-@export
 const Capability := enum {
 	CapabilityMatrix := 0,
 	CapabilityShader := 1,
@@ -927,7 +880,6 @@ const Capability := enum {
 	CapabilityMax := 0x7fffffff,
 };
 
-@export
 const RayFlagsShift := enum {
 	RayFlagsOpaqueKHRShift := 0,
 	RayFlagsNoOpaqueKHRShift := 1,
@@ -942,7 +894,6 @@ const RayFlagsShift := enum {
 	RayFlagsMax := 0x7fffffff,
 };
 
-@export
 const RayFlagsMask := enum {
 	RayFlagsMaskNone := 0,
 	RayFlagsOpaqueKHRMask := 0x00000001,
@@ -957,14 +908,12 @@ const RayFlagsMask := enum {
 	RayFlagsSkipAABBsKHRMask := 0x00000200,
 };
 
-@export
 const RayQueryIntersection := enum {
 	RayQueryIntersectionRayQueryCandidateIntersectionKHR := 0,
 	RayQueryIntersectionRayQueryCommittedIntersectionKHR := 1,
 	RayQueryIntersectionMax := 0x7fffffff,
 };
 
-@export
 const RayQueryCommittedIntersectionType := enum {
 	RayQueryCommittedIntersectionTypeRayQueryCommittedIntersectionNoneKHR := 0,
 	RayQueryCommittedIntersectionTypeRayQueryCommittedIntersectionTriangleKHR := 1,
@@ -972,14 +921,12 @@ const RayQueryCommittedIntersectionType := enum {
 	RayQueryCommittedIntersectionTypeMax := 0x7fffffff,
 };
 
-@export
 const RayQueryCandidateIntersectionType := enum {
 	RayQueryCandidateIntersectionTypeRayQueryCandidateIntersectionTriangleKHR := 0,
 	RayQueryCandidateIntersectionTypeRayQueryCandidateIntersectionAABBKHR := 1,
 	RayQueryCandidateIntersectionTypeMax := 0x7fffffff,
 };
 
-@export
 const Op := enum {
 	OpNop := 0,
 	OpUndef := 1,
@@ -1538,4 +1485,3 @@ const Op := enum {
 	OpRayQueryGetIntersectionWorldToObjectKHR := 6032,
 	OpMax := 0x7fffffff,
 };
-

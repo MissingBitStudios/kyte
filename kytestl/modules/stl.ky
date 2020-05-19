@@ -1,5 +1,6 @@
 // Kyte Standard Library
-const glsl := include("glslext.ky");
+@private
+const glsl := import("glslext.ky");
 
 // Types
 // Mat

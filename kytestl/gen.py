@@ -7,17 +7,17 @@ def spirv():
 	with open("../dependencies/SPIRV-Headers/include/spirv/unified1/spirv.hpp") as c, open("modules/spirv.ky", "w") as k:
 		line = c.readline()
 		while line:
-			rep = constant.sub("@export\nconst \\1 := \\2;\n", line)
+			rep = constant.sub("const \\1 := \\2;", line)
 			if rep != line:
 				k.write(rep)
-			rep = enum.sub("@export\nconst \\1 := enum {", line)
+			rep = enum.sub("\nconst \\1 := enum {", line)
 			if rep != line:
 				k.write(rep)
 			rep = enum_value.sub("\t\\1 := \\2,", line)
 			if rep != line:
 				k.write(rep)
 			if line == "};\n":
-				k.write("};\n\n")
+				k.write("};\n")
 			line = c.readline()
 
 def glsl():
@@ -26,23 +26,21 @@ def glsl():
 	with open("../dependencies/SPIRV-Headers/include/spirv/unified1/GLSL.std.450.h") as c, open("modules/glslext.ky", "w") as k:
 		line = c.readline()
 		while line:
-			rep = constant.sub("@export\nconst \\1 := \\2;\n", line)
+			rep = constant.sub("const \\1 := \\2;", line)
 			if rep != line:
 				k.write(rep)
 			if line == "enum GLSLstd450 {\n":
-				k.write("@export\nconst GLSLOp := enum {\n")
+				k.write("\nconst GLSLOp := enum {\n")
 			rep = enum_value.sub("\t\\1 := \\2,", line)
 			if rep != line:
 				k.write(rep)
 			if line == "};\n":
 				k.write("\tGLSLstd450Count\n};\n\n")
 			line = c.readline()
-		k.write(r'''@export
-const GLSL_STD_EXT_INST := 1;
+		k.write(r'''const GLSL_STD_EXT_INST := 1;
 
 @iknowwhatimdoing
 @inline
-@export
 const op := (op : GLSLOp, r : &T<any>, params : any...) $ {
 	__spirv(OpExtInst, T, r, GLSL_STD_EXT_INST, op, params...);
 };
@@ -56,7 +54,7 @@ def ocl():
 		line = c.readline()
 		while line:
 			if line == "enum OpenCLstd_Entrypoints {\n":
-				k.write("@export\nconst OpenCLOp := enum {")
+				k.write("const OpenCLOp := enum {")
 			rep = enum_value.sub("\t\\1 := \\2,", line)
 			if rep != line:
 				k.write(rep)
@@ -65,12 +63,10 @@ def ocl():
 			if line == "};\n":
 				k.write("};\n\n")
 			line = c.readline()
-		k.write('''@export
-const OPEN_CL_EXT_INST := 2;
+		k.write('''const OPEN_CL_EXT_INST := 1;
 
 @iknowwhatimdoing
 @inline
-@export
 const op := (op : OpenCLOp, r : &T<any>, params : any...) $ {
 	__spirv(OpExtInst, T, r, OPEN_CL_EXT_INST, op, params...);
 };

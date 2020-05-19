@@ -1,10 +1,6 @@
-@export
 const Version := 100;
-
-@export
 const Revision := 3;
 
-@export
 const GLSLOp := enum {
 	Bad := 0,              // Don't use
 	Round := 1,
@@ -91,12 +87,10 @@ const GLSLOp := enum {
 	GLSLstd450Count
 };
 
-@export
 const GLSL_STD_EXT_INST := 1;
 
 @iknowwhatimdoing
 @inline
-@export
 const op := (op : GLSLOp, r : &T<any>, params : any...) $ {
 	__spirv(OpExtInst, T, r, GLSL_STD_EXT_INST, op, params...);
 };
