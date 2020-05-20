@@ -22,10 +22,18 @@ int main(int argc, char** argv)
     for (j = i + 1; j < argc && argv[j][0] != '-'; j++);
     int source_count = j - i - 1 > 1 ? j - i - 1 : 1;
 
+    for (i = 1; i < argc && std::strcmp(argv[i], "-m"); i++);
+    for (j = i + 1; j < argc && argv[j][0] != '-'; j++);
+    int module_dir_count = j - i - 1 > 1 ? j - i - 1 : 1;
+
     program.add_argument("-k")
         .help("list of source files")
         .nargs(source_count)
         .required();
+
+    program.add_argument("-m")
+        .help("list of module search directories")
+        .nargs(module_dir_count);
     
     program.add_argument("-o")
         .help("optimization level")
@@ -65,6 +73,8 @@ int main(int argc, char** argv)
         std::cerr << e.what() << std::endl;
         return COMPILER_OPTIONS_ERROR;
     }
+
+    std::vector<std::string> module_dirs = program.get<std::vector<std::string>>("-m");
 
     std::vector<std::string> sources = program.get<std::vector<std::string>>("-k");
     for (std::string source : sources)

@@ -13,7 +13,15 @@ target_include_directories(kyte PUBLIC include)
 
 target_link_libraries(kyte SPIRV-Tools SPIRV-Tools-opt SPIRV-Tools-link)
 
+set_target_properties(kyte PROPERTIES PUBLIC_HEADER include/kyte/kyte.hpp)
 set_target_properties(kyte PROPERTIES FOLDER "kyte")
+
+if(KYTE_INSTALL)
+	include(GNUInstallDirs)
+	install(TARGETS kyte
+			PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/kyte
+	)
+endif()
 
 if(KYTE_GRAMMAR)
 	add_custom_target(kyte_grammar ALL

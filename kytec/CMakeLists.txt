@@ -7,5 +7,6 @@ target_link_libraries(kytec kyte argparse)
 set_target_properties(kytec PROPERTIES FOLDER "kyte")
 
 if(KYTE_INSTALL)
-	install(TARGETS kytec DESTINATION bin)
+	include(GNUInstallDirs)
+	install(TARGETS kytec DESTINATION ${CMAKE_INSTALL_BINDIR}/kyte)
 endif()
