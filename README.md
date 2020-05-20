@@ -11,19 +11,23 @@ Kyte is a shader language and compiler.
 
 sample.ky
 ```
-const stl := import("stl.ky");
+expose module("stl.ky");
 
 @vertex
-const sample_vertex_main := () $ vec4 {
-	pos := uniform();
+const sample_vertex_main := (pos : vec3) $ vec4 {
 	return vec4(pos, 1.0f);
 };
 
 @fragment
-const sample_fragment_main := () $ vec4 {
+const sample_fragment_main := (pos : vec4) $ vec4 {
 	return vec4(1.0f, 0.0f, 0.0f, 1.0f);
 };
 ```
+
+## Output Formats
+
+* SPIR-V Binary
+* SPIR-V ASM
 
 ## Getting Started
 
