@@ -47,7 +47,7 @@ namespace yy { parser::symbol_type yylex(lexcontext& ctx); }
 %token LEFT_ASSIGN "<<=" RIGHT_ASSIGN ">>=" AND_ASSIGN "&="
 %token XOR_ASSIGN "^=" OR_ASSIGN "|=" NOT_ASSIGN "~="
 %token OPERATOR "operator" CONST "const"
-%token INT "int" UINT "uint" FLOAT "float" DOUBLE "double" BOOL "bool" VAR "var"
+%token INT "int" UINT "uint" FLOAT "float" DOUBLE "double" BOOL "bool"
 %token STRUCT "struct" ENUM "enum"
 %token ELLIPSIS "..."
 %token CASE "case" DEFAULT "default" IF "if" ELSE "else" SWITCH "switch"
@@ -92,14 +92,15 @@ tag_word
 
 // declarations for functions and variables
 declaration
-    : IDENTIFIER ':' type ';'                           // variable declaration
-    | IDENTIFIER ':' type assignment_statement          // variable declaration and assignment (type stated)
-    | IDENTIFIER ':' assignment_statement               // variable declaration and assignment (type implied)
-    | CONST IDENTIFIER ':' type ';'                     // const declaration and assignment
-    | CONST IDENTIFIER ':' type assignment_statement    // const declaration and assignment (type stated)
-    | CONST IDENTIFIER ':' assignment_statement         // const declaration and assignment (type implied)
+    : IDENTIFIER ':' type ';'                     // variable declaration
+    | IDENTIFIER ':' type assignment ';'          // variable declaration and assignment (type stated)
+    | IDENTIFIER ':' assignment ';'               // variable declaration and assignment (type implied)
+    | CONST IDENTIFIER ':' type ';'               // const declaration and assignment
+    | CONST IDENTIFIER ':' type assignment ';'    // const declaration and assignment (type stated)
+    | CONST IDENTIFIER ':' assignment ';'         // const declaration and assignment (type implied)
     ;
 
+// arguments for a function (go between the parentheses)
 function_arguments
     : IDENTIFIER ':' type
     | IDENTIFIER ':' type ELLIPSIS
@@ -121,7 +122,11 @@ statement
 	;
 
 assignment_statement
-    : '=' expression_statement
+    : IDENTIFIER assignment ';'
+    ;
+
+assignment
+    : '=' expression
     ;
 
 // used for functions, if statements, loops, etc.
@@ -151,7 +156,6 @@ type
     | UINT
     | DOUBLE
     | BOOL
-    | VAR
     | function_type
     ;
 
@@ -193,7 +197,20 @@ function_decl_expression
 
 
 
+yy::parser::symbol_type yy::yylex(lexcontext& ctx)
+{
+	const char* YYMARKER;
+	const char* anchor = ctx.cursor;
+	unsigned int comment_scope = 0;
+#define walk() { ctx.loc.columns(ctx.cursor - anchor); }
+#define advance(label) { anchor = ctx.cursor; ctx.loc.step(); goto label; }
+#define token(name) { walk(); return parser::make_##name(ctx.loc); }
+#define tokenv(name, ...) { walk(); return parser::make_##name(__VA_ARGS__, ctx.loc); }
 
+	auto getIdentifier = [&](std::string& identifier)
+	{
+        tokenv(IDENTIFIER, identifier);
+	};
 
 %{ /* Begin re2c lexer */
 	re2c:yyfill:enable = 0;
@@ -252,7 +269,6 @@ init:
 
 	// Multi-char operators and any other character (either an operator or an invalid symbol)
 	"..."                    { token(ELLIPSIS); }
-	"->"                     { token(ARROW); }
 	"&&"                     { token(AND_OP); }
 	"||"                     { token(OR_OP); }
 	"++"                     { token(INC_OP); }
@@ -270,8 +286,6 @@ init:
 	"~="                     { token(NOT_ASSIGN); }
 	"<<="                    { token(LEFT_ASSIGN); }
 	">>="                    { token(RIGHT_ASSIGN); }
-	":="                     { token(DECL_ASSIGN); }
-	"="                      { token(ASSIGN); }
 	"<<"                     { token(LEFT_OP); }
 	">>"                     { token(RIGHT_OP); }
 	"<="                     { token(LE_OP); }
@@ -299,13 +313,13 @@ void yy::parser::error(const location_type& l, const std::string& message)
 	std::ifstream f(l.begin.filename->c_str());
 	std::string s;
 
-	for (int i = 0; i < l.begin.line; i++)
+	for (int i = 0; i < (int)l.begin.line; i++)
 	{
 		std::getline(f, s);
 	}
 
 	std::cout << s << std::endl;
-   f.close();
+    f.close();
 
 std::cerr << std::string(l.begin.column - 1, ' ') << '^' << std::string(l.end.column - l.begin.column - 1, '~') << std::endl;
 }
