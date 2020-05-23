@@ -25,18 +25,11 @@ struct lexcontext;
 
 %code
 {
-enum class IdentifierFlag
-{
-	TYPE_NAME,
-	VARIABLE_NAME,
-	FUNCTION_NAME
-};
 
 struct lexcontext
 {
 	const char* cursor;
 	yy::location loc;
-	IdentifierFlag identifierFlag;
 };
 
 namespace yy { parser::symbol_type yylex(lexcontext& ctx); }
@@ -44,7 +37,7 @@ namespace yy { parser::symbol_type yylex(lexcontext& ctx); }
 
 %token END 0
 %token BLOCK_COMMENT_ERROR
-%token IDENTIFIER CONSTANT TYPE_NAME FUNCTION_NAME VARIABLE_NAME
+%token IDENTIFIER CONSTANT
 %token ATTRIBUTE "attribute" UNIFORM "uniform" SAMPLER "sampler"
 %token IMPORT "import"
 %token INC_OP "++" DEC_OP "--"
@@ -53,11 +46,10 @@ namespace yy { parser::symbol_type yylex(lexcontext& ctx); }
 %token LEFT_OP "<<" RIGHT_OP ">>"
 %token LEFT_ASSIGN "<<=" RIGHT_ASSIGN ">>=" AND_ASSIGN "&="
 %token XOR_ASSIGN "^=" OR_ASSIGN "|=" NOT_ASSIGN "~="
-%token DECL_ASSIGN ":=" ASSIGN "=" SET_TYPE ":"
 %token OPERATOR "operator" CONST "const"
-%token INT "int" UINT "uint" FLOAT "float" DOUBLE "double" BOOL "bool"
+%token INT "int" UINT "uint" FLOAT "float" DOUBLE "double" BOOL "bool" VAR "var"
 %token STRUCT "struct" ENUM "enum"
-%token ELLIPSIS "..." ARROW "->"
+%token ELLIPSIS "..."
 %token CASE "case" DEFAULT "default" IF "if" ELSE "else" SWITCH "switch"
 %token WHILE "while" DO "do" FOR "for"
 %token CONTINUE "continue" BREAK "break" RETURN "return" DISCARD "discard"
@@ -69,20 +61,20 @@ namespace yy { parser::symbol_type yylex(lexcontext& ctx); }
 
 // whole translation unit with import and functions
 translation_unit
-	: external_declaration
-	| translation_unit external_declaration
+	: external_declaration  // variable declaration with or without tags
 	;
 
-// imports and functions
+// variables and functions
 external_declaration
-    : declaration
+    : declaration           // e.g. x := 5;   OR   getX := () $ int { return x; };
+    | tag declaration       // e.g. @private setX := (n : int) { x = n; };
     | external_declaration declaration
     | external_declaration tag declaration
-    | %empty
+    | END
 	;
 
 tag
-    : '@' tag_word
+    : '@' tag_word          // e.g. @inline
     | tag '@' tag_word
     ;
 
@@ -90,6 +82,7 @@ tag_word
     : "inline"
     | "iknowwhatiamdoing"
     | "private"
+    | "export"  // implicitly defined unless @private tag is used
     | "vertex"
     | "fragment"
     | "geometry"
@@ -99,124 +92,102 @@ tag_word
 
 // declarations for functions and variables
 declaration
-    : function_declaration ";"
-    | declaration function_declaration ";"
-    | variable_declaration
-    | declaration variable_declaration
-    ;
-
-function_declaration
-    : IDENTIFIER ":=" '(' function_arguments ')' compound_statement // void function declaration
-    | CONST IDENTIFIER ":=" '(' function_arguments ')' compound_statement // const void function declaration
-    | IDENTIFIER ":=" '(' function_arguments ')' "$" TYPE_NAME compound_statement // function declaration with return
-    | CONST IDENTIFIER ":=" '(' function_arguments ')' "$" TYPE_NAME compound_statement // const function declaration with return
+    : IDENTIFIER ':' type ';'                           // variable declaration
+    | IDENTIFIER ':' type assignment_statement          // variable declaration and assignment (type stated)
+    | IDENTIFIER ':' assignment_statement               // variable declaration and assignment (type implied)
+    | CONST IDENTIFIER ':' type ';'                     // const declaration and assignment
+    | CONST IDENTIFIER ':' type assignment_statement    // const declaration and assignment (type stated)
+    | CONST IDENTIFIER ':' assignment_statement         // const declaration and assignment (type implied)
     ;
 
 function_arguments
-    : IDENTIFIER ":" TYPE_NAME
-    | function_arguments "," IDENTIFIER ":" TYPE_NAME
-    ;
-
-variable_declaration
-    : IDENTIFIER ":=" expression_statement // variable declaration
-    | CONST IDENTIFIER ":=" expression_statement // const declaration
+    : IDENTIFIER ':' type
+    | IDENTIFIER ':' type ELLIPSIS
+    | CONST IDENTIFIER ':' type
+    | CONST IDENTIFIER ':' type ELLIPSIS
+    | function_arguments ',' IDENTIFIER ':' type
+    | function_arguments ',' IDENTIFIER ':' type ELLIPSIS
+    | function_arguments ',' CONST IDENTIFIER ':' type
+    | function_arguments ',' CONST IDENTIFIER ':' type ELLIPSIS
     ;
 
 // any kind of statement
 statement
-	: labeled_statement
-	| compound_statement
-	| expression_statement
-	| selection_statement
-	| iteration_statement
-	| jump_statement
-    | declaration
+	: compound_statement        // e.g. { ... }
+	| expression_statement      // e.g. (x && y);
+	| jump_statement            // e.g. return x;
+    | declaration               // e.g. x := 5;
+    | assignment_statement      // e.g. x = 5;
 	;
 
-// follow switch statements
-labeled_statement
-	: CASE expression ':' statement
-	| DEFAULT ':' statement
-	;
+assignment_statement
+    : '=' expression_statement
+    ;
 
 // used for functions, if statements, loops, etc.
 compound_statement
 	: '{' '}'
 	| '{' statement_list '}'
-	| '{' declaration_list '}'
-	| '{' declaration_list statement_list '}'
 	;
 
-declaration_list
-	: declaration
-	| declaration_list declaration
-	;
-
+// filler for statements and declarations
 statement_list
-	: statement
-	| statement_list statement
-	;
+    : statement
+    | statement_list statement
+    ;
 
 expression_statement
 	: ';'
 	| expression ';'
 	;
 
-selection_statement
-	: IF '(' expression ')' statement
-	| IF '(' expression ')' statement ELSE statement
-	| SWITCH '(' expression ')' labeled_statement
-	;
-
-iteration_statement
-	: WHILE '(' expression ')' statement
-	| DO statement WHILE '(' expression ')' ';'
-	| FOR '(' expression_statement expression_statement ')' statement
-	| FOR '(' expression_statement expression_statement expression ')' statement
-	;
-
 jump_statement
-	: CONTINUE ';'
-	| BREAK ';'
-	| RETURN ';'
-	| RETURN expression ';'
-	| DISCARD
+	: RETURN expression_statement      // e.g. return x;
 	;
 
-assignment_operator
-	: ASSIGN // "="
-    | DECL_ASSIGN // ":="
-	| MUL_ASSIGN // "*="
-	| DIV_ASSIGN // "/="
-	| MOD_ASSIGN // "%="
-	| ADD_ASSIGN // "+="
-	| SUB_ASSIGN // "-="
-	| LEFT_ASSIGN // "<<="
-	| RIGHT_ASSIGN // ">>="
-	| AND_ASSIGN // "&="
-	| XOR_ASSIGN // "^="
-	| OR_ASSIGN // "|="
-	| NOT_ASSIGN // "~="
-	;
+type
+    : INT
+    | FLOAT
+    | UINT
+    | DOUBLE
+    | BOOL
+    | VAR
+    | function_type
+    ;
+
+function_type
+    : '(' ')' '$'                           // used for void function declaration (no parameters)
+    | '(' ')' '$' type                      // used for function declaration with return (no parameters)
+    | '(' function_arguments ')' '$'        // used for void function declaration
+    | '(' function_arguments ')' '$' type   // used for function declaration with return
+    ;
+
 
 // all the expression stuff below
-
 expression
-    : IDENTIFIER
-    | CONSTANT
-    | function_call_expression
+    : IDENTIFIER                    // e.g. x
+    | CONSTANT                      // e.g. 5
+    | function_call_expression      // e.g. setX(5.0)
+    | function_decl_expression      // e.g. (n : int) { x = n; };
     ;
 
 function_call_expression
-    : IDENTIFIER "(" argument_list ")"
+    : IDENTIFIER '(' ')'                // function call
+    | IDENTIFIER '(' argument_list ')'  // function call with parameters
     ;
 
 argument_list
     : IDENTIFIER
     | CONSTANT
-    | argument_list "," IDENTIFIER
-    | argument_list "," CONSTANT
+    | argument_list ',' IDENTIFIER
+    | argument_list ',' CONSTANT
     ;
+
+function_decl_expression
+    : function_type compound_statement
+    ;
+
+
 
 %%
 
