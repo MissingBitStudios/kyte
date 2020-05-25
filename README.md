@@ -11,15 +11,15 @@ Kyte is a shader language and compiler.
 
 sample.ky
 ```
-expose module("stl.ky");
+expose import("stl.ky");
 
 @vertex
-const sample_vertex_main := (pos : vec3) $ vec4 {
+sample_vertex_main :: (pos : vec3) $ ky_position : vec4 {
 	return vec4(pos, 1.0f);
 };
 
 @fragment
-const sample_fragment_main := (pos : vec4) $ vec4 {
+sample_fragment_main :: () $ ky_color : vec4 {
 	return vec4(1.0f, 0.0f, 0.0f, 1.0f);
 };
 ```

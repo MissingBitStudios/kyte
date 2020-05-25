@@ -80,23 +80,32 @@ namespace kyte
 		return writeOpcode(1, opCode);
 	}
 
-	uint16_t Binary::writeOperands(std::variant<uint32_t, const char*> operand)
+	uint16_t Binary::writeOperands(std::variant<uint32_t, const char*, std::vector<std::variant<uint32_t, const char*>>> operand)
 	{
 		if (std::holds_alternative<uint32_t>(operand))
 		{
 			return writeWord(std::get<uint32_t>(operand));
 		}
-		else
+		else if (std::holds_alternative<const char*>(operand))
 		{
 			return writeLiteralString(std::get<const char*>(operand));
 		}
-	}
-
-	uint16_t Binary::writeExtInstruction(uint32_t setId, uint32_t instruction, uint32_t resultTypeId, uint32_t resultId)
-	{
-		writeOpcode(5, spv::OpExtInst);
-		writeWords(resultTypeId, resultId, setId, instruction);
-		return 5;
+		else
+		{
+			uint16_t wordCount = 0;
+			for (std::variant<uint32_t, const char*> o : std::get<std::vector<std::variant<uint32_t, const char*>>>(operand))
+			{
+				if (std::holds_alternative<uint32_t>(o))
+				{
+					wordCount += writeWord(std::get<uint32_t>(o));
+				}
+				else
+				{
+					wordCount += writeLiteralString(std::get<const char*>(o));
+				}
+			}
+			return wordCount;
+		}
 	}
 
 	uint32_t Binary::getNextId()

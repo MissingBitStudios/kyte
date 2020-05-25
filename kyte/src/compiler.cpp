@@ -29,7 +29,6 @@ namespace kyte
 		// OpExtension Instructions
 		
 		// OpExtInstImport Instructions
-		b.writeInstruction(spv::OpExtInstImport, kyte::GLSL_STD_EXT_INST_ID, kyte::GLSL_STD_EXT_INST_NAME); // https://www.khronos.org/registry/spir-v/specs/1.0/GLSL.std.450.html
 		
 		// OpMemoryModel Instruction
 		b.writeInstruction(spv::OpMemoryModel, spv::AddressingModelLogical, spv::MemoryModelGLSL450);

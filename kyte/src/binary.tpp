@@ -25,22 +25,7 @@ namespace kyte
 	}
 
 	template<typename ...Ts>
-	uint16_t Binary::writeExtInstruction(uint32_t setId, uint32_t instruction, uint32_t resultTypeId, uint32_t resultId, Ts... operands)
-	{
-		size_t m = binary.size();
-
-		uint16_t wordCount = writeOpcode(0, spv::OpExtInst);
-		wordCount += writeWords(resultTypeId, resultId, setId, instruction);
-
-		wordCount += writeOperands(operands...);
-
-		binary[m] |= wordCount << spv::WordCountShift;
-
-		return wordCount;
-	}
-
-	template<typename ...Ts>
-	uint16_t Binary::writeOperands(std::variant<uint32_t, const char*> operand, Ts... operands)
+	uint16_t Binary::writeOperands(std::variant<uint32_t, const char*, std::vector<std::variant<uint32_t, const char*>>> operand, Ts... operands)
 	{
 		uint16_t wordCount = writeOperands(operand);
 		return wordCount + writeOperands(operands...);

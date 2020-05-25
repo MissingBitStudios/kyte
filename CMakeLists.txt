@@ -40,5 +40,3 @@ if(KYTE_TESTS)
 endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-include(CPack)

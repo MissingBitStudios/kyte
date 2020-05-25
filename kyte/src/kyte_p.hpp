@@ -13,8 +13,6 @@ namespace kyte
 	const uint32_t MagicNumber = 23;
 	const uint32_t Version = 1;
 	const uint32_t SourceLanguageKyte = spv::SourceLanguageUnknown;
-	const char* const GLSL_STD_EXT_INST_NAME = "GLSL.std.450";
-	const uint32_t GLSL_STD_EXT_INST_ID = 1;
 
 	const spv_target_env SpvTargetEnv = SPV_ENV_UNIVERSAL_1_5;
 
@@ -34,17 +32,14 @@ namespace kyte
 		uint16_t writeInstruction(spv::Op opCode);
 		template<typename ...Ts>
 		uint16_t writeInstruction(spv::Op opCode, Ts... operands);
-		uint16_t writeExtInstruction(uint32_t setId, uint32_t instruction, uint32_t resultTypeId, uint32_t resultId);
-		template<typename ...Ts>
-		uint16_t writeExtInstruction(uint32_t setId, uint32_t instruction, uint32_t resultTypeId, uint32_t resultId, Ts... operands);
 		uint32_t getNextId();
 
 		const std::vector<uint32_t>& get() const;
 	private:
 		uint16_t writeWords(uint32_t word);
-		uint16_t writeOperands(std::variant<uint32_t, const char*> operand);
+		uint16_t writeOperands(std::variant<uint32_t, const char*, std::vector<std::variant<uint32_t, const char*>>> operand);
 		template<typename ...Ts>
-		uint16_t writeOperands(std::variant<uint32_t, const char*> operand, Ts... operands);
+		uint16_t writeOperands(std::variant<uint32_t, const char*, std::vector<std::variant<uint32_t, const char*>>> operand, Ts... operands);
 		std::vector<uint32_t> binary;
 		uint32_t nextId = 1;
 	};
