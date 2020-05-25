@@ -108,11 +108,6 @@ namespace kyte
 		}
 	}
 
-	uint32_t Binary::getNextId()
-	{
-		return nextId++;
-	}
-
 	const std::vector<uint32_t>& Binary::get() const
 	{
 		return binary;

@@ -9,63 +9,9 @@ namespace kyte
 		// AST Transform
 		// parse(source);
 
-		// Binarification https://www.khronos.org/registry/spir-v/specs/unified1/SPIRV.html
-		Binary b;
+		CodeGenerator cg;
 
-		// Header
-		b.writeWords(
-			spv::MagicNumber, // https://www.khronos.org/registry/spir-v/specs/unified1/SPIRV.html#_a_id_magic_a_magic_number
-			spv::Version, // SPIR-V Version
-			kyte::MagicNumber, // Generator’s magic number
-			255, // Bound
-			0 // Reserved
-		);
-
-		// Begin Instruction Stream
-		// OpCapability Instructions
-		b.writeInstruction(spv::OpCapability, spv::CapabilityLinkage); // @Temp
-		b.writeInstruction(spv::OpCapability, spv::CapabilityShader);
-		
-		// OpExtension Instructions
-		
-		// OpExtInstImport Instructions
-		
-		// OpMemoryModel Instruction
-		b.writeInstruction(spv::OpMemoryModel, spv::AddressingModelLogical, spv::MemoryModelGLSL450);
-		
-		// OpEntryPoint Instructions
-		
-		// OpExecutionMode/OpExecutionModeId Instructions
-
-		// Debug
-		if (options.debugInfo)
-		{
-			// OpString/OpSourceExtension/OpSource/OpSourceContinued Instructions
-			b.writeInstruction(spv::OpSource, kyte::SourceLanguageKyte, kyte::Version);
-			// OpName/OpMemberName Instructions
-			// OpModuleProcessed Instructions
-		}
-
-		// Annotation
-		// OpDecorate/OpMemberDecorate/OpGroupDecorate/OpGroupMemberDecorate/OpDecorationGroup Instructions
-
-		// OpTypeXXX/OpConstantXXX/OpSpecXXX/OpVariable(Storage Class != Function) Instructions
-		// Preffered location of OpUndef Instructions
-		// This section is the first section to allow use of OpLine/OpNoLine Instructions
-
-		// Function Declarations
-		// Per function
-		// OpFunction
-			// OpFunctionParameter...
-		// opFunctionEnd
-
-		// Function Definitions
-		// OpFunction
-			// OpFunctionParameter...
-			// Block...
-		// opFunctionEnd
-
-		std::vector<uint32_t> binary = b.get();
+		std::vector<uint32_t> binary = std::move(cg.generate(options));
 
 		if (options.validate || options.showDisassembly)
 		{

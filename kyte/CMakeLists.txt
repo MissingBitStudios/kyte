@@ -1,6 +1,8 @@
 add_library(kyte STATIC
 	src/binary.cpp
 	src/binary.tpp
+	src/code_generator.cpp
+	src/code_generator.tpp
 	src/compiler.cpp
 	src/kyte_p.hpp
 	src/parser.cpp

@@ -7,6 +7,7 @@
 #include <spirv-tools/libspirv.hpp>
 
 #include <variant>
+#include <unordered_map>
 
 namespace kyte
 {
@@ -32,7 +33,6 @@ namespace kyte
 		uint16_t writeInstruction(spv::Op opCode);
 		template<typename ...Ts>
 		uint16_t writeInstruction(spv::Op opCode, Ts... operands);
-		uint32_t getNextId();
 
 		const std::vector<uint32_t>& get() const;
 	private:
@@ -41,10 +41,27 @@ namespace kyte
 		template<typename ...Ts>
 		uint16_t writeOperands(std::variant<uint32_t, const char*, std::vector<std::variant<uint32_t, const char*>>> operand, Ts... operands);
 		std::vector<uint32_t> binary;
+	};
+
+	class CodeGenerator
+	{
+	public:
+		uint32_t registerType();
+		uint32_t registerExtInst(const std::string& extInstName);
+		uint32_t registerFunction();
+		uint32_t registerConstant();
+		void registerEntryPoint(spv::ExecutionModel executionModel, uint32_t function);
+
+		std::vector<uint32_t> generate(Options options);
+	private:
+		uint32_t getNextId();
 		uint32_t nextId = 1;
+
+		std::unordered_map<std::string, uint32_t> extInst;
 	};
 
 	// void parse(const std::string& sourceCode);
 } // namespace kyte
 
 #include "binary.tpp"
+#include "code_generator.tpp"
