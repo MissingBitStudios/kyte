@@ -14,11 +14,11 @@ namespace kyte
 	{
 		return writeWord(word);
 	}
-	
+
 	/*The low-order 32 bits appear in the first operand.*/
 	uint16_t Binary::writeWord64(uint64_t word)
 	{
-		uint32_t high = (uint32_t)(word >> sizeof(uint32_t) * CHAR_BIT);
+		uint32_t high = (uint32_t)(word >> sizeof(uint32_t)* CHAR_BIT);
 		uint32_t low = (uint32_t)word;
 		return writeWords(low, high);
 	}
@@ -97,6 +97,11 @@ namespace kyte
 		writeOpcode(5, spv::OpExtInst);
 		writeWords(resultTypeId, resultId, setId, instruction);
 		return 5;
+	}
+
+	uint32_t Binary::getNextId()
+	{
+		return nextId++;
 	}
 
 	const std::vector<uint32_t>& Binary::get() const

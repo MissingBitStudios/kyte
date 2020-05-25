@@ -1,0 +1,5 @@
+private extern import("glslext.ky");
+
+inline cos :: (theta : float) $ value : float {
+	__spirv_glsl(GLSLCos, value, theta);
+}

@@ -31,17 +31,15 @@ def glsl():
 				k.write(rep)
 			if line == "enum GLSLstd450 {\n":
 				k.write("\nconst GLSLOp := enum {\n")
-			rep = enum_value.sub("\t\\1 := \\2,", line)
+			rep = enum_value.sub("\tGLSL\\1 := \\2,", line)
 			if rep != line:
 				k.write(rep)
 			if line == "};\n":
 				k.write("\tGLSLstd450Count\n};\n\n")
 			line = c.readline()
-		k.write(r'''const GLSL_STD_EXT_INST := 1;
+		k.write(r'''const GLSL_STD_EXT_INST := __spirv_include("GLSL.std.450");
 
-@iknowwhatimdoing
-@inline
-const op := (op : GLSLOp, r : &T<any>, params : any...) $ {
+inline __spirv_glsl :: (op : GLSLOp, r : &T<any>, params : any...) $ {
 	__spirv(OpExtInst, T, r, GLSL_STD_EXT_INST, op, params...);
 };
 ''')
@@ -55,7 +53,7 @@ def ocl():
 		while line:
 			if line == "enum OpenCLstd_Entrypoints {\n":
 				k.write("const OpenCLOp := enum {")
-			rep = enum_value.sub("\t\\1 := \\2,", line)
+			rep = enum_value.sub("\tOPENCL\\1 := \\2,", line)
 			if rep != line:
 				k.write(rep)
 			if line.startswith("    //"):
@@ -63,11 +61,9 @@ def ocl():
 			if line == "};\n":
 				k.write("};\n\n")
 			line = c.readline()
-		k.write('''const OPEN_CL_EXT_INST := 1;
+		k.write('''const OPEN_CL_EXT_INST := __spirv_include("OpenCL.std");
 
-@iknowwhatimdoing
-@inline
-const op := (op : OpenCLOp, r : &T<any>, params : any...) $ {
+inline __spirv_opencl :: (op : OpenCLOp, r : &T<any>, params : any...) $ {
 	__spirv(OpExtInst, T, r, OPEN_CL_EXT_INST, op, params...);
 };
 ''')

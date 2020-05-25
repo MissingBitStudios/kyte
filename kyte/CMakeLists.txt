@@ -19,7 +19,7 @@ set_target_properties(kyte PROPERTIES FOLDER "kyte")
 if(KYTE_INSTALL)
 	include(GNUInstallDirs)
 	install(TARGETS kyte
-			PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/kyte
+			PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 	)
 endif()
 

@@ -8,5 +8,5 @@ set_target_properties(kytec PROPERTIES FOLDER "kyte")
 
 if(KYTE_INSTALL)
 	include(GNUInstallDirs)
-	install(TARGETS kytec DESTINATION ${CMAKE_INSTALL_BINDIR}/kyte)
+	install(TARGETS kytec DESTINATION ${CMAKE_INSTALL_BINDIR})
 endif()

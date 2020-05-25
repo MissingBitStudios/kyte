@@ -1,0 +1,5 @@
+private expose import("types.ky");
+
+inline operator + :: (a : float, b : float) $ c : float {
+	__spirv(OpFAdd, float, c, a, b);
+}

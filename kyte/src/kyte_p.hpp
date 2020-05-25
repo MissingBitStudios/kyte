@@ -37,6 +37,7 @@ namespace kyte
 		uint16_t writeExtInstruction(uint32_t setId, uint32_t instruction, uint32_t resultTypeId, uint32_t resultId);
 		template<typename ...Ts>
 		uint16_t writeExtInstruction(uint32_t setId, uint32_t instruction, uint32_t resultTypeId, uint32_t resultId, Ts... operands);
+		uint32_t getNextId();
 
 		const std::vector<uint32_t>& get() const;
 	private:
@@ -45,6 +46,7 @@ namespace kyte
 		template<typename ...Ts>
 		uint16_t writeOperands(std::variant<uint32_t, const char*> operand, Ts... operands);
 		std::vector<uint32_t> binary;
+		uint32_t nextId = 1;
 	};
 
 	// void parse(const std::string& sourceCode);
