@@ -12,9 +12,9 @@
 namespace kyte
 {
 	const uint32_t MagicNumber = 23;
-	const uint32_t Version = 1;
+	const uint32_t Version = 0x00000100;
 	const uint32_t SourceLanguageKyte = spv::SourceLanguageUnknown;
-
+	 
 	const spv_target_env SpvTargetEnv = SPV_ENV_UNIVERSAL_1_5;
 
 	class Binary
@@ -46,10 +46,12 @@ namespace kyte
 	class CodeGenerator
 	{
 	public:
-		uint32_t registerType();
-		uint32_t registerExtInst(const std::string& extInstName);
+		uint32_t getTypeID();
+		uint32_t getConstantID();
+		uint32_t getExtInstID(const std::string& extInstName);
+		void registerDebugName(uint32_t resultId, const std::string& debugName);
+		void registerDecoration(uint32_t targetId, uint32_t decoration, const std::vector<std::variant<uint32_t, const char*>>& operands = std::vector<std::variant<uint32_t, const char*>>());
 		uint32_t registerFunction();
-		uint32_t registerConstant();
 		void registerEntryPoint(spv::ExecutionModel executionModel, uint32_t function);
 
 		std::vector<uint32_t> generate(Options options);
@@ -57,10 +59,16 @@ namespace kyte
 		uint32_t getNextId();
 		uint32_t nextId = 1;
 
-		std::unordered_map<std::string, uint32_t> extInst;
+		std::unordered_map<std::string, uint32_t> extInsts;
+		std::unordered_map<uint32_t, std::string> debugNames;
+		std::unordered_map<uint32_t, std::pair<uint32_t, std::vector<std::variant<uint32_t, const char*>>>> decorations;
 	};
 
-	// void parse(const std::string& sourceCode);
+	class Parser
+	{
+	public:
+		void parse(const std::string& sourceCode);
+	};
 } // namespace kyte
 
 #include "binary.tpp"

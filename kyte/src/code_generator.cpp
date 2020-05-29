@@ -2,18 +2,18 @@
 
 namespace kyte
 {
-	uint32_t CodeGenerator::registerType()
+	uint32_t CodeGenerator::getTypeID()
 	{
 		return getNextId();
 	}
 
-	uint32_t CodeGenerator::registerExtInst(const std::string& extInstName)
+	uint32_t CodeGenerator::getExtInstID(const std::string& extInstName)
 	{
-		if (extInst.count(extInstName))
+		if (extInsts.count(extInstName))
 		{
-			return extInst[extInstName];
+			return extInsts[extInstName];
 		}
-		return extInst[extInstName] = getNextId();
+		return extInsts[extInstName] = getNextId();
 	}
 
 	uint32_t CodeGenerator::registerFunction()
@@ -21,9 +21,19 @@ namespace kyte
 		return getNextId();
 	}
 
-	uint32_t CodeGenerator::registerConstant()
+	uint32_t CodeGenerator::getConstantID()
 	{
 		return getNextId();
+	}
+
+	void CodeGenerator::registerDebugName(uint32_t resultId, const std::string& debugName)
+	{
+		debugNames[resultId] = debugName;
+	}
+
+	void CodeGenerator::registerDecoration(uint32_t targetId, uint32_t decoration, const std::vector<std::variant<uint32_t, const char*>>& operands = std::vector<std::variant<uint32_t, const char*>>())
+	{
+		decorations[targetId] = { decoration, operands };
 	}
 
 	void CodeGenerator::registerEntryPoint(spv::ExecutionModel executionModel, uint32_t function)
@@ -58,7 +68,7 @@ namespace kyte
 		// OpExtension Instructions
 
 		// OpExtInstImport Instructions
-		for (auto it = extInst.begin(); it != extInst.end(); it++)
+		for (auto it = extInsts.begin(); it != extInsts.end(); it++)
 		{
 			binary.writeInstruction(spv::OpExtInstImport, it->second, it->first.c_str());
 		}
@@ -76,11 +86,19 @@ namespace kyte
 			// OpString/OpSourceExtension/OpSource/OpSourceContinued Instructions
 			binary.writeInstruction(spv::OpSource, kyte::SourceLanguageKyte, kyte::Version);
 			// OpName/OpMemberName Instructions
+			for (auto it = debugNames.begin(); it != debugNames.end(); it++)
+			{
+				binary.writeInstruction(spv::OpName, it->first, it->second.c_str());
+			}
 			// OpModuleProcessed Instructions
 		}
 
 		// Annotation
 		// OpDecorate/OpMemberDecorate/OpGroupDecorate/OpGroupMemberDecorate/OpDecorationGroup Instructions
+		for (auto it = decorations.begin(); it != decorations.end(); it++)
+		{
+			binary.writeInstruction(spv::OpDecorate, it->first, it->second.first, it->second.second);
+		}
 
 		// OpTypeXXX/OpConstantXXX/OpSpecXXX/OpVariable(Storage Class != Function) Instructions
 		// Preffered location of OpUndef Instructions
@@ -89,13 +107,13 @@ namespace kyte
 		// Function Declarations
 		// OpFunction
 			// OpFunctionParameter...
-		// opFunctionEnd
+		// OpFunctionEnd
 
 		// Function Definitions
 		// OpFunction
 			// OpFunctionParameter...
 			// Block...
-		// opFunctionEnd
+		// OpFunctionEnd
 
 		return binary.get();
 	}

@@ -11,7 +11,7 @@ namespace kyte
 
 		CodeGenerator cg;
 
-		std::vector<uint32_t> binary = std::move(cg.generate(options));
+		std::vector<uint32_t> binary = cg.generate(options);
 
 		if (options.validate || options.showDisassembly)
 		{

@@ -10,6 +10,7 @@ namespace kyte
 		bool debugInfo = false;
 		bool validate = true;
 		bool showDisassembly = false;
+		bool profile = false;
 		uint8_t optimizationLevel = 0;
 	};
 
